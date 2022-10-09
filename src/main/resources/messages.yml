@@ -1,0 +1,14 @@
+guildq-world-nonexistent: "Swiat gildyjny nie zostal jeszcze utworzony!"
+guildq-world-enter: "Przenosze na swiat gildyjny..."
+guildq-world-exit: "Przenosze ze swiata gildyjnego..."
+
+
+guildq-quarter-create-exists: "Siedziba tej gildii juz istnieje!"
+guildq-quarter-create-shortId_taken: "Ta krotka nazwa jest zajeta przez inna siedzibe!"
+guildq-quarter-create-success: "Pomyslnie utworzono siedzibe!"
+guildq-quarter-shortId-nonexistent: "Siedziba o podanej nazwie nie istnieje!"
+guildq-quarter-teleport-success: "Przenosze do siedziby..."
+
+
+quildq-guilds-not_member: "Nie jestes czlonkiem zadnej gildii!"
+quildq-guilds-not_master: "Nie jestes zalozycielem gildii!"
