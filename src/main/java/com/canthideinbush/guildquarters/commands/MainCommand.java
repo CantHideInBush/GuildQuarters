@@ -30,7 +30,7 @@ public class MainCommand extends ParentCommand {
     }
 
     @Override
-    public InternalCommand getParentCommand() {
+    public Class<? extends InternalCommand> getParentCommandClass() {
         return null;
     }
 

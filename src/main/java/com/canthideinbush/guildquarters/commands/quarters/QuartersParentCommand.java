@@ -16,6 +16,7 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new CreateQuarterCommand());
         subcommands.add(new CreateNamedQuarterCommand());
         subcommands.add(new TeleportToQuarterCommand());
+        subcommands.add(new QuarterResetCommand());
 
     }
 
@@ -32,9 +33,10 @@ public class QuartersParentCommand extends ParentCommand {
         return "quarters";
     }
 
+
     @Override
-    public InternalCommand getParentCommand() {
-        return CHIBCommandsRegistry.get(MainCommand.class);
+    public Class<? extends InternalCommand> getParentCommandClass() {
+        return MainCommand.class;
     }
 
     @Override

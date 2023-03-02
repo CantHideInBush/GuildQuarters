@@ -41,9 +41,10 @@ public class ToGuildWorldCommand extends InternalCommand  {
     }
 
     @Override
-    public InternalCommand getParentCommand() {
-        return CHIBCommandsRegistry.get(MainCommand.class);
+    public Class<? extends InternalCommand> getParentCommandClass() {
+        return MainCommand.class;
     }
+
 
     @Override
     public String getPermission() {

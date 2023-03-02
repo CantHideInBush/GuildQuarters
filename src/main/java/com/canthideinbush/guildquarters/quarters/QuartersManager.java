@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class QuartersManager implements KeyedStorage<GuildQuarter> {
@@ -46,6 +47,9 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
     public GuildQuarter getByShortId(String shortId){
         return quarters.stream().filter(q -> q.getShortId().equalsIgnoreCase(shortId)).findAny().orElse(null);
+    }
+    public GuildQuarter getByGuildId(UUID uuid){
+        return quarters.stream().filter(q -> q.guildUUID.equals(uuid)).findAny().orElse(null);
     }
 
 

@@ -19,8 +19,8 @@ public class CreateQuarterCommand extends InternalCommand {
     }
 
     @Override
-    public InternalCommand getParentCommand() {
-        return CHIBCommandsRegistry.get(QuartersParentCommand.class);
+    public Class<? extends InternalCommand> getParentCommandClass() {
+        return QuartersParentCommand.class;
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.canthideinbush.guildquarters.utils;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.utils.worldgen.EmptyGenerator;
+import com.canthideinbush.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
@@ -23,6 +25,10 @@ public class GuildUtils {
         return Bukkit.getWorld(GuildQ.getInstance().getConfig().getString("GuildWorldName", "guildworld"));
     }
 
+
+    public static void pasteGuildSchematic(Location location) {
+        GuildQ.getInstance().getUtilsProvider().worldEdit.pasteAt(location, "default.schem");
+    }
 
     public static int getQuarterSize() {
         return GuildQ.getInstance().getConfig().getInt("Quarters.ChunkSize");

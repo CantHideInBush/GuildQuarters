@@ -12,3 +12,12 @@ guildq-quarter-teleport-success: "Przenosze do siedziby..."
 
 quildq-guilds-not_member: "Nie jestes czlonkiem zadnej gildii!"
 quildq-guilds-not_master: "Nie jestes zalozycielem gildii!"
+
+common:
+  guild-nonexistent: "Ta gildia nie istnieje!"
+  quarter-nonexistent: "Ta gildia nie istnieje!"
+
+command:
+  quarter:
+    reset:
+      success: "Zresetowano siedzibe!"
