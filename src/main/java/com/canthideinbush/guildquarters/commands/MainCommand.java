@@ -26,7 +26,7 @@ public class MainCommand extends ParentCommand {
 
     @Override
     public String getName() {
-        return "guildq";
+        return "gq";
     }
 
     @Override

@@ -9,6 +9,11 @@ guildq-quarter-create-success: "Pomyslnie utworzono siedzibe!"
 guildq-quarter-shortId-nonexistent: "Siedziba o podanej nazwie nie istnieje!"
 guildq-quarter-teleport-success: "Przenosze do siedziby..."
 
+guildq:
+  quarter:
+    create:
+      exists: "Siedziba tej gildii juz istnieje!"
+
 
 quildq-guilds-not_member: "Nie jestes czlonkiem zadnej gildii!"
 quildq-guilds-not_master: "Nie jestes zalozycielem gildii!"

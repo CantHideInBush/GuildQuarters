@@ -37,7 +37,7 @@ public class ToGuildWorldCommand extends InternalCommand  {
 
     @Override
     public String getName() {
-        return "toguildworld";
+        return "gworld";
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ToGuildWorldCommand extends InternalCommand  {
 
     @Override
     public String getPermission() {
-        return "toguildworld";
+        return "gworld";
     }
 
     @Override

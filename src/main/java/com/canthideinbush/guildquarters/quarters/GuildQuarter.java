@@ -12,13 +12,17 @@ import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
+import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 
 @SerializableAs("GuildQuarter")
@@ -92,43 +96,45 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public void clearChunks(Runnable r) {
         Bukkit.getScheduler().runTaskAsynchronously(GuildQ.getInstance(), () -> {
+            CraftWorld nmsWorld = ((CraftWorld) GuildUtils.getGuildWorld()).getHandle().getWorld();
             int quarterSize = GuildUtils.getQuarterSize();
             int minY = GuildUtils.getGuildWorld().getMinHeight();
             int maxY = GuildUtils.getGuildWorld().getMaxHeight();
             ArrayList<BlockState> toUpdate = new ArrayList<>();
             for (int x = chunkX - quarterSize; x < chunkX + quarterSize; x++) {
                 for (int z = chunkZ - quarterSize; z < chunkZ + quarterSize; z++) {
-                    try {
-                        Chunk chunk = GuildUtils.getGuildWorld().getChunkAtAsync(x, z).get();
-                        ChunkSnapshot snapshot = chunk.getChunkSnapshot();
-                        for (int bX = 0; bX < 16; bX++) {
-                            for (int bZ = 0; bZ < 16; bZ++) {
-                                for (int y = minY; y < maxY; y++) {
-                                    if (!snapshot.getBlockType(bX, y, bZ).equals(Material.AIR)) {
-                                        BlockState state = chunk.getBlock(bX, y, bZ).getState();
-                                        state.setType(Material.AIR);
-                                        toUpdate.add(state);
-                                    }
+                    CraftChunk chunk = (CraftChunk) nmsWorld.getChunkAt(x, z).getPersistentDataContainer();
+                    ChunkSnapshot snapshot = chunk.getChunkSnapshot(true, false, false);
+                    for (int bX = 0; bX < 16; bX++) {
+                        for (int bZ = 0; bZ < 16; bZ++) {
+                            if (snapshot.getHighestBlockYAt(bX, bZ) == minY - 1) continue;
+                            for (int y = minY; y < maxY; y++) {
+                                chunk.
+                                if (!snapshot.getBlockType(bX, y, bZ).isAir()) {
+                                    BlockState state = chunk.getBlock(bX, y, bZ).getState(false);
+                                    state.setType(Material.AIR);
+                                    toUpdate.add(state);
                                 }
                             }
-
                         }
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
+
                     }
 
 
                 }
             }
             Bukkit.getScheduler().runTask(GuildQ.getInstance(), () -> {
-                toUpdate.forEach(blockState -> blockState.update(true, false));
+                toUpdate.forEach(blockState -> blockState.update(false, false));
                 r.run();
             });
         });
     }
 
     public void reset() {
-        clearChunks(() -> GuildUtils.pasteGuildSchematic(getInitialLocation()));
+        clearChunks(() -> {
+            GuildUtils.pasteGuildSchematic(getInitialLocation());
+            GuildQ.getInstance().getLogger().log(Level.INFO, "GuildQuarter " + getShortId() + " reset complete");;
+        });
     }
 
 }

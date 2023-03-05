@@ -18,6 +18,9 @@ public class QuarterResetCommand extends InternalCommand {
     public boolean execute(CommandSender sender, String[] args) {
         ArgParser parser = new ArgParser(args, getArgIndex());
 
+        if (!parser.hasNext()) {
+            sendConfigErrorMessage(sender, "command-arguments-insufficient");
+        }
         String guildName = parser.next();
         Guild guild = Guilds.getApi().getGuild(guildName);
         if (guild == null) {
