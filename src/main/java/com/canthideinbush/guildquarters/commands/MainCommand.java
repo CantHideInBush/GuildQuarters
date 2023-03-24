@@ -1,6 +1,7 @@
 package com.canthideinbush.guildquarters.commands;
 
 import com.canthideinbush.guildquarters.commands.quarters.QuartersParentCommand;
+import com.canthideinbush.guildquarters.commands.tiers.TierParentCommand;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
@@ -17,6 +18,7 @@ public class MainCommand extends ParentCommand {
 
         subcommands.add(new QuartersParentCommand());
         subcommands.add(new ToGuildWorldCommand());
+        subcommands.add(new TierParentCommand());
     }
 
     @Override

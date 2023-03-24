@@ -1,7 +1,7 @@
 package com.canthideinbush.guildquarters.commands.quarters;
 
 import com.canthideinbush.guildquarters.commands.MainCommand;
-import com.canthideinbush.utils.commands.CHIBCommandsRegistry;
+import com.canthideinbush.guildquarters.commands.tiers.SetTierCommand;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
 
@@ -17,6 +17,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new CreateNamedQuarterCommand());
         subcommands.add(new TeleportToQuarterCommand());
         subcommands.add(new QuarterResetCommand());
+        subcommands.add(new TemplateQuarterTeleportCommand());
+
 
     }
 

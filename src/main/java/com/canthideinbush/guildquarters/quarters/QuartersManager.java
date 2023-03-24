@@ -24,6 +24,14 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     private final ArrayList<GuildQuarter> quarters = new ArrayList<>();
 
 
+    public static GuildQuarter templateQuarter;
+
+    public QuartersManager() {
+        load();
+        createNamedQuarter("TemplateQuarter");
+        templateQuarter = getByShortId("TemplateQuarter");
+    }
+
 
     public boolean createNamedQuarter(String shortId) {
         if (getByShortId(shortId) != null) return false;
@@ -31,7 +39,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         return true;
     }
     public boolean createGuildQuarter(Guild guild) {
-        if (findByKey(guild.getId()) != null) return false;
+        if (getByGuildId(guild.getId()) != null) return false;
         register(new GuildQuarter(getEmptyChunk(), guild));
         return true;
     }
@@ -48,8 +56,8 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     public GuildQuarter getByShortId(String shortId){
         return quarters.stream().filter(q -> q.getShortId().equalsIgnoreCase(shortId)).findAny().orElse(null);
     }
-    public GuildQuarter getByGuildId(UUID uuid){
-        return quarters.stream().filter(q -> q.guildUUID.equals(uuid)).findAny().orElse(null);
+    public GuildQuarter getByGuildId(@NotNull UUID uuid){
+        return quarters.stream().filter(q -> uuid.equals(q.guildUUID)).findAny().orElse(null);
     }
 
 

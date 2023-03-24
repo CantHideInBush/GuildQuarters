@@ -26,3 +26,10 @@ command:
   quarter:
     reset:
       success: "Zresetowano siedzibe!"
+  tier:
+    structure:
+      create:
+        success: "Pomyslnie dodano strukture!"
+      remove:
+        success: "Pomyslnie usunieto strukture!"
+

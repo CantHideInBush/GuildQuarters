@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.commands.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
+import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import me.glaremasters.guilds.Guilds;
@@ -21,14 +22,9 @@ public class QuarterResetCommand extends InternalCommand {
         if (!parser.hasNext()) {
             sendConfigErrorMessage(sender, "command-arguments-insufficient");
         }
-        String guildName = parser.next();
-        Guild guild = Guilds.getApi().getGuild(guildName);
-        if (guild == null) {
-            sendConfigErrorMessage(sender, "common.guild-nonexistent");
-            return false;
-        }
+        String shortId = parser.next();
+        GuildQuarter quarter = GuildQ.getInstance().getQuartersManager().getByShortId(shortId);
 
-        GuildQuarter quarter = GuildQ.getInstance().getQuartersManager().getByGuildId(guild.getId());
         if (quarter == null) {
             sendConfigErrorMessage(sender, "common.quarter-nonexistent");
             return false;
@@ -53,7 +49,7 @@ public class QuarterResetCommand extends InternalCommand {
     @Override
     public List<String> complete(String[] args) {
         if (args.length - 1 == getArgIndex()) {
-            return Guilds.getApi().getGuildHandler().getGuildNames();
+            return GuildQ.getInstance().getQuartersManager().getShortIds();
         }
         return Collections.emptyList();
     }

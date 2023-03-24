@@ -1,9 +1,7 @@
 package com.canthideinbush.guildquarters;
 
 import com.canthideinbush.guildquarters.commands.MainCommand;
-import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuartersListener;
-import com.canthideinbush.guildquarters.quarters.QuartersManager;
+import com.canthideinbush.guildquarters.quarters.*;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
@@ -12,10 +10,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.function.Function;
+
 public final class GuildQ extends CHIBPlugin {
 
     static {
         ConfigurationSerialization.registerClass(GuildQuarter.class);
+        ConfigurationSerialization.registerClass(QuarterTier.class);
+        ConfigurationSerialization.registerClass(QuarterStructures.class);
 
     }
 
@@ -33,17 +36,29 @@ public final class GuildQ extends CHIBPlugin {
     private QuartersManager quartersManager;
 
 
+    private static final HashMap<Class<?>, Function<Object, String>> serializers = new HashMap<>();
+    private static final HashMap<Class<?>, Function<String, Object>> deserializers = new HashMap<>();
+
+    static {
+
+    }
+
+
+
     @Override
     public void onEnable() {
         instance = this;
 
-
-        // Plugin startup logic
+        serializers.forEach(YAMLConfig::registerSerializer);
+        deserializers.forEach(YAMLConfig::registerDeserializer);
 
         loadConfigurations();
 
 
+
         CHIBInit();
+
+        GuildUtils.createGuildWorld();
 
         loadCommands();
 
@@ -52,7 +67,7 @@ public final class GuildQ extends CHIBPlugin {
         loadListeners();
 
 
-        GuildUtils.createGuildWorld();
+
 
 
     }
@@ -66,11 +81,12 @@ public final class GuildQ extends CHIBPlugin {
 
 
     private void loadManagers() {
+        QuarterTiers.load();
         quartersManager = new QuartersManager();
-        quartersManager.load();
     }
 
     private void saveManagers() {
+        QuarterTiers.save();
         quartersManager.save();
     }
 
