@@ -21,6 +21,7 @@ quildq-guilds-not_master: "Nie jestes zalozycielem gildii!"
 common:
   guild-nonexistent: "Ta gildia nie istnieje!"
   quarter-nonexistent: "Ta gildia nie istnieje!"
+  tier-nonexistent: "Ten poziom gildii nie istnieje!"
 
 command:
   quarter:

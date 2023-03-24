@@ -26,6 +26,10 @@ public class QuarterTiers implements KeyedStorage<QuarterTier> {
         return quarterTier;
     }
 
+    public static boolean exists(int tier) {
+        return tier < 0 || instance.findByKey(tier) != null;
+    }
+
     public static void load() {
         tiers = (ArrayList<QuarterTier>) GuildQ.getInstance().getQuartersStorage().get("Tiers", new ArrayList<>());
     }

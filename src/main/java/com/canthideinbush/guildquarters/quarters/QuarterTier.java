@@ -27,10 +27,13 @@ public class QuarterTier implements ABSave, Keyed<Object> {
     @YAMLElement
     public QuarterStructures structures = new QuarterStructures();
 
+    public int getIndex() {
+        return index;
+    }
 
     @Override
     public Object getKey() {
-        return index;
+        return getIndex();
     }
 
     public void apply(GuildQuarter quarter) {
