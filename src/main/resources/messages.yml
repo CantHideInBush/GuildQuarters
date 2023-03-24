@@ -33,4 +33,8 @@ command:
         success: "Pomyslnie dodano strukture!"
       remove:
         success: "Pomyslnie usunieto strukture!"
+    upgrade:
+      success: "Zwiekszono poziom siedziby!"
+    downgrade:
+      success: "Obnizono poziom siedziby!"
 

@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 import java.util.List;
 
-public class UpgradeCommand extends InternalCommand {
+public class DowngradeCommand extends InternalCommand {
 
     @Override
     public boolean execute(Player sender, String[] args) {
@@ -30,21 +30,21 @@ public class UpgradeCommand extends InternalCommand {
 
         QuarterTier tier = quarter.getTier();
 
-        if (!QuarterTiers.exists(tier.getIndex() + 1)) {
+        if (!QuarterTiers.exists(tier.getIndex() - 1)) {
             sendConfigErrorMessage(sender, "common.tier-nonexistent");
             return false;
         }
 
-        quarter.upgrade();
+        quarter.downgrade();
 
-        sendConfigSuccessMessage(sender, "command.tier.upgrade.success");
+        sendConfigSuccessMessage(sender, "command.tier.downgrade.success");
 
         return true;
     }
 
     @Override
     public String getName() {
-        return "upgrade";
+        return "downgrade";
     }
 
     @Override
@@ -54,7 +54,6 @@ public class UpgradeCommand extends InternalCommand {
 
     @Override
     public List<String> complete(String[] args) {
-
         return Collections.emptyList();
     }
 }
