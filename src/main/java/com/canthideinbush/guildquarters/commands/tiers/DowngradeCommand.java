@@ -4,14 +4,18 @@ import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuarterTier;
 import com.canthideinbush.guildquarters.quarters.QuarterTiers;
+import com.canthideinbush.utils.commands.ABArgumentCompletion;
+import com.canthideinbush.utils.commands.ABCompleter;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-public class DowngradeCommand extends InternalCommand {
+public class DowngradeCommand extends InternalCommand implements ABArgumentCompletion {
 
     @Override
     public boolean execute(Player sender, String[] args) {
@@ -52,8 +56,21 @@ public class DowngradeCommand extends InternalCommand {
         return TierParentCommand.class;
     }
 
+
+
+    List<HashMap<String, Method>> completion = prepareCompletion();
+    @ABCompleter(arg = "downgrade", index = 0)
+    private List<String> completeQuarter() {
+        return GuildQ.getInstance().getQuartersManager().getShortIds();
+    }
+
+    @Override
+    public List<HashMap<String, Method>> getCompletion() {
+        return completion;
+    }
+
     @Override
     public List<String> complete(String[] args) {
-        return Collections.emptyList();
+        return ABComplete(args);
     }
 }

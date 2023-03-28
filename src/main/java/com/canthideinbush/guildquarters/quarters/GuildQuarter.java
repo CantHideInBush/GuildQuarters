@@ -159,17 +159,20 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         });
     }
 
-    public void upgrade() {
+    public boolean upgrade() {
         if (QuarterTiers.get(quarterTier + 1) != null) {
             quarterTier++;
             getTier().apply(this);
+            return true;
         }
+        else return false;
     }
 
-    public void downgrade() {
-        if (quarterTier == 0) return;
+    public boolean downgrade() {
+        if (quarterTier == 0) return false;
+        getTier().undo(this);
         quarterTier--;
-        //TODO: schematic undo function
+        return true;
     }
 
 }

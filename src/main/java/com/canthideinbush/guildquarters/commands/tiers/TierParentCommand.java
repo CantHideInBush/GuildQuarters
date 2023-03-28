@@ -10,6 +10,8 @@ public class TierParentCommand extends ParentCommand {
     public TierParentCommand() {
         subCommands.add(new StructureParentCommand());
         subCommands.add(new SetTierCommand());
+        subCommands.add(new UpgradeCommand());
+        subCommands.add(new DowngradeCommand());
     }
 
     @Override
