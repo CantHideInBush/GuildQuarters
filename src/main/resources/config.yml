@@ -1,3 +1,7 @@
 GuildWorldName: "guildworld"
 Quarters:
   ChunkSize: 10
+  region:
+    xz-size: 20
+    y-up: 20
+    y-down: 10
