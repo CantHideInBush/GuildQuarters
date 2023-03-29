@@ -54,6 +54,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     private QuarterRegion region;
 
 
+    public static String DEFAULT_SCHEM_NAME = "default.schem";
     public GuildQuarter(Map<String, Object> map) {
         deserializeFromMap(map);
     }

@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
+import com.canthideinbush.utils.WorldEditUtils;
 import com.canthideinbush.utils.managers.KeyedStorage;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import me.glaremasters.guilds.guild.Guild;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class QuartersManager implements KeyedStorage<GuildQuarter> {
@@ -27,9 +29,16 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     public static GuildQuarter templateQuarter;
 
     public QuartersManager() {
-        load();
-        createNamedQuarter("TemplateQuarter");
-        templateQuarter = getByShortId("TemplateQuarter");
+        if (GuildQ.getInstance().getUtilsProvider()
+                .worldEdit.findByName(GuildQuarter.DEFAULT_SCHEM_NAME) == null) {
+            GuildQ.getInstance().getLogger().log(Level.WARNING,
+                    "Default schematic file not found! Disabling quarters manager!");
+        }
+        else {
+            load();
+            createNamedQuarter("TemplateQuarter");
+            templateQuarter = getByShortId("TemplateQuarter");
+        }
     }
 
 
