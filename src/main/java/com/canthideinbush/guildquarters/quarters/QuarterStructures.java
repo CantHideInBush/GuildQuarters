@@ -50,9 +50,8 @@ public class QuarterStructures implements ABSave {
     public void apply(GuildQuarter quarter) {
         structures.forEach((schematic, vector) -> {
             Clipboard clipboard = GuildQ.getInstance().getUtilsProvider().worldEdit.swapAt(quarter.getInitialLocation().add(vector), schematic);
-            GuildQ.getInstance().getUtilsProvider().worldEdit.pasteAt(
-                    quarter.getInitialLocation().add(vector).add(0, 5, 0)
-                    , clipboard
+            GuildQ.getInstance().getUtilsProvider().worldEdit.saveClipboard(
+                    clipboard, "savedclip.schem"
             );
         });
     }

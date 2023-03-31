@@ -30,7 +30,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
     public QuartersManager() {
         if (GuildQ.getInstance().getUtilsProvider()
-                .worldEdit.findByName(GuildQuarter.DEFAULT_SCHEM_NAME) == null) {
+                .worldEdit.findByName(GuildUtils.getSchematicName()) == null) {
             GuildQ.getInstance().getLogger().log(Level.WARNING,
                     "Default schematic file not found! Disabling quarters manager!");
         }
