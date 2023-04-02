@@ -14,8 +14,7 @@ public class QuartersListener implements Listener {
         Guild guild = event.getGuild();
         GuildQuarter quarter;
         if ((quarter = GuildQ.getInstance().getQuartersManager().getByGuildId(guild.getId())) != null) {
-            quarter.clearChunks(() -> {});
-            GuildQ.getInstance().getQuartersManager().unregister(quarter);
+            quarter.remove();
         }
     }
 

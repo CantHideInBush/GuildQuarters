@@ -1,23 +1,20 @@
-package com.canthideinbush.guildquarters.commands.tiers;
+package com.canthideinbush.guildquarters.commands.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuarterTier;
-import com.canthideinbush.guildquarters.quarters.QuarterTiers;
 import com.canthideinbush.utils.commands.ABArgumentCompletion;
-import com.canthideinbush.utils.commands.ABCompleter;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DowngradeCommand extends InternalCommand implements ABArgumentCompletion {
+public class QuarterDeleteCommand extends InternalCommand implements ABArgumentCompletion {
 
     @Override
-    public boolean execute(Player sender, String[] args) {
+    public boolean execute(CommandSender sender, String[] args) {
         ArgParser parser = new ArgParser(args, getArgIndex());
 
         if (!parser.hasNext()) {
@@ -27,49 +24,34 @@ public class DowngradeCommand extends InternalCommand implements ABArgumentCompl
 
         GuildQuarter quarter;
         if ((quarter = GuildQ.getInstance().getQuartersManager().getByShortId(parser.next())) == null) {
-            sendConfigErrorMessage(sender, "common.guild-nonexistent");
+            sendConfigErrorMessage(sender, "common.quarter-nonexistent");
             return false;
         }
-
-        QuarterTier tier = quarter.getTier();
-
-        if (!QuarterTiers.exists(tier.getIndex() - 1)) {
-            sendConfigErrorMessage(sender, "common.tier-nonexistent");
-            return false;
-        }
-
-        quarter.downgrade();
-
-        sendConfigSuccessMessage(sender, "command.tier.downgrade.success");
+        quarter.remove();
+        sendConfigSuccessMessage(sender, "command.quarter.delete.success");
 
         return true;
     }
 
     @Override
     public String getName() {
-        return "downgrade";
+        return "delete";
     }
 
     @Override
     public Class<? extends InternalCommand> getParentCommandClass() {
-        return TierParentCommand.class;
-    }
-
-
-
-    List<HashMap<String, Supplier<List<String>>>> completion = prepareCompletion();
-    @ABCompleter(arg = "downgrade", index = 0)
-    private List<String> completeQuarter() {
-        return GuildQ.getInstance().getQuartersManager().getShortIds();
-    }
-
-    @Override
-    public List<HashMap<String, Supplier<List<String>>>> getCompletion() {
-        return completion;
+        return QuartersParentCommand.class;
     }
 
     @Override
     public List<String> complete(String[] args) {
         return ABComplete(args);
+    }
+
+    List<HashMap<String, Supplier<List<String>>>> completion = prepareCompletion();
+
+    @Override
+    public List<HashMap<String, Supplier<List<String>>>> getCompletion() {
+        return completion;
     }
 }

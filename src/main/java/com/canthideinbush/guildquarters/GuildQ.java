@@ -20,6 +20,7 @@ public final class GuildQ extends CHIBPlugin {
         ConfigurationSerialization.registerClass(QuarterTier.class);
         ConfigurationSerialization.registerClass(QuarterStructures.class);
         ConfigurationSerialization.registerClass(QuarterRegion.class);
+        ConfigurationSerialization.registerClass(QuarterStructure.class);
 
     }
 

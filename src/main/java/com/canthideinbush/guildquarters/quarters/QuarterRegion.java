@@ -11,13 +11,22 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.RegionGroup;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.glaremasters.guilds.guild.GuildMember;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @SerializableAs("QuarterRegion")
 public class QuarterRegion implements ABSave {
@@ -44,6 +53,7 @@ public class QuarterRegion implements ABSave {
 
     public QuarterRegion(Map<String, Object> map) {
         deserializeFromMap(map);
+        updateMembers();
     }
     public QuarterRegion(GuildQuarter quarter) {
         this.quarter = quarter;
@@ -52,7 +62,10 @@ public class QuarterRegion implements ABSave {
             this.region = WorldGuard.getInstance().getPlatform().getRegionContainer()
                     .get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).getRegion(regionId);
         }
-        else this.region = create();
+        else {
+            this.region = create();
+            setPermissions();
+        }
 
 
 
@@ -63,6 +76,18 @@ public class QuarterRegion implements ABSave {
         DEFAULT_XZ_SIZE = config.getInt("xz-size", 20);
         DEFAULT_Y_UP = config.getInt("y-up",20);
         DEFAULT_Y_DOWN = config.getInt("y-down", 10);
+        updateMembers();
+    }
+
+    public void updateMembers() {
+        if (quarter.getGuild() == null) return;
+        Collection<UUID> memberList = quarter.getGuild().getMembers().stream().map(GuildMember::getUuid).collect(Collectors.toList());
+        region.getMembers().getUniqueIds().forEach(uuid -> {
+            if (!memberList.contains(uuid)) {
+                region.getMembers().removePlayer(uuid);
+            }
+        });
+        memberList.forEach(uuid -> region.getMembers().addPlayer(uuid));
     }
 
 
@@ -70,13 +95,20 @@ public class QuarterRegion implements ABSave {
 
 
     public ProtectedRegion create() {
-        return new ProtectedCuboidRegion(
+        ProtectedRegion region = new ProtectedCuboidRegion(
                 regionId, BukkitAdapter.adapt(
-                        quarter.getInitialLocation().add(new Vector(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE))
+                quarter.getInitialLocation().add(new Vector(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE))
         ).toVector().toBlockPoint()
                 , BukkitAdapter.adapt(
-                quarter.getInitialLocation().add(DEFAULT_XZ_SIZE, DEFAULT_Y_UP, DEFAULT_XZ_SIZE))
+                        quarter.getInitialLocation().add(DEFAULT_XZ_SIZE, DEFAULT_Y_UP, DEFAULT_XZ_SIZE))
                 .toVector().toBlockPoint());
+        WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).addRegion(region);
+        return region;
+    }
+
+    public void setPermissions() {
+        region.setFlag(Flags.BUILD.getRegionGroupFlag(), RegionGroup.MEMBERS);
+        region.setFlag(Flags.CHEST_ACCESS.getRegionGroupFlag(), RegionGroup.MEMBERS);
     }
 
     public boolean exists() {
@@ -151,6 +183,10 @@ public class QuarterRegion implements ABSave {
         } catch (RegionOperationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void remove() {
+        WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).removeRegion(this.regionId);
     }
 
 }

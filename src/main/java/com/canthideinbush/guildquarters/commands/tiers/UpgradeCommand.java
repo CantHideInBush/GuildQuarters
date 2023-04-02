@@ -4,18 +4,15 @@ import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuarterTier;
 import com.canthideinbush.guildquarters.quarters.QuarterTiers;
-import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.utils.commands.ABArgumentCompletion;
 import com.canthideinbush.utils.commands.ABCompleter;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class UpgradeCommand extends InternalCommand implements ABArgumentCompletion {
 
@@ -64,7 +61,7 @@ public class UpgradeCommand extends InternalCommand implements ABArgumentComplet
     }
 
 
-    List<HashMap<String, Method>> completion = prepareCompletion();
+    List<HashMap<String, Supplier<List<String>>>> completion = prepareCompletion();
     @ABCompleter(arg = "upgrade", index = 0)
     private List<String> completeQuarter() {
         return GuildQ.getInstance().getQuartersManager().getShortIds();
@@ -73,7 +70,7 @@ public class UpgradeCommand extends InternalCommand implements ABArgumentComplet
 
 
     @Override
-    public List<HashMap<String, Method>> getCompletion() {
+    public List<HashMap<String, Supplier<List<String>>>> getCompletion() {
         return completion;
     }
 

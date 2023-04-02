@@ -4,6 +4,7 @@ import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,10 +38,10 @@ public class QuarterStructures implements ABSave {
     }
 
     @YAMLElement
-    private HashMap<String, Vector> structures = new HashMap<>();
+    private ArrayList<QuarterStructure> structures = new ArrayList<>();
 
     public void addStructure(String schematic, Vector vector) {
-        structures.put(schematic, vector);
+        structures.add(new QuarterStructure(schematic, vector.toBlockVector()));
     }
 
     public void removeStructure(String schematic) {
@@ -48,18 +49,11 @@ public class QuarterStructures implements ABSave {
     }
 
     public void apply(GuildQuarter quarter) {
-        structures.forEach((schematic, vector) -> {
-            Clipboard clipboard = GuildQ.getInstance().getUtilsProvider().worldEdit.swapAt(quarter.getInitialLocation().add(vector), schematic);
-            GuildQ.getInstance().getUtilsProvider().worldEdit.saveClipboard(
-                    clipboard, "savedclip.schem"
-            );
-        });
+        structures.forEach(structure -> structure.paste(quarter));
     }
 
     public void undo(GuildQuarter quarter) {
-        structures.forEach((schematic, vector) -> {
-            GuildQ.getInstance().getUtilsProvider().worldEdit.inversePasteAt(quarter.getInitialLocation().add(vector), schematic);
-        });
+        structures.forEach(structure -> structure.undo(quarter));
     }
 
 

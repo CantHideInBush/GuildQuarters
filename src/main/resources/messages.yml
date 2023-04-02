@@ -27,6 +27,8 @@ command:
   quarter:
     reset:
       success: "Zresetowano siedzibe!"
+    delete:
+      success: "Usunieto siedzibe!"
   tier:
     structure:
       create:

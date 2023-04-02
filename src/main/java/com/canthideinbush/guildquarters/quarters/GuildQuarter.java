@@ -6,7 +6,10 @@ import com.canthideinbush.utils.managers.Keyed;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import com.canthideinbush.utils.storing.YAMLElement;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldguard.WorldGuard;
+import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
@@ -56,6 +59,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public GuildQuarter(Map<String, Object> map) {
         deserializeFromMap(map);
+        region = new QuarterRegion(this);
     }
 
     public GuildQuarter(Chunk chunk, String shortId) {
@@ -112,6 +116,12 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
 
+    public Guild getGuild() {
+        if (guildUUID == null) return null;
+        return Guilds.getApi().getGuild(guildUUID);
+    }
+
+
     public void setQuarterTier(int quarterTier) {
         if (quarterTier < 0) quarterTier = 0;
         if (quarterTier < this.quarterTier) getTier().undo(this);
@@ -120,7 +130,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
     public void clearChunks(Runnable r) {
-        HashMap<LevelChunk, BlockPos> toClear = new HashMap<>();
+        ArrayList<BlockPos> toClear = new ArrayList<>();
         Bukkit.getScheduler().runTaskAsynchronously(GuildQ.getInstance(), () -> {
             CraftWorld nmsWorld = ((CraftWorld) GuildUtils.getGuildWorld()).getHandle().getWorld();
             int quarterSize = GuildUtils.getQuarterSize();
@@ -132,10 +142,11 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
                     ChunkSnapshot snapshot = chunk.getChunkSnapshot(true, false, false);
                     for (int bX = 0; bX < 16; bX++) {
                         for (int bZ = 0; bZ < 16; bZ++) {
-                            if (snapshot.getHighestBlockYAt(bX, bZ) == minY - 1) continue;
-                            for (int y = minY; y < maxY; y++) {
-                                if (!snapshot.getBlockType(bX, y, bZ).isAir()) {
-                                    toClear.put(chunk.getHandle(), new BlockPos(bX, y, bZ));
+                            if (snapshot.getHighestBlockYAt(bX, bZ) != minY - 1) {
+                                for (int y = minY; y < maxY; y++) {
+                                    if (!snapshot.getBlockType(bX, y, bZ).isAir()) {
+                                        toClear.add(new BlockPos(x * 16 + bX, y, z * 16 + bZ));
+                                    }
                                 }
                             }
                         }
@@ -146,8 +157,8 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
                 }
             }
             Bukkit.getScheduler().runTask(GuildQ.getInstance(), () -> {
-                toClear.forEach((chunk, position) -> chunk.setBlockState(position, Blocks.AIR.defaultBlockState(), false));
-                r.run();
+                toClear.forEach((position) ->((CraftChunk) nmsWorld.getChunkAt(position.getX() >> 4, position.getZ() >> 4)).getHandle().setBlockState(position, Blocks.AIR.defaultBlockState(), false));
+                if (r != null) r.run();
             });
         });
     }
@@ -173,6 +184,19 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         getTier().undo(this);
         quarterTier--;
         return true;
+    }
+
+    public void remove() {
+        clearChunks(() -> {
+            region.remove();
+            GuildQ.getInstance().getQuartersManager().unregister(this);
+            if (getGuild() != null) {
+                getGuild().getMembers().forEach(
+                        guildMember -> guildMember.getAsPlayer().performCommand("/spawn")
+                );
+            }
+        });
+
     }
 
 }

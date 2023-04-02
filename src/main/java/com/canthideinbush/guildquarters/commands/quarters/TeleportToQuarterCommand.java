@@ -1,6 +1,7 @@
 package com.canthideinbush.guildquarters.commands.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.commands.CHIBCommandsRegistry;
@@ -21,7 +22,7 @@ public class TeleportToQuarterCommand extends InternalCommand {
 
     @Override
     public Class<? extends InternalCommand> getParentCommandClass() {
-        return QuartersParentCommand.class;
+        return MainCommand.class;
     }
 
     @Override
