@@ -51,6 +51,17 @@ public class QuarterRegion implements ABSave {
     private int downExpansion;
 
 
+    public static void init() {
+        ConfigurationSection config = GuildQ.getInstance().getConfig().getConfigurationSection("Quarters.region");
+        if (config == null) {
+            config = GuildQ.getInstance().getConfig().createSection("Quarters.region");
+        }
+        DEFAULT_XZ_SIZE = config.getInt("xz-size", 20);
+        DEFAULT_Y_UP = config.getInt("y-up",20);
+        DEFAULT_Y_DOWN = config.getInt("y-down", 10);
+    }
+
+
     public QuarterRegion(Map<String, Object> map) {
         deserializeFromMap(map);
         updateMembers();
@@ -58,6 +69,8 @@ public class QuarterRegion implements ABSave {
     public QuarterRegion(GuildQuarter quarter) {
         this.quarter = quarter;
         this.regionId = quarter.getShortId() + "_quarter_region";
+
+
         if (exists()) {
             this.region = WorldGuard.getInstance().getPlatform().getRegionContainer()
                     .get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).getRegion(regionId);
@@ -69,13 +82,7 @@ public class QuarterRegion implements ABSave {
 
 
 
-        ConfigurationSection config = GuildQ.getInstance().getConfig().getConfigurationSection("Quarters.region");
-        if (config == null) {
-            config = GuildQ.getInstance().getConfig().createSection("Quarters.region");
-        }
-        DEFAULT_XZ_SIZE = config.getInt("xz-size", 20);
-        DEFAULT_Y_UP = config.getInt("y-up",20);
-        DEFAULT_Y_DOWN = config.getInt("y-down", 10);
+
         updateMembers();
     }
 

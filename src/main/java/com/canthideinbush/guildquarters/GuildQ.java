@@ -84,7 +84,9 @@ public final class GuildQ extends CHIBPlugin {
 
     private void loadManagers() {
         QuarterTiers.load();
+        QuarterRegion.init();
         quartersManager = new QuartersManager();
+
     }
 
     private void saveManagers() {
