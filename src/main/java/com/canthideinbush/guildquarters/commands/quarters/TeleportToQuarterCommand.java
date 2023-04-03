@@ -52,7 +52,7 @@ public class TeleportToQuarterCommand extends InternalCommand {
 
         World w = GuildUtils.getGuildWorld();
 
-        sender.teleport(w.getHighestBlockAt(quarter.getChunkX() * 16, quarter.getChunkZ() * 16).getLocation().add(0, 1, 0));
+        sender.teleport(w.getHighestBlockAt(quarter.getSpawnLocation().getBlockX(), quarter.getSpawnLocation().getBlockZ()).getLocation().add(0, 1, 0));
 
         sendConfigSuccessMessage(sender, "guildq-quarter-teleport-success");
 

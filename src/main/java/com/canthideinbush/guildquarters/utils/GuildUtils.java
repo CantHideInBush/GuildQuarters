@@ -27,6 +27,7 @@ public class GuildUtils {
 
 
     public static void pasteGuildSchematic(Location location) {
+
         GuildQ.getInstance().getUtilsProvider().worldEdit.pasteAt(location, getSchematicName());
     }
 

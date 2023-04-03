@@ -56,6 +56,8 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     @YAMLElement
     private QuarterRegion region;
 
+    @YAMLElement
+    private Location spawnLocation;
 
     public GuildQuarter(Map<String, Object> map) {
         deserializeFromMap(map);
@@ -70,6 +72,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         GuildUtils.pasteGuildSchematic(getInitialLocation());
         getTier().apply(this);
         region = new QuarterRegion(this);
+        spawnLocation = getInitialLocation();
     }
 
     public GuildQuarter(Chunk chunk, Guild guild) {
@@ -81,6 +84,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         GuildUtils.pasteGuildSchematic(getInitialLocation());
         getTier().apply(this);
         region = new QuarterRegion(this);
+        spawnLocation = getInitialLocation();
     }
 
 
@@ -199,4 +203,11 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     }
 
+    public void setSpawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
+    }
+
+    public Location getSpawnLocation() {
+        return spawnLocation;
+    }
 }
