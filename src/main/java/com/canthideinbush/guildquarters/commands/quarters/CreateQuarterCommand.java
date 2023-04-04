@@ -38,7 +38,7 @@ public class CreateQuarterCommand extends InternalCommand {
     }
 
     @DefaultConfigMessage(forN = "success")
-    String SUCCESS = "Pomyslnie utworzono siedzibe!";
+    private static final String SUCCESS = "Pomyslnie utworzono siedzibe!";
 
     @Override
     public boolean execute(Player sender, String[] args) {

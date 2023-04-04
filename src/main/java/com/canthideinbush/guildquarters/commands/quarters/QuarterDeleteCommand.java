@@ -3,7 +3,9 @@ package com.canthideinbush.guildquarters.commands.quarters;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.utils.commands.ABArgumentCompletion;
+import com.canthideinbush.utils.commands.ABCompleter;
 import com.canthideinbush.utils.commands.InternalCommand;
+import com.canthideinbush.utils.commands.TabCompleter;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.command.CommandSender;
 
@@ -11,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class QuarterDeleteCommand extends InternalCommand implements ABArgumentCompletion {
+public class
+QuarterDeleteCommand extends InternalCommand implements ABArgumentCompletion {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -33,6 +36,11 @@ public class QuarterDeleteCommand extends InternalCommand implements ABArgumentC
         return true;
     }
 
+    @ABCompleter(index = 0, arg = "delete")
+    private List<String> COMPLETER_0() {
+        return GuildQ.getInstance().getQuartersManager().getShortIds();
+    }
+
     @Override
     public String getName() {
         return "delete";
@@ -44,14 +52,14 @@ public class QuarterDeleteCommand extends InternalCommand implements ABArgumentC
     }
 
     @Override
-    public List<String> complete(String[] args) {
-        return ABComplete(args);
+    public List<String> complete(String[] args, CommandSender sender) {
+        return ABComplete(args, sender);
     }
 
-    List<HashMap<String, Supplier<List<String>>>> completion = prepareCompletion();
+    List<TabCompleter> completion = prepareCompletion();
 
     @Override
-    public List<HashMap<String, Supplier<List<String>>>> getCompletion() {
+    public List<TabCompleter> getCompletion() {
         return completion;
     }
 }

@@ -7,6 +7,7 @@ import com.canthideinbush.guildquarters.quarters.QuarterTiers;
 import com.canthideinbush.utils.commands.ABArgumentCompletion;
 import com.canthideinbush.utils.commands.ABCompleter;
 import com.canthideinbush.utils.commands.InternalCommand;
+import com.canthideinbush.utils.commands.TabCompleter;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.entity.Player;
 
@@ -57,14 +58,14 @@ public class DowngradeCommand extends InternalCommand implements ABArgumentCompl
 
 
 
-    List<HashMap<String, Supplier<List<String>>>> completion = prepareCompletion();
+    List<TabCompleter> completion = prepareCompletion();
     @ABCompleter(arg = "downgrade", index = 0)
     private List<String> completeQuarter() {
         return GuildQ.getInstance().getQuartersManager().getShortIds();
     }
 
     @Override
-    public List<HashMap<String, Supplier<List<String>>>> getCompletion() {
+    public List<TabCompleter> getCompletion() {
         return completion;
     }
 
