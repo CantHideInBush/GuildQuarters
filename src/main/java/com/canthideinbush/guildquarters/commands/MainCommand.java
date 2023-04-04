@@ -1,5 +1,6 @@
 package com.canthideinbush.guildquarters.commands;
 
+import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.quarters.QuartersParentCommand;
 import com.canthideinbush.guildquarters.commands.quarters.TeleportToQuarterCommand;
 import com.canthideinbush.guildquarters.commands.tiers.TierParentCommand;
@@ -21,6 +22,11 @@ public class MainCommand extends ParentCommand {
         subcommands.add(new ToGuildWorldCommand());
         subcommands.add(new TierParentCommand());
         subcommands.add(new TeleportToQuarterCommand());
+    }
+
+    @Override
+    public CHIBPlugin getPlugin() {
+        return GuildQ.getInstance();
     }
 
     @Override

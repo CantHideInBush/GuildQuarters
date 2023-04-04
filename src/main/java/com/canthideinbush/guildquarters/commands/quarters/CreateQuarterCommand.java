@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.commands.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.utils.commands.CHIBCommandsRegistry;
+import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import me.glaremasters.guilds.Guilds;
@@ -36,6 +37,8 @@ public class CreateQuarterCommand extends InternalCommand {
         return Collections.emptyList();
     }
 
+    @DefaultConfigMessage(forN = "success")
+    String SUCCESS = "Pomyslnie utworzono siedzibe!";
 
     @Override
     public boolean execute(Player sender, String[] args) {
@@ -56,7 +59,7 @@ public class CreateQuarterCommand extends InternalCommand {
             return false;
         }
 
-        sendConfigSuccessMessage(sender, "guildq-quarter-create-success");
+        sendConfigSuccessMessage(sender, getMessagePath("success"));
 
         return true;
     }
