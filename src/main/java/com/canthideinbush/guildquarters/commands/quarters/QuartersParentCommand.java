@@ -18,6 +18,7 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new QuarterResetCommand());
         subcommands.add(new TemplateQuarterTeleportCommand());
         subcommands.add(new QuarterDeleteCommand());
+        subcommands.add(new SetSpawnLocationCommand());
 
 
     }

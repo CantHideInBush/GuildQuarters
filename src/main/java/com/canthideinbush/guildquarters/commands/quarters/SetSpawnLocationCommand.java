@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.commands.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
+import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;
 import me.glaremasters.guilds.Guilds;
@@ -45,8 +46,8 @@ public class SetSpawnLocationCommand extends InternalCommand implements ABArgume
     @DefaultConfigMessage(forN = "success")
     private static final String SUCCESS = "Pomyslnie ustawiono spawn!";
     @ABCompleter(index = 0, arg = "setspawn", permission = "")
-    private static String QUARTERS_COMPLETE() {
-
+    private static List<String> QUARTERS_COMPLETE() {
+        return GuildQ.getInstance().getQuartersManager().getShortIds();
     }
 
     @Override

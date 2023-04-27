@@ -9,6 +9,7 @@ import com.canthideinbush.utils.commands.ABCompleter;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.TabCompleter;
 import com.canthideinbush.utils.storing.ArgParser;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class DowngradeCommand extends InternalCommand implements ABArgumentCompl
     }
 
     @Override
-    public List<String> complete(String[] args) {
-        return ABComplete(args);
+    public List<String> complete(String[] args, CommandSender sender) {
+        return ABComplete(args, sender);
     }
 }
