@@ -47,6 +47,8 @@ public class UpgradeCommand extends InternalCommand implements ABArgumentComplet
         return true;
     }
 
+
+
     @Override
     public List<String> complete(String[] args, CommandSender sender) {
         return ABComplete(args, sender);

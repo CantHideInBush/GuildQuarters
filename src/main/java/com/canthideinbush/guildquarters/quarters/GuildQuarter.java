@@ -61,7 +61,6 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public GuildQuarter(Map<String, Object> map) {
         deserializeFromMap(map);
-        region = new QuarterRegion(this);
     }
 
     public GuildQuarter(Chunk chunk, String shortId) {
@@ -209,5 +208,18 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public Location getSpawnLocation() {
         return spawnLocation;
+    }
+
+    @Override
+    public String toString() {
+        return "GuildQuarter{" +
+                "guildUUID=" + guildUUID +
+                ", shortId='" + shortId + '\'' +
+                ", chunkX=" + chunkX +
+                ", chunkZ=" + chunkZ +
+                ", quarterTier=" + quarterTier +
+                ", region=" + region +
+                ", spawnLocation=" + spawnLocation +
+                '}';
     }
 }

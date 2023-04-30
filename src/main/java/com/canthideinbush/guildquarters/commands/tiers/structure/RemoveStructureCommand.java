@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.commands.tiers.structure;
 
 import com.canthideinbush.guildquarters.quarters.QuarterTiers;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
+import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.entity.Player;
@@ -34,17 +35,24 @@ public class RemoveStructureCommand extends InternalCommand {
             return false;
         }
 
-        String schematic = parser.next();
+        String name = parser.next();
 
-        QuarterTiers.removeStructure(tier, schematic);
-        sendConfigSuccessMessage(sender, "command.tier.structure.remove.success");
+        if (QuarterTiers.removeStructure(tier, name)) {
+            sendConfigSuccessMessage(sender, "command.tier.structure.remove.success");
+        }
+        else {
+            sendConfigErrorMessage(sender, getMessagePath("non-existent"));
+        }
 
         return true;
     }
 
+    @DefaultConfigMessage(forN = "non-existent")
+    private static final String NON_EXISTENT = "Struktura o podanej nazwie nie istnieje!";
+
     @Override
     public String getName() {
-        return "create";
+        return "remove";
     }
 
     @Override
@@ -58,7 +66,7 @@ public class RemoveStructureCommand extends InternalCommand {
             return Collections.singletonList("tier");
         }
         else if (args.length == getArgIndex() + 2) {
-            return Collections.singletonList("schematic");
+            return Collections.singletonList("name");
         }
         return Collections.emptyList();
     }

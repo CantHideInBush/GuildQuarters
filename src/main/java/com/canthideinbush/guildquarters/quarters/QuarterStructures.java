@@ -6,8 +6,10 @@ import com.canthideinbush.utils.storing.YAMLElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -40,12 +42,19 @@ public class QuarterStructures implements ABSave {
     @YAMLElement
     private ArrayList<QuarterStructure> structures = new ArrayList<>();
 
-    public void addStructure(String schematic, Vector vector) {
-        structures.add(new QuarterStructure(schematic, vector.toBlockVector()));
+    public boolean addStructure(String name, String schematic, Vector vector) {
+        if (getByName(name) == null) {
+            structures.add(new QuarterStructure(name, schematic, vector.toBlockVector()));
+            return true;
+        }
+        return false;
     }
 
-    public void removeStructure(String schematic) {
-        structures.remove(schematic);
+    public boolean removeStructure(String name) {
+        QuarterStructure structure = structures.stream().filter(s -> name.equalsIgnoreCase(s.getName())).findAny().orElse(null);
+        if (structure == null) return false;
+        structures.remove(structure);
+        return true;
     }
 
     public void apply(GuildQuarter quarter) {
@@ -56,5 +65,28 @@ public class QuarterStructures implements ABSave {
         structures.forEach(structure -> structure.undo(quarter));
     }
 
+    public void apply(GuildQuarter quarter, String name) {
+        List<QuarterStructure> structures = this.structures.stream().filter(
+          structure -> structure.getName().equalsIgnoreCase(name)).collect(Collectors.toList())
+        ;
+        structures.forEach(structure -> structure.paste(quarter));
+    }
+    public void undo(GuildQuarter quarter, String name) {
+        List<QuarterStructure> structures = this.structures.stream().filter(
+          structure -> structure.getName().equalsIgnoreCase(name)).collect(Collectors.toList())
+        ;
+        structures.forEach(structure -> structure.undo(quarter));
+    }
 
+    public QuarterStructure getByName(String name) {
+        return structures.stream().filter(s -> s.getName().equalsIgnoreCase(name)).findAny().orElse(null);
+
+    }
+
+    @Override
+    public String toString() {
+        return "QuarterStructures{" +
+                "structures=" + structures +
+                '}';
+    }
 }

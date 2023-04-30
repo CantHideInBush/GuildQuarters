@@ -4,10 +4,7 @@ import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuarterTier;
 import com.canthideinbush.guildquarters.quarters.QuarterTiers;
-import com.canthideinbush.utils.commands.ABArgumentCompletion;
-import com.canthideinbush.utils.commands.ABCompleter;
-import com.canthideinbush.utils.commands.InternalCommand;
-import com.canthideinbush.utils.commands.TabCompleter;
+import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,8 +32,8 @@ public class DowngradeCommand extends InternalCommand implements ABArgumentCompl
 
         QuarterTier tier = quarter.getTier();
 
-        if (!QuarterTiers.exists(tier.getIndex() - 1)) {
-            sendConfigErrorMessage(sender, "common.tier-nonexistent");
+        if (tier.getIndex() - 1 < 0) {
+            sendConfigErrorMessage(sender, getMessagePath("non-zero"));
             return false;
         }
 
@@ -46,6 +43,9 @@ public class DowngradeCommand extends InternalCommand implements ABArgumentCompl
 
         return true;
     }
+
+    @DefaultConfigMessage(forN = "non-zero")
+    private static final String NON_ZERO = "Nie mozna obnizyc poziomu ponizej zera!";
 
     @Override
     public String getName() {

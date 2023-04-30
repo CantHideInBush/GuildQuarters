@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters.commands.tiers;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.quarters.QuartersParentCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
+import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.entity.Player;
@@ -45,9 +46,14 @@ public class SetTierCommand extends InternalCommand {
         }
 
         quarter.setQuarterTier(tier);
+        sendConfigSuccessMessage(sender, getMessagePath("success"));
 
         return true;
     }
+
+
+    @DefaultConfigMessage(forN = "success")
+    private static final String SUCCESS = "Ustawiono poziom siedziby";
 
     @Override
     public String getName() {

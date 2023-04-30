@@ -19,6 +19,9 @@ import java.util.Map;
 public class QuarterStructure implements ABSave {
 
 
+
+    @YAMLElement
+    private String name;
     @YAMLElement
     private String schematic;
 
@@ -32,9 +35,10 @@ public class QuarterStructure implements ABSave {
         deserializeFromMap(map);
     }
 
-    public QuarterStructure(String schematicName, BlockVector offset) {
+    public QuarterStructure(String name, String schematicName, BlockVector offset) {
+        this.name = name;
         this.schematic = schematicName;
-        this.undoSchematic = GuildQ.getInstance().getDataFolder()  + File.separator +  "schematics" + File.separator + "guildq-undo-" + schematicName;
+        this.undoSchematic = GuildQ.getInstance().getDataFolder()  + File.separator +  "schematics" + File.separator + "guildq-undo-" + name;
         this.offset = offset;
     }
 
@@ -59,7 +63,17 @@ public class QuarterStructure implements ABSave {
         GuildQ.getInstance().getUtilsProvider().worldEdit.pasteAt(quarter.getInitialLocation().add(offset), undoSchematic, false);
     }
 
+    public String getName() {
+        return name;
+    }
 
-
-
+    @Override
+    public String toString() {
+        return "QuarterStructure{" +
+                "name='" + name + '\'' +
+                ", schematic='" + schematic + '\'' +
+                ", undoSchematic='" + undoSchematic + '\'' +
+                ", offset=" + offset +
+                '}';
+    }
 }

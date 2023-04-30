@@ -44,13 +44,23 @@ public class QuarterTier implements ABSave, Keyed<Object> {
         structures.undo(quarter);
     }
 
-    public void addStructure(String schematic, Vector vector) {
-        structures.addStructure(schematic, vector);
+    public boolean addStructure(String name, String schematic, Vector vector) {
+        return structures.addStructure(name, schematic, vector);
     }
 
-    public void removeStructure(String schematic) {
-        structures.removeStructure(schematic);
+    public boolean removeStructure(String name) {
+        return structures.removeStructure(name);
     }
 
+    public QuarterStructures getStructures() {
+        return structures;
+    }
 
+    @Override
+    public String toString() {
+        return "QuarterTier{" +
+                "index=" + index +
+                ", structures=" + structures +
+                '}';
+    }
 }

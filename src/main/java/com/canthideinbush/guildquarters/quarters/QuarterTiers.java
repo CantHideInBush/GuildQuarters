@@ -43,17 +43,31 @@ public class QuarterTiers implements KeyedStorage<QuarterTier> {
     Adds new schematic to this tier, pasted when quarter is upgraded
 
      */
-    public static void addStructure(int tier, String schematic, Vector vector) {
+    public static boolean addStructure(int tier, String name, String schematic, Vector vector) {
         QuarterTier quarterTier = get(tier);
-        quarterTier.addStructure(schematic, vector);
+       boolean b = quarterTier.addStructure(name, schematic, vector);
 
+
+        GuildQ.getInstance().getQuartersManager().getObjects().forEach(quarter -> {
+            if (quarter.getTier().equals(quarterTier)) {
+                quarterTier.getStructures().apply(quarter, name);
+            }
+        });
+        return b;
     }
 
 
-    public static void removeStructure(int tier, String schematic) {
+    public static boolean removeStructure(int tier, String name) {
         QuarterTier quarterTier;
-        if ((quarterTier = get(tier)) == null) return;
-        quarterTier.removeStructure(schematic);
+        if ((quarterTier = get(tier)) == null) return false;
+
+        GuildQ.getInstance().getQuartersManager().getObjects().forEach(quarter -> {
+            if (quarter.getTier().equals(quarterTier)) {
+                quarterTier.getStructures().undo(quarter, name);
+            }
+        });
+
+        return quarterTier.removeStructure(name);
 
     }
 

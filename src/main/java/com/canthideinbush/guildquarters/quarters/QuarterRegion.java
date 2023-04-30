@@ -32,8 +32,16 @@ import java.util.stream.Collectors;
 public class QuarterRegion implements ABSave {
 
 
+    @YAMLElement
+    private String quarterId;
     private GuildQuarter quarter;
 
+    private GuildQuarter quarter() {
+        if (quarter != null) return quarter;
+        else return quarter = GuildQ.getInstance().getQuartersManager().getByShortId(quarterId);
+    }
+
+    @YAMLElement
     private String regionId;
     private ProtectedRegion region;
 
@@ -64,10 +72,10 @@ public class QuarterRegion implements ABSave {
 
     public QuarterRegion(Map<String, Object> map) {
         deserializeFromMap(map);
-        updateMembers();
     }
     public QuarterRegion(GuildQuarter quarter) {
         this.quarter = quarter;
+        this.quarterId = quarter.getShortId();
         this.regionId = quarter.getShortId() + "_quarter_region";
 
 
@@ -79,15 +87,10 @@ public class QuarterRegion implements ABSave {
             this.region = create();
             setPermissions();
         }
-
-
-
-
-        updateMembers();
     }
 
     public void updateMembers() {
-        if (quarter.getGuild() == null) return;
+        if (quarter().getGuild() == null) return;
         Collection<UUID> memberList = quarter.getGuild().getMembers().stream().map(GuildMember::getUuid).collect(Collectors.toList());
         region.getMembers().getUniqueIds().forEach(uuid -> {
             if (!memberList.contains(uuid)) {
@@ -104,7 +107,7 @@ public class QuarterRegion implements ABSave {
     public ProtectedRegion create() {
         ProtectedRegion region = new ProtectedCuboidRegion(
                 regionId, BukkitAdapter.adapt(
-                quarter.getInitialLocation().add(new Vector(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE))
+                quarter().getInitialLocation().add(new Vector(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE))
         ).toVector().toBlockPoint()
                 , BukkitAdapter.adapt(
                         quarter.getInitialLocation().add(DEFAULT_XZ_SIZE, DEFAULT_Y_UP, DEFAULT_XZ_SIZE))
@@ -119,7 +122,7 @@ public class QuarterRegion implements ABSave {
     }
 
     public boolean exists() {
-        return WorldGuardUtils.getRegionsInLocation(quarter.getInitialLocation())
+        return WorldGuardUtils.getRegionsInLocation(quarter().getInitialLocation())
                 .stream().map(ProtectedRegion::getId)
                 .anyMatch(s -> s.equalsIgnoreCase(regionId));
     }
@@ -196,4 +199,16 @@ public class QuarterRegion implements ABSave {
         WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).removeRegion(this.regionId);
     }
 
+    @Override
+    public String toString() {
+        return "QuarterRegion{" +
+                "quarterId='" + quarterId + '\'' +
+                ", quarter=" + quarter +
+                ", regionId='" + regionId + '\'' +
+                ", region=" + region +
+                ", xzExpansion=" + xzExpansion +
+                ", upExpansion=" + upExpansion +
+                ", downExpansion=" + downExpansion +
+                '}';
+    }
 }
