@@ -8,6 +8,7 @@ import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
 import com.sk89q.worldguard.WorldGuard;
@@ -17,20 +18,26 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.glaremasters.guilds.guild.GuildMember;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SerializableAs("QuarterRegion")
 public class QuarterRegion implements ABSave {
 
+
+
+    public enum Direction  {
+        UP,DOWN,HORIZON;
+        public static List<String> values = Stream.of(values())
+                .map(Enum::name).collect(Collectors.toList());
+    }
 
     @YAMLElement
     private String quarterId;
@@ -43,7 +50,9 @@ public class QuarterRegion implements ABSave {
 
     @YAMLElement
     private String regionId;
-    private ProtectedRegion region;
+    private ProtectedCuboidRegion region() {
+        return (ProtectedCuboidRegion) WorldGuardUtils.getRegion(GuildUtils.getGuildWorld(), regionId);
+    }
 
     public static int DEFAULT_XZ_SIZE;
     public static int DEFAULT_Y_UP;
@@ -67,45 +76,39 @@ public class QuarterRegion implements ABSave {
         DEFAULT_XZ_SIZE = config.getInt("xz-size", 20);
         DEFAULT_Y_UP = config.getInt("y-up",20);
         DEFAULT_Y_DOWN = config.getInt("y-down", 10);
+
     }
 
 
     public QuarterRegion(Map<String, Object> map) {
         deserializeFromMap(map);
     }
+
+
     public QuarterRegion(GuildQuarter quarter) {
         this.quarter = quarter;
         this.quarterId = quarter.getShortId();
         this.regionId = quarter.getShortId() + "_quarter_region";
-
-
-        if (exists()) {
-            this.region = WorldGuard.getInstance().getPlatform().getRegionContainer()
-                    .get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).getRegion(regionId);
-        }
-        else {
-            this.region = create();
-            setPermissions();
-        }
+        create();
     }
 
     public void updateMembers() {
         if (quarter().getGuild() == null) return;
         Collection<UUID> memberList = quarter.getGuild().getMembers().stream().map(GuildMember::getUuid).collect(Collectors.toList());
-        region.getMembers().getUniqueIds().forEach(uuid -> {
+        region().getMembers().getUniqueIds().forEach(uuid -> {
             if (!memberList.contains(uuid)) {
-                region.getMembers().removePlayer(uuid);
+                region().getMembers().removePlayer(uuid);
             }
         });
-        memberList.forEach(uuid -> region.getMembers().addPlayer(uuid));
+        memberList.forEach(uuid -> region().getMembers().addPlayer(uuid));
     }
 
 
 
 
 
-    public ProtectedRegion create() {
-        ProtectedRegion region = new ProtectedCuboidRegion(
+    public ProtectedCuboidRegion create() {
+        ProtectedCuboidRegion region = new ProtectedCuboidRegion(
                 regionId, BukkitAdapter.adapt(
                 quarter().getInitialLocation().add(new Vector(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE))
         ).toVector().toBlockPoint()
@@ -117,8 +120,8 @@ public class QuarterRegion implements ABSave {
     }
 
     public void setPermissions() {
-        region.setFlag(Flags.BUILD.getRegionGroupFlag(), RegionGroup.MEMBERS);
-        region.setFlag(Flags.CHEST_ACCESS.getRegionGroupFlag(), RegionGroup.MEMBERS);
+        region().setFlag(Flags.BUILD.getRegionGroupFlag(), RegionGroup.MEMBERS);
+        region().setFlag(Flags.CHEST_ACCESS.getRegionGroupFlag(), RegionGroup.MEMBERS);
     }
 
     public boolean exists() {
@@ -139,60 +142,56 @@ public class QuarterRegion implements ABSave {
         return downExpansion;
     }
 
+    public void expand(BlockFace face, int distance) {
+        WorldGuardUtils.expand(GuildUtils.getGuildWorld(), region(),
+                BukkitAdapter.adapt(face).toBlockVector().multiply(distance));
+    }
+
+    public void contract(BlockFace face, int distance) {
+        WorldGuardUtils.contract(GuildUtils.getGuildWorld(), region(),
+                BukkitAdapter.adapt(face).toBlockVector().multiply(distance));
+    }
+
     public void expandXZ(int distance) {
         xzExpansion += distance;
-        try {
-            ((Region) region).expand(BlockVector3.at(distance, 0, distance),
+        WorldGuardUtils.expand(GuildUtils.getGuildWorld(), region(),
+                BlockVector3.at(distance, 0, distance),
                     BlockVector3.at(-distance, 0, -distance));
-        } catch (RegionOperationException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     public void expandUp(int distance) {
         upExpansion += distance;
-        try {
-            ((Region) region).expand(BlockVector3.at(0, distance, 0));
-        } catch (RegionOperationException e) {
-            throw new RuntimeException(e);
-        }
+        WorldGuardUtils.expand(GuildUtils.getGuildWorld(), region(), BlockVector3.at(0, distance, 0));
     }
+
+
+
+
 
     public void expandDown(int distance) {
         downExpansion += distance;
-        try {
-            ((Region) region).expand(BlockVector3.at(0, -distance, 0));
-        } catch (RegionOperationException e) {
-            throw new RuntimeException(e);
-        }
+        WorldGuardUtils.expand(GuildUtils.getGuildWorld(), region(), BlockVector3.at(0, -distance, 0));
     }
 
     public void contractXZ(int distance) {
         xzExpansion -= distance;
-        try {
-            ((Region) region).contract(BlockVector3.at(distance, 0, distance),
-                    BlockVector3.at(-distance, 0, -distance));
-        } catch (RegionOperationException e) {
-            throw new RuntimeException(e);
-        }
+        WorldGuardUtils.contract(GuildUtils.getGuildWorld(), region(),
+                BlockVector3.at(distance, 0, distance),
+                BlockVector3.at(-distance, 0, -distance));
+
     }
 
     public void contractUp(int distance) {
         upExpansion -= distance;
-        try {
-            ((Region) region).contract(BlockVector3.at(0, distance, 0));
-        } catch (RegionOperationException e) {
-            throw new RuntimeException(e);
-        }
+        WorldGuardUtils.contract(GuildUtils.getGuildWorld(), region(), BlockVector3.at(0, distance, 0));
+
     }
 
     public void contractDown(int distance) {
         downExpansion -= distance;
-        try {
-            ((Region) region).contract(BlockVector3.at(0, -distance, 0));
-        } catch (RegionOperationException e) {
-            throw new RuntimeException(e);
-        }
+        WorldGuardUtils.contract(GuildUtils.getGuildWorld(), region(), BlockVector3.at(0, -distance, 0));
+
     }
 
     public void remove() {
@@ -205,7 +204,7 @@ public class QuarterRegion implements ABSave {
                 "quarterId='" + quarterId + '\'' +
                 ", quarter=" + quarter +
                 ", regionId='" + regionId + '\'' +
-                ", region=" + region +
+                ", region=" + region() +
                 ", xzExpansion=" + xzExpansion +
                 ", upExpansion=" + upExpansion +
                 ", downExpansion=" + downExpansion +

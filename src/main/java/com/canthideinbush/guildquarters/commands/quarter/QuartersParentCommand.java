@@ -1,7 +1,8 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.commands.MainCommand;
-import com.canthideinbush.guildquarters.commands.tiers.SetTierCommand;
+import com.canthideinbush.guildquarters.commands.quarter.region.ContractCommand;
+import com.canthideinbush.guildquarters.commands.quarter.region.ExpandCommand;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
 
@@ -20,6 +21,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new QuarterDeleteCommand());
         subcommands.add(new SetSpawnLocationCommand());
         subcommands.add(new InfoCommand());
+        subcommands.add(new ExpandCommand());
+        subcommands.add(new ContractCommand());
 
 
     }
@@ -34,7 +37,7 @@ public class QuartersParentCommand extends ParentCommand {
 
     @Override
     public String getName() {
-        return "quarters";
+        return "quarter";
     }
 
 
@@ -43,10 +46,6 @@ public class QuartersParentCommand extends ParentCommand {
         return MainCommand.class;
     }
 
-    @Override
-    public String getPermission() {
-        return "quarters";
-    }
 
 
 

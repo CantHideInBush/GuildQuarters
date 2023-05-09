@@ -1,12 +1,9 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
-import me.glaremasters.guilds.Guilds;
-import me.glaremasters.guilds.guild.Guild;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;

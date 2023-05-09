@@ -34,11 +34,14 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
             GuildQ.getInstance().getLogger().log(Level.WARNING,
                     "Default schematic file not found! Disabling quarters manager!");
         }
-        else {
-            load();
-            createNamedQuarter("TemplateQuarter");
-            templateQuarter = getByShortId("TemplateQuarter");
-        }
+
+
+    }
+
+    public void initialize() {
+        load();
+        createNamedQuarter("TemplateQuarter");
+        templateQuarter = getByShortId("TemplateQuarter");
     }
 
 

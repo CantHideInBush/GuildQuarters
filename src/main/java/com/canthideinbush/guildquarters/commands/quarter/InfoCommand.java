@@ -1,4 +1,4 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
@@ -9,9 +9,7 @@ import com.canthideinbush.utils.commands.TabCompleter;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InfoCommand extends InternalCommand implements ABArgumentCompletion {

@@ -1,13 +1,10 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.utils.commands.CHIBCommandsRegistry;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

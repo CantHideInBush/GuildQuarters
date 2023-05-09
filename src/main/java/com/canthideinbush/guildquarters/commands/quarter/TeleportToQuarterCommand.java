@@ -1,13 +1,11 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
-import com.canthideinbush.utils.commands.CHIBCommandsRegistry;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 

@@ -1,8 +1,7 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;
 import me.glaremasters.guilds.Guilds;
@@ -25,7 +24,7 @@ public class SetSpawnLocationCommand extends InternalCommand implements ABArgume
                 return false;
             }
         }
-        else if (Guilds.getApi().getGuild(sender) == null || Guilds.getApi().getGuildRole(sender).isChangeHome()) {
+        else if (Guilds.getApi().getGuild(sender) == null || !Guilds.getApi().getGuildRole(sender).isChangeHome()) {
             quarter = GuildQ.getInstance().getQuartersManager().getByGuildId(Guilds.getApi().getGuild(sender).getId());
         }
         else {

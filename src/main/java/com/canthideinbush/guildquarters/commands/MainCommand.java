@@ -1,8 +1,8 @@
 package com.canthideinbush.guildquarters.commands;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.commands.quarters.QuartersParentCommand;
-import com.canthideinbush.guildquarters.commands.quarters.TeleportToQuarterCommand;
+import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
+import com.canthideinbush.guildquarters.commands.quarter.TeleportToQuarterCommand;
 import com.canthideinbush.guildquarters.commands.tiers.TierParentCommand;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.commands.InternalCommand;

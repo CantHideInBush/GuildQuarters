@@ -1,4 +1,4 @@
-package com.canthideinbush.guildquarters.commands.quarters;
+package com.canthideinbush.guildquarters.commands.quarter;
 
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.utils.commands.InternalCommand;

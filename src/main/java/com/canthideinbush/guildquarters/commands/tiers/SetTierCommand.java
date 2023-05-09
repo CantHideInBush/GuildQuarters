@@ -1,7 +1,7 @@
 package com.canthideinbush.guildquarters.commands.tiers;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.commands.quarters.QuartersParentCommand;
+import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;

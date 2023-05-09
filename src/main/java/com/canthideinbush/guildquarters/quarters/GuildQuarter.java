@@ -127,9 +127,18 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public void setQuarterTier(int quarterTier) {
         if (quarterTier < 0) quarterTier = 0;
-        if (quarterTier < this.quarterTier) getTier().undo(this);
-        this.quarterTier = quarterTier;
-        getTier().apply(this);
+        if (quarterTier < this.quarterTier) {
+            for (int i = this.quarterTier; i > quarterTier; i--) {
+                getTier().undo(this);
+                this.quarterTier = i;
+            }
+        }
+        else if (quarterTier > this.quarterTier) {
+            for (int i = this.quarterTier; i < quarterTier; i++) {
+                getTier().apply(this);
+                this.quarterTier = i;
+            }
+        }
     }
 
     public void clearChunks(Runnable r) {
@@ -167,6 +176,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
     public void reset() {
+        setQuarterTier(0);
         clearChunks(() -> {
             GuildUtils.pasteGuildSchematic(getInitialLocation());
             GuildQ.getInstance().getLogger().log(Level.INFO, "GuildQuarter " + getShortId() + " reset complete");;
@@ -221,5 +231,9 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
                 ", region=" + region +
                 ", spawnLocation=" + spawnLocation +
                 '}';
+    }
+
+    public QuarterRegion getRegion() {
+        return region;
     }
 }
