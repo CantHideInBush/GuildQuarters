@@ -27,6 +27,8 @@ public final class GuildQ extends CHIBPlugin {
 
 
     private static GuildQ instance;
+
+
     public static GuildQ getInstance() {
         return instance;
     }
@@ -34,6 +36,8 @@ public final class GuildQ extends CHIBPlugin {
     private YAMLConfig config;
     private YAMLConfig messageConfig;
     private YAMLConfig quartersStorage;
+
+    private YAMLConfig itemsStorage;
 
     private QuartersManager quartersManager;
 
@@ -101,6 +105,7 @@ public final class GuildQ extends CHIBPlugin {
         config = new YAMLConfig(this, "config", true);
         messageConfig = new YAMLConfig(this, "messages", true);
         quartersStorage = new YAMLConfig(this, "quarters", false);
+        itemsStorage = new YAMLConfig(this, "items", false);
     }
 
     private void loadListeners() {
@@ -111,6 +116,7 @@ public final class GuildQ extends CHIBPlugin {
         config.save();
         messageConfig.save();
         quartersStorage.save();
+        itemsStorage.save();
     }
 
     @Override
@@ -139,5 +145,9 @@ public final class GuildQ extends CHIBPlugin {
 
     public YAMLConfig getQuartersStorage() {
         return quartersStorage;
+    }
+
+    public YAMLConfig getItemsStorage() {
+        return itemsStorage;
     }
 }
