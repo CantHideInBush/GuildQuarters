@@ -37,8 +37,6 @@ public class DowngradeCommand extends InternalCommand implements ABArgumentCompl
             return false;
         }
 
-        quarter.downgrade();
-
         sendConfigSuccessMessage(sender, "command.tier.downgrade.success");
 
         return true;

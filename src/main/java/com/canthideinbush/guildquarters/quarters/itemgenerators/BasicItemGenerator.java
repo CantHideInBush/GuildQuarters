@@ -20,8 +20,6 @@ public class BasicItemGenerator implements ItemGenerator{
 
     }
 
-    @YAMLElement
-    int stored;
 
     @YAMLElement
     int amount;
@@ -35,17 +33,25 @@ public class BasicItemGenerator implements ItemGenerator{
 
     @Override
     public void generate() {
-        stored += getAmount();
     }
 
-    @Override
-    public int getStored() {
-        return stored;
-    }
 
     @Override
     public int getAmount() {
         return amount;
+    }
+
+    @YAMLElement
+    private int startTime;
+
+    @Override
+    public int getStartTime() {
+        return startTime;
+    }
+
+    @Override
+    public void setStartTime(int time) {
+        this.startTime = time;
     }
 
     @Override
@@ -58,18 +64,4 @@ public class BasicItemGenerator implements ItemGenerator{
         return GeneratorItem.get(itemId);
     }
 
-    ItemStack itemStack;
-    @Override
-    public void take(InventoryHolder holder, int amount) {
-        if (amount <= 0) return;
-        if (amount > stored) {
-            amount = stored;
-        }
-        stored -= amount;
-        if (itemStack == null) {
-            itemStack = getItem().getItem();
-            itemStack.setAmount(amount);
-        }
-        holder.getInventory().addItem(itemStack);
-    }
 }

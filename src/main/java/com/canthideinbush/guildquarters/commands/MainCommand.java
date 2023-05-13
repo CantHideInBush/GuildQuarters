@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters.commands;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.TeleportToQuarterCommand;
+import com.canthideinbush.guildquarters.commands.schem.SchemParentCommand;
 import com.canthideinbush.guildquarters.commands.tiers.TierParentCommand;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.commands.InternalCommand;
@@ -13,15 +14,14 @@ import java.util.Collection;
 
 public class MainCommand extends ParentCommand {
 
-    private final ArrayList<InternalCommand> subcommands = new ArrayList<>();
 
     public MainCommand(CHIBPlugin plugin) {
         super(plugin);
-
-        subcommands.add(new QuartersParentCommand());
-        subcommands.add(new ToGuildWorldCommand());
-        subcommands.add(new TierParentCommand());
-        subcommands.add(new TeleportToQuarterCommand());
+        subCommands.add(new SchemParentCommand());
+        subCommands.add(new QuartersParentCommand());
+        subCommands.add(new ToGuildWorldCommand());
+        subCommands.add(new TierParentCommand());
+        subCommands.add(new TeleportToQuarterCommand());
     }
 
     @Override
@@ -29,10 +29,6 @@ public class MainCommand extends ParentCommand {
         return GuildQ.getInstance();
     }
 
-    @Override
-    public Collection<InternalCommand> getSubcommands() {
-        return subcommands;
-    }
 
     @Override
     public String getName() {

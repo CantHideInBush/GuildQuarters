@@ -22,6 +22,7 @@ common:
   guild-nonexistent: "Ta gildia nie istnieje!"
   quarter-nonexistent: "Ta siedziba gildii nie istnieje!"
   tier-nonexistent: "Ten poziom gildii nie istnieje!"
+  schematic-nonexistent: "Ten schemat nie istnieje!"
 
 command:
   quarter:

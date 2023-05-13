@@ -42,6 +42,8 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         load();
         createNamedQuarter("TemplateQuarter");
         templateQuarter = getByShortId("TemplateQuarter");
+
+        quarters.forEach(GuildQuarter::initialize);
     }
 
 

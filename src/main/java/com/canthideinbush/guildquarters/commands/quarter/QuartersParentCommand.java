@@ -23,6 +23,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new InfoCommand());
         subcommands.add(new ExpandCommand());
         subcommands.add(new ContractCommand());
+        subcommands.add(new PasteSchemCommand());
+        subcommands.add(new UndoSchemCommand());
 
 
     }

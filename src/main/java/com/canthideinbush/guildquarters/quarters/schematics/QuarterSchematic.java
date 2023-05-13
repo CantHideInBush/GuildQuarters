@@ -1,13 +1,11 @@
-package com.canthideinbush.guildquarters.quarters;
+package com.canthideinbush.guildquarters.quarters.schematics;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.utils.storing.ABSave;
-import com.canthideinbush.utils.storing.YAMLConfig;
 import com.canthideinbush.utils.storing.YAMLElement;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
-import net.minecraft.world.level.block.Block;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
@@ -16,7 +14,7 @@ import java.io.File;
 import java.util.Map;
 
 @SerializableAs("QuarterStructure")
-public class QuarterStructure implements ABSave {
+public class QuarterSchematic implements ABSave {
 
 
 
@@ -31,14 +29,15 @@ public class QuarterStructure implements ABSave {
     @YAMLElement
     private Vector offset;
 
-    public QuarterStructure(Map<String, Object> map) {
+
+    public QuarterSchematic(Map<String, Object> map) {
         deserializeFromMap(map);
     }
 
-    public QuarterStructure(String name, String schematicName, BlockVector offset) {
+    public QuarterSchematic(String name, String schematicName, BlockVector offset) {
         this.name = name;
         this.schematic = schematicName;
-        this.undoSchematic = GuildQ.getInstance().getDataFolder()  + File.separator +  "schematics" + File.separator + "guildq-undo-" + name;
+        this.undoSchematic = GuildQ.getInstance().getDataFolder()  + File.separator +  "schematics" + File.separator + "guildq-undo-" + name + ".schem";
         this.offset = offset;
     }
 

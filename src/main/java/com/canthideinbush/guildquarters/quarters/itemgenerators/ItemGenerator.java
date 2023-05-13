@@ -6,13 +6,12 @@ import org.bukkit.inventory.InventoryHolder;
 public interface ItemGenerator extends ABSave {
 
     void generate();
-    int getStored();
     int getAmount();
+
+    int getStartTime();
+    void setStartTime(int time);
     int getInterval();
-
     GeneratorItem getItem();
-
-    void take(InventoryHolder holder, int amount);
 
 
 }

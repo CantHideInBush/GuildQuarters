@@ -40,8 +40,6 @@ public class UpgradeCommand extends InternalCommand implements ABArgumentComplet
             return false;
         }
 
-        quarter.upgrade();
-
         sendConfigSuccessMessage(sender, "command.tier.upgrade.success");
 
         return true;

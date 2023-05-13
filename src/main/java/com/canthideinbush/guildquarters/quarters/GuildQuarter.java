@@ -1,6 +1,8 @@
 package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
+import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.managers.Keyed;
 import com.canthideinbush.utils.storing.ABSave;
@@ -25,10 +27,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -54,6 +53,9 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     private int quarterTier = 0;
 
     @YAMLElement
+    private QuarterObjects quarterObjects;
+
+    @YAMLElement
     private QuarterRegion region;
 
     @YAMLElement
@@ -69,9 +71,9 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         this.shortId = shortId;
         setDebugGlass();
         GuildUtils.pasteGuildSchematic(getInitialLocation());
-        getTier().apply(this);
         region = new QuarterRegion(this);
         spawnLocation = getInitialLocation();
+        quarterObjects = new QuarterObjects();
     }
 
     public GuildQuarter(Chunk chunk, Guild guild) {
@@ -81,9 +83,9 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         this.shortId = guild.getName();
         setDebugGlass();
         GuildUtils.pasteGuildSchematic(getInitialLocation());
-        getTier().apply(this);
         region = new QuarterRegion(this);
         spawnLocation = getInitialLocation();
+        quarterObjects = new QuarterObjects();
     }
 
 
@@ -129,13 +131,11 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         if (quarterTier < 0) quarterTier = 0;
         if (quarterTier < this.quarterTier) {
             for (int i = this.quarterTier; i > quarterTier; i--) {
-                getTier().undo(this);
                 this.quarterTier = i;
             }
         }
         else if (quarterTier > this.quarterTier) {
             for (int i = this.quarterTier; i < quarterTier; i++) {
-                getTier().apply(this);
                 this.quarterTier = i;
             }
         }
@@ -183,21 +183,6 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         });
     }
 
-    public boolean upgrade() {
-        if (QuarterTiers.get(quarterTier + 1) != null) {
-            quarterTier++;
-            getTier().apply(this);
-            return true;
-        }
-        else return false;
-    }
-
-    public boolean downgrade() {
-        if (quarterTier == 0) return false;
-        getTier().undo(this);
-        quarterTier--;
-        return true;
-    }
 
     public void remove() {
         clearChunks(() -> {
@@ -211,6 +196,8 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         });
 
     }
+
+
 
     public void setSpawnLocation(Location spawnLocation) {
         this.spawnLocation = spawnLocation;
@@ -235,5 +222,13 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public QuarterRegion getRegion() {
         return region;
+    }
+
+    public void initialize() {
+        quarterObjects.setQuarter(this);
+    }
+
+    public QuarterObjects getQuarterObjects() {
+        return quarterObjects;
     }
 }

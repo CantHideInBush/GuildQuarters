@@ -2,6 +2,9 @@ package com.canthideinbush.guildquarters;
 
 import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.quarters.*;
+import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
+import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
+import com.canthideinbush.guildquarters.quarters.structures.QuarterStructures;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
@@ -18,9 +21,9 @@ public final class GuildQ extends CHIBPlugin {
     static {
         ConfigurationSerialization.registerClass(GuildQuarter.class);
         ConfigurationSerialization.registerClass(QuarterTier.class);
-        ConfigurationSerialization.registerClass(QuarterStructures.class);
+        ConfigurationSerialization.registerClass(QuarterSchematics.class);
         ConfigurationSerialization.registerClass(QuarterRegion.class);
-        ConfigurationSerialization.registerClass(QuarterStructure.class);
+        ConfigurationSerialization.registerClass(QuarterSchematic.class);
 
     }
 
@@ -40,6 +43,8 @@ public final class GuildQ extends CHIBPlugin {
     private YAMLConfig itemsStorage;
 
     private QuartersManager quartersManager;
+    private QuarterSchematics quarterSchematics;
+    private QuarterStructures quarterStructures;
 
 
     private static final HashMap<Class<?>, Function<Object, String>> serializers = new HashMap<>();
@@ -87,6 +92,10 @@ public final class GuildQ extends CHIBPlugin {
 
 
     private void loadManagers() {
+        quarterSchematics = quartersStorage.contains("Schematics") ? (QuarterSchematics) quartersStorage.get("Schematics") : new QuarterSchematics();
+        quarterStructures = quartersStorage.contains("Structures") ? (QuarterStructures) quartersStorage.get("Schematics") : new QuarterStructures();
+
+
         QuarterTiers.load();
         QuarterRegion.init();
         quartersManager = new QuartersManager();
@@ -97,6 +106,8 @@ public final class GuildQ extends CHIBPlugin {
     private void saveManagers() {
         QuarterTiers.save();
         quartersManager.save();
+        quarterSchematics.save();
+        quarterStructures.save();
     }
 
 
@@ -141,6 +152,14 @@ public final class GuildQ extends CHIBPlugin {
 
     public QuartersManager getQuartersManager() {
         return quartersManager;
+    }
+
+    public QuarterSchematics getQuarterSchematics() {
+        return quarterSchematics;
+    }
+
+    public QuarterStructures getQuarterStructures() {
+        return quarterStructures;
     }
 
     public YAMLConfig getQuartersStorage() {
