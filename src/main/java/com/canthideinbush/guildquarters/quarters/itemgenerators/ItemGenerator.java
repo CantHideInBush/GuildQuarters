@@ -5,6 +5,8 @@ import org.bukkit.inventory.InventoryHolder;
 
 public interface ItemGenerator extends ABSave {
 
+
+    String getId();
     void generate();
     int getAmount();
 
@@ -12,6 +14,8 @@ public interface ItemGenerator extends ABSave {
     void setStartTime(int time);
     int getInterval();
     GeneratorItem getItem();
+
+    ItemGenerator clone();
 
 
 }

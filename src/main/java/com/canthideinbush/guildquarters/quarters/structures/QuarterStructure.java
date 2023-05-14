@@ -7,12 +7,19 @@ import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class QuarterStructure implements ABSave {
 
     public QuarterStructure(String id) {
         this.id = id;
+    }
+
+    public QuarterStructure(StructureBuilder builder) {
+        this.id = builder.getId();
+        this.storage = builder.getStorage();
+        this.generators = builder.getGenerators();
     }
 
     public QuarterStructure(Map<String, Object> map) {
@@ -27,10 +34,19 @@ public class QuarterStructure implements ABSave {
     }
 
     @YAMLElement
-    private ArrayList<ItemGenerator> generators = new ArrayList<>();
+    private List<ItemGenerator> generators = new ArrayList<>();
 
     @YAMLElement
     private StructureStorage storage = new StructureStorageImpl();
+
+
+    public List<ItemGenerator> getGenerators() {
+        return generators;
+    }
+
+    public StructureStorage getStorage() {
+        return storage;
+    }
 
     @SuppressWarnings("all")
     @Override

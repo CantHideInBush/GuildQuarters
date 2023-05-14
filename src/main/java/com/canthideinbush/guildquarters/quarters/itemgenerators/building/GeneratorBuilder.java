@@ -1,0 +1,42 @@
+package com.canthideinbush.guildquarters.quarters.itemgenerators.building;
+
+import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+
+public interface GeneratorBuilder {
+
+
+
+
+    ItemGenerator build();
+
+    List<String> options();
+
+    List<String> complete(Player player, String option);
+
+    String errorFor(String option, String value);
+
+    void with(String option, String value);
+
+    void withId(String id);
+
+    List<String> missingOptions();
+
+    boolean isComplete();
+
+    static String MUST_BE_POSITIVE() {
+        return GuildQ.getInstance().getUtilsProvider().getChatUtils().getMessage(
+                "must-be-positive"
+        );
+    }
+
+    static String INCORRECT_DATA_TYPE() {
+        return GuildQ.getInstance().getUtilsProvider().getChatUtils().getMessage(
+                "incorrect_data_type"
+        );
+    }
+
+}

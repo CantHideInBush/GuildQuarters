@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A class containing all kinds of modificable objects for quarter
+ * A class containing all kinds of modifiable objects for quarter
  */
 public class QuarterObjects implements ABSave {
 

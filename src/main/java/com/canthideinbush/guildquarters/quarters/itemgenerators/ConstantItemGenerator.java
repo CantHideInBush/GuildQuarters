@@ -1,23 +1,21 @@
 package com.canthideinbush.guildquarters.quarters.itemgenerators;
 
 import com.canthideinbush.utils.storing.YAMLElement;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public class BasicItemGenerator implements ItemGenerator{
+public class ConstantItemGenerator implements ItemGenerator {
 
 
-    public BasicItemGenerator(Map<String, Object> map) {
+    public ConstantItemGenerator(Map<String, Object> map) {
         deserializeFromMap(map);
     }
 
-    public BasicItemGenerator(String itemId, int amount, int interval) {
+    public ConstantItemGenerator(String id, String itemId, int amount, int interval) {
         this.itemId = itemId;
         this.amount = amount;
         this.interval = interval;
-
+        this.id = id;
     }
 
 
@@ -30,6 +28,13 @@ public class BasicItemGenerator implements ItemGenerator{
     @YAMLElement
     private String itemId;
 
+    @YAMLElement
+    private String id;
+
+    @Override
+    public String getId() {
+        return id;
+    }
 
     @Override
     public void generate() {
@@ -64,4 +69,8 @@ public class BasicItemGenerator implements ItemGenerator{
         return GeneratorItem.get(itemId);
     }
 
+    @Override
+    public ItemGenerator clone() {
+        return new ConstantItemGenerator(id, itemId, amount, interval);
+    }
 }

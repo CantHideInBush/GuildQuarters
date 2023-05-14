@@ -1,7 +1,10 @@
 package com.canthideinbush.guildquarters;
 
 import com.canthideinbush.guildquarters.commands.MainCommand;
+import com.canthideinbush.guildquarters.commands.generators.StartCommand;
 import com.canthideinbush.guildquarters.quarters.*;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerators;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructures;
@@ -24,6 +27,10 @@ public final class GuildQ extends CHIBPlugin {
         ConfigurationSerialization.registerClass(QuarterSchematics.class);
         ConfigurationSerialization.registerClass(QuarterRegion.class);
         ConfigurationSerialization.registerClass(QuarterSchematic.class);
+        ConfigurationSerialization.registerClass(QuarterObjects.class);
+        ConfigurationSerialization.registerClass(QuarterSchematics.class);
+        ConfigurationSerialization.registerClass(QuarterStructures.class);
+        ConfigurationSerialization.registerClass(ItemGenerators.class);
 
     }
 
@@ -45,6 +52,8 @@ public final class GuildQ extends CHIBPlugin {
     private QuartersManager quartersManager;
     private QuarterSchematics quarterSchematics;
     private QuarterStructures quarterStructures;
+
+    private ItemGenerators itemGenerators;
 
 
     private static final HashMap<Class<?>, Function<Object, String>> serializers = new HashMap<>();
@@ -93,7 +102,8 @@ public final class GuildQ extends CHIBPlugin {
 
     private void loadManagers() {
         quarterSchematics = quartersStorage.contains("Schematics") ? (QuarterSchematics) quartersStorage.get("Schematics") : new QuarterSchematics();
-        quarterStructures = quartersStorage.contains("Structures") ? (QuarterStructures) quartersStorage.get("Schematics") : new QuarterStructures();
+        quarterStructures = quartersStorage.contains("Structures") ? (QuarterStructures) quartersStorage.get("Structures") : new QuarterStructures();
+        itemGenerators = quartersStorage.contains("ItemGenerators") ? (ItemGenerators) quartersStorage.get("ItemGenerators") : new ItemGenerators();
 
 
         QuarterTiers.load();
@@ -108,6 +118,7 @@ public final class GuildQ extends CHIBPlugin {
         quartersManager.save();
         quarterSchematics.save();
         quarterStructures.save();
+        itemGenerators.save();
     }
 
 
@@ -148,6 +159,9 @@ public final class GuildQ extends CHIBPlugin {
 
     private void loadCommands() {
         new MainCommand(this);
+
+        StartCommand.builders.put("constant", ConstantGeneratorBuilder.class);
+
     }
 
     public QuartersManager getQuartersManager() {
@@ -160,6 +174,10 @@ public final class GuildQ extends CHIBPlugin {
 
     public QuarterStructures getQuarterStructures() {
         return quarterStructures;
+    }
+
+    public ItemGenerators getItemGenerators() {
+        return itemGenerators;
     }
 
     public YAMLConfig getQuartersStorage() {
