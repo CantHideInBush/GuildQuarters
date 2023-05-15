@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.commands;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.generators.GeneratorParentCommand;
+import com.canthideinbush.guildquarters.commands.item.ItemParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.TeleportToQuarterCommand;
 import com.canthideinbush.guildquarters.commands.schem.SchemParentCommand;
@@ -24,6 +25,7 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new TierParentCommand());
         subCommands.add(new TeleportToQuarterCommand());
         subCommands.add(new GeneratorParentCommand());
+        subCommands.add(new ItemParentCommand());
     }
 
     @Override

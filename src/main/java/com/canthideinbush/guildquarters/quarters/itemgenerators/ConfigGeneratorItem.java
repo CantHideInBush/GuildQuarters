@@ -11,11 +11,17 @@ public class ConfigGeneratorItem implements GeneratorItem {
         this.name = name;
     }
 
+    public ConfigGeneratorItem(String name) {
+        this.name = name;
+    }
+
 
 
     public void remove() {
         GuildQ.getInstance().getItemsStorage().set(name, null);
     }
+
+
 
     @Override
     public String getId() {
