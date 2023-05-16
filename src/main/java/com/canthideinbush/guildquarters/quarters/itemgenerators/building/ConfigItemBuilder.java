@@ -1,8 +1,7 @@
 package com.canthideinbush.guildquarters.quarters.itemgenerators.building;
 
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ConfigGeneratorItem;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
@@ -25,7 +24,7 @@ public class ConfigItemBuilder implements ItemBuilder {
     }
 
     @Override
-    public List<String> complete(Player player, String option) {
+    public List<String> complete(CommandSender player, String option) {
 
         return Collections.emptyList();
     }
@@ -37,7 +36,11 @@ public class ConfigItemBuilder implements ItemBuilder {
 
     @Override
     public void with(String option, String value) {
+        switch (option) {
+            case "item" -> {
 
+            }
+        }
     }
 
     @Override

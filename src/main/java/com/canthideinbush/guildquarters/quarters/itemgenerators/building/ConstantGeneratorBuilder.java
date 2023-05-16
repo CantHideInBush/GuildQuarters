@@ -5,6 +5,7 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.ConstantItemGene
 import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
 import com.canthideinbush.guildquarters.utils.Utils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Player;
 
@@ -36,8 +37,9 @@ public class ConstantGeneratorBuilder implements GeneratorBuilder {
         return options;
     }
 
+
     @Override
-    public List<String> complete(Player player, String option) {
+    public List<String> complete(CommandSender player, String option) {
         switch (option.toLowerCase()) {
             case "amount","interval" -> {
                 return Collections.singletonList("0");
