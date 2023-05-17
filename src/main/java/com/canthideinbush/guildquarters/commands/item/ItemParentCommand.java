@@ -7,7 +7,7 @@ import com.canthideinbush.utils.commands.ParentCommand;
 public class ItemParentCommand extends ParentCommand {
 
     public ItemParentCommand() {
-        subCommands.add(new BuildParentCommand());
+        subCommands.add(new ItemBuildCommand());
     }
 
     @Override

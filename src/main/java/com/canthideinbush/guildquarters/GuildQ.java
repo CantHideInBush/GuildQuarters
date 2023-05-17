@@ -1,9 +1,11 @@
 package com.canthideinbush.guildquarters;
 
 import com.canthideinbush.guildquarters.commands.MainCommand;
-import com.canthideinbush.guildquarters.commands.generators.StartCommand;
+import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
+import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
 import com.canthideinbush.guildquarters.quarters.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerators;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
@@ -160,7 +162,9 @@ public final class GuildQ extends CHIBPlugin {
     private void loadCommands() {
         new MainCommand(this);
 
-        StartCommand.builders.put("constant", ConstantGeneratorBuilder.class);
+        GeneratorBuildCommand.builders.put("constant", ConstantGeneratorBuilder.class);
+
+        ItemBuildCommand.builders.put("config", ConfigGeneratorItemBuilder.class);
 
     }
 

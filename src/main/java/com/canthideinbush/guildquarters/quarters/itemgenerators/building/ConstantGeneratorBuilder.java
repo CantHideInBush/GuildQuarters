@@ -96,10 +96,6 @@ public class ConstantGeneratorBuilder implements GeneratorBuilder {
         }
     }
 
-    @Override
-    public void withId(String id) {
-        this.id = id;
-    }
 
     @Override
     public List<String> missingOptions() {

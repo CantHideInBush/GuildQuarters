@@ -7,7 +7,7 @@ import com.canthideinbush.utils.commands.ParentCommand;
 public class GeneratorParentCommand extends ParentCommand {
 
     public GeneratorParentCommand() {
-        subCommands.add(new BuildParentCommand());
+        subCommands.add(new GeneratorBuildCommand());
     }
 
 
