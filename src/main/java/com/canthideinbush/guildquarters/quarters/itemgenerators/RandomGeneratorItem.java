@@ -11,6 +11,11 @@ public class RandomGeneratorItem implements GeneratorItem {
         this.id = id;
     }
 
+    public RandomGeneratorItem(String id, ChanceMap<String> map) {
+        this.id = id;
+        this.itemMap = map;
+    }
+
     public void addItem(String id, double chance) {
         itemMap.add(id, chance);
     }

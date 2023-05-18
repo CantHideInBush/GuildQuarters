@@ -9,12 +9,10 @@ public interface ItemGenerator extends ABSave {
     String getId();
     void generate();
     int getAmount();
-
     int getStartTime();
     void setStartTime(int time);
     int getInterval();
     GeneratorItem getItem();
-
     ItemGenerator clone();
 
 

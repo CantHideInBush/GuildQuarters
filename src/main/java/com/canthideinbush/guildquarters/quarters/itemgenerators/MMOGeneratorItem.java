@@ -1,11 +1,17 @@
 package com.canthideinbush.guildquarters.quarters.itemgenerators;
 
+import com.canthideinbush.utils.storing.YAMLElement;
 import net.Indyuce.mmoitems.MMOItems;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 public class MMOGeneratorItem implements GeneratorItem {
 
 
+    public MMOGeneratorItem(Map<String, Object> map) {
+        deserializeFromMap(map);
+    }
 
     public MMOGeneratorItem(String id, String type, String mmoId) {
         this.type = type;
@@ -13,9 +19,12 @@ public class MMOGeneratorItem implements GeneratorItem {
         this.mmoId = mmoId;
     }
 
-    private final String type;
-    private final String id;
-    private final String mmoId;
+    @YAMLElement
+    private String type;
+    @YAMLElement
+    private String id;
+    @YAMLElement
+    private String mmoId;
 
     @Override
     public String getId() {

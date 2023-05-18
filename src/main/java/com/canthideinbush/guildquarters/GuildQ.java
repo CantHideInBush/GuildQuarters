@@ -4,9 +4,14 @@ import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
 import com.canthideinbush.guildquarters.quarters.*;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ConfigGeneratorItem;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerators;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.MMOGeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItemBuilder;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemBuilder;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructures;
@@ -33,6 +38,8 @@ public final class GuildQ extends CHIBPlugin {
         ConfigurationSerialization.registerClass(QuarterSchematics.class);
         ConfigurationSerialization.registerClass(QuarterStructures.class);
         ConfigurationSerialization.registerClass(ItemGenerators.class);
+        ConfigurationSerialization.registerClass(ConfigGeneratorItem.class);
+        ConfigurationSerialization.registerClass(MMOGeneratorItem.class);
 
     }
 
@@ -130,6 +137,7 @@ public final class GuildQ extends CHIBPlugin {
         messageConfig = new YAMLConfig(this, "messages", true);
         quartersStorage = new YAMLConfig(this, "quarters", false);
         itemsStorage = new YAMLConfig(this, "items", false);
+        GeneratorItem.load();
     }
 
     private void loadListeners() {
@@ -140,6 +148,8 @@ public final class GuildQ extends CHIBPlugin {
         config.save();
         messageConfig.save();
         quartersStorage.save();
+
+        GeneratorItem.save();
         itemsStorage.save();
     }
 
@@ -163,8 +173,11 @@ public final class GuildQ extends CHIBPlugin {
         new MainCommand(this);
 
         GeneratorBuildCommand.builders.put("constant", ConstantGeneratorBuilder.class);
+        GeneratorBuildCommand.builders.put("random", RandomItemBuilder.class);
 
         ItemBuildCommand.builders.put("config", ConfigGeneratorItemBuilder.class);
+        ItemBuildCommand.builders.put("mmo", MMOItemBuilder.class);
+
 
     }
 
