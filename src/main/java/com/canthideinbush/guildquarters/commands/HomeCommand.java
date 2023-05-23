@@ -45,7 +45,10 @@ public class HomeCommand extends InternalCommand implements ABArgumentCompletion
 
         if ((quarter = GuildQ.getInstance().getQuartersManager().getByMember(target)) != null) {
             target.teleport(quarter.getSpawnLocation());
-            sendConfigSuccessMessage(sender, getMessagePath("success"));
+            sendConfigSuccessMessage(target, getMessagePath("success"));
+            if (!target.equals(sender)) {
+                sendConfigSuccessMessage(sender, getMessagePath("sender-success"));
+            }
             return true;
         }
         sendConfigErrorMessage(sender, getMessagePath("not-member"));
@@ -55,6 +58,8 @@ public class HomeCommand extends InternalCommand implements ABArgumentCompletion
 
     @DefaultConfigMessage(forN = "success")
     private static String SUCCESS = "Przeteleportowano!";
+    @DefaultConfigMessage(forN = "sender-success")
+    private static String SENDER_SUCCESS = "Przeteleportowano cel!";
 
     @DefaultConfigMessage(forN = "not-member")
     private static String NOT_MEMBER = "Nie jestes czlonkiem zadnej siedziby!";

@@ -21,12 +21,15 @@ import com.canthideinbush.utils.storing.YAMLConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.function.Function;
 
-public final class GuildQ extends CHIBPlugin {
+public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
 
     static {
         ConfigurationSerialization.registerClass(GuildQuarter.class);
@@ -74,9 +77,12 @@ public final class GuildQ extends CHIBPlugin {
 
 
 
+
     @Override
     public void onEnable() {
         instance = this;
+
+        Bukkit.getPluginManager().registerEvents(this, this);
 
         serializers.forEach(YAMLConfig::registerSerializer);
         deserializers.forEach(YAMLConfig::registerDeserializer);
@@ -102,6 +108,11 @@ public final class GuildQ extends CHIBPlugin {
     }
 
     @Override
+    public void onLoad() {
+
+    }
+
+    @Override
     public void onDisable() {
         saveManagers();
 
@@ -117,9 +128,19 @@ public final class GuildQ extends CHIBPlugin {
 
         QuarterTiers.load();
         QuarterRegion.init();
-        quartersManager = new QuartersManager();
-        quartersManager.initialize();
 
+        //QuartersManager is loaded in world load event below
+
+    }
+
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        if (event.getWorld().equals(GuildUtils.getGuildWorld())) {
+            quartersStorage = new YAMLConfig(this, "quarters", false);
+            quartersManager = new QuartersManager();
+            quartersManager.initialize();
+        }
     }
 
 
@@ -144,7 +165,7 @@ public final class GuildQ extends CHIBPlugin {
     private void loadConfigurations() {
         config = new YAMLConfig(this, "config", true);
         messageConfig = new YAMLConfig(this, "messages", true);
-        quartersStorage = new YAMLConfig(this, "quarters", false);
+        //QuartersStorage in event
         itemsStorage = new YAMLConfig(this, "items", false);
         GeneratorItem.load();
     }
