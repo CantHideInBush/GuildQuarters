@@ -24,7 +24,7 @@ public class SetSpawnLocationCommand extends InternalCommand implements ABArgume
         GuildQuarter quarter;
         if (parser.hasNext()) {
             if (!sender.hasPermission(ADMIN_PERMISSION())) {
-                sendConfigErrorMessage(sender, "permissions-insufficient", ADMIN_PERMISSION());
+                sendConfigErrorMessage(sender, "common.permissions-insufficient", ADMIN_PERMISSION());
                 return false;
             }
             if ((quarter = GuildQ.getInstance().getQuartersManager().getByShortId(parser.next())) == null) {

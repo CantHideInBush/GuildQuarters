@@ -2,17 +2,49 @@ package com.canthideinbush.guildquarters.commands;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.utils.commands.DefaultConfigMessage;
-import com.canthideinbush.utils.commands.InternalCommand;
+import com.canthideinbush.utils.commands.*;
+import com.canthideinbush.utils.storing.ArgParser;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
-public class HomeCommand extends InternalCommand {
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class HomeCommand extends InternalCommand implements ABArgumentCompletion {
 
     @Override
-    public boolean execute(Player sender, String[] args) {
+    public boolean execute(CommandSender sender, String[] args) {
         GuildQuarter quarter;
-        if ((quarter = GuildQ.getInstance().getQuartersManager().getByMember(sender)) != null) {
-            sender.teleport(quarter.getSpawnLocation());
+
+        Player target;
+
+        ArgParser parser = new ArgParser(args, getArgIndex());
+        if (parser.hasNext()) {
+            if (!hasPermission(sender, ADMIN_PERMISSION())) {
+                sendConfigErrorMessage(sender, "common.permissions-insufficient", ADMIN_PERMISSION());
+                return false;
+            }
+            target = Bukkit.getPlayer(parser.next());
+            if (target == null) {
+                sendConfigErrorMessage(sender, getMessagePath("not-online"));
+                return false;
+            }
+        }
+        else {
+            if (sender instanceof Player) {
+                target = (Player) sender;
+            }
+            else {
+                sendConfigErrorMessage(sender, "command-arguments-insufficient");
+                return false;
+            }
+        }
+
+        if ((quarter = GuildQ.getInstance().getQuartersManager().getByMember(target)) != null) {
+            target.teleport(quarter.getSpawnLocation());
             sendConfigSuccessMessage(sender, getMessagePath("success"));
             return true;
         }
@@ -27,6 +59,25 @@ public class HomeCommand extends InternalCommand {
     @DefaultConfigMessage(forN = "not-member")
     private static String NOT_MEMBER = "Nie jestes czlonkiem zadnej siedziby!";
 
+    @DefaultConfigMessage(forN = "not-online")
+    private static String NOT_ONLINE = "Ten gracz nie jest online!";
+
+    private String ADMIN_PERMISSION() {
+        return getAbsolutePermission() + ".admin";
+    }
+
+    @Override
+    public List<String> complete(String[] args, CommandSender sender) {
+        return ABComplete(args, sender);
+    }
+
+    @Override
+    protected List<Permission> getAdditionalPermissions() {
+        Permission admin = new Permission(ADMIN_PERMISSION());
+        Bukkit.getPluginManager().getPermission(getAbsolutePermission()).addParent(admin, true);
+        return Collections.singletonList(admin);
+    }
+
     @Override
     public String getName() {
         return "home";
@@ -35,5 +86,16 @@ public class HomeCommand extends InternalCommand {
     @Override
     public Class<? extends InternalCommand> getParentCommandClass() {
         return MainCommand.class;
+    }
+
+    @ABCompleter(index = 0, localPermission = "admin")
+    private List<String> completePlayers() {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+    }
+
+    private final List<TabCompleter> completion = prepareCompletion();
+    @Override
+    public List<TabCompleter> getCompletion() {
+        return completion;
     }
 }
