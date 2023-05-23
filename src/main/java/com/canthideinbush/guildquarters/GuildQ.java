@@ -122,6 +122,15 @@ public final class GuildQ extends CHIBPlugin {
 
     }
 
+
+    /**
+     * Reloads configurations, skips storages due to possible errors
+     */
+    public void reload() {
+        config = new YAMLConfig(this, "config", true);
+        messageConfig = new YAMLConfig(this, "messages", true);
+    }
+
     private void saveManagers() {
         QuarterTiers.save();
         quartersManager.save();

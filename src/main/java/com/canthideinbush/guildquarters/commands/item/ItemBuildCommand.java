@@ -19,6 +19,11 @@ import java.util.List;
 public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorItemBuilder> {
 
     public ItemBuildCommand() {
+
+        saveDefaultConfigMessages();
+    }
+
+    protected void defaultInit() {
         subCommands.add(new StartCommand(this) {
             @Override
             public Class<? extends InternalCommand> getParentCommandClass() {
@@ -54,7 +59,6 @@ public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorIte
                 return GeneratorBuildCommand.class;
             }
         });
-        saveDefaultConfigMessages();
     }
 
     @DefaultConfigMessage(forN = "invalid-item")

@@ -3,38 +3,34 @@ package com.canthideinbush.guildquarters.commands.quarter.region;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuarterRegion;
 import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;
+import org.bukkit.ChatColor;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExpandCommand extends InternalCommand implements ABArgumentCompletion {
-
+public class GetExpansion extends InternalCommand implements ABArgumentCompletion {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         ArgParser parser = new ArgParser(args, getArgIndex());
-
         if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, "command-arguments-insufficent");
+            sendConfigErrorMessage(sender, getMessagePath("command-arguments-insufficient"));
             return false;
         }
 
-        String quarterId = parser.next();
         GuildQuarter quarter;
-        if ((quarter = GuildQ.getInstance().getQuartersManager().getByShortId(quarterId)) == null) {
+        if ((quarter = GuildQ.getInstance().getQuartersManager().getByShortId(parser.next())) == null) {
             sendConfigErrorMessage(sender, "common.quarter-nonexistent");
             return false;
         }
 
         if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, "command-arguments-insufficent");
+            sendConfigErrorMessage(sender, "command-arguments-insufficient");
             return false;
         }
 
@@ -42,60 +38,34 @@ public class ExpandCommand extends InternalCommand implements ABArgumentCompleti
         try {
             face = BlockFace.valueOf(parser.next().toUpperCase());
         } catch (IllegalArgumentException e) {
-            sendConfigErrorMessage(sender, getMessagePath("no-such-direction"));
+            sendConfigErrorMessage(sender, getMessagePath("direction-nonexistent"));
             return false;
         }
 
-
-        if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, "command-arguments-insufficent");
-            return false;
-        }
-        int distance;
-        try {
-            distance = parser.nextInt();
-        } catch (NumberFormatException e) {
-            sendConfigErrorMessage(sender, "incorrect_data_type");
-            return false;
-        }
-
-        if (distance <= 0) {
-            sendConfigErrorMessage(sender, "must-be-positive");
-            return false;
-        }
-
-        quarter.getRegion().expand(face, distance);
-
-
-        sendConfigSuccessMessage(sender, getMessagePath("success"));
+        sendConfigSuccessMessage(sender, getMessagePath("success"), quarter.getRegion().getExpansion(face));
 
 
         return true;
     }
 
-
     @DefaultConfigMessage(forN = "success")
-    private static final String SUCCESS = "Rozszerzono region!";
+    private static final String SUCCESS = "Ekpsansja siedziby: %s";
 
-    @DefaultConfigMessage(forN = "no-such-direction")
-    private static final String NO_SUCH_DIRECTION = "Wprowadzono bledny kierunek!";
+    @DefaultConfigMessage(forN = "direction-nonexistent")
+    private static final String DIR_NONEXISTENT = "Podany kierunek nie istnieje!";
 
     @ABCompleter(index = 0)
-    private List<String> completeQuarter() {
+    private List<String> completeQuarters() {
         return GuildQ.getInstance().getQuartersManager().getShortIds();
     }
-
     @ABCompleter(index = 1)
     private List<String> completeDirections() {
         return Arrays.stream(BlockFace.values()).map(Enum::name).collect(Collectors.toList());
     }
 
-    @ABCompleter(index = 2)
-    private final int completeDistance = 0;
-
     @Override
     public String getName() {
-        return "expand";
+        return "getexpansion";
     }
 
     @Override
@@ -103,13 +73,16 @@ public class ExpandCommand extends InternalCommand implements ABArgumentCompleti
         return QuartersParentCommand.class;
     }
 
+    private final List<TabCompleter> completer = prepareCompletion();
+
+
     @Override
     public List<String> complete(String[] args, CommandSender sender) {
         return ABComplete(args, sender);
     }
-    private final List<TabCompleter> completion = prepareCompletion();
+
     @Override
     public List<TabCompleter> getCompletion() {
-        return completion;
+        return completer;
     }
 }

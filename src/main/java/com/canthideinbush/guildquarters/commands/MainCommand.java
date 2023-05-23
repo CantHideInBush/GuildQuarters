@@ -26,6 +26,8 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new TeleportToQuarterCommand());
         subCommands.add(new GeneratorParentCommand());
         subCommands.add(new ItemParentCommand());
+        subCommands.add(new ReloadCommand());
+        subCommands.add(new HomeCommand());
     }
 
     @Override
@@ -46,6 +48,6 @@ public class MainCommand extends ParentCommand {
 
     @Override
     public String getPermission() {
-        return "GuildQuarters.Command.Main";
+        return "GuildQuarters";
     }
 }

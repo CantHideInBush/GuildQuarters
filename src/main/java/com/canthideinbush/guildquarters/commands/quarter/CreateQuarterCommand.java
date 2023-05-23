@@ -34,7 +34,7 @@ public class CreateQuarterCommand extends InternalCommand {
 
     @Override
     public List<String> complete(String[] args, CommandSender sender) {
-        if (args.length == getArgIndex() - 1 &&
+        if (args.length == getArgIndex() + 1 &&
                 (sender instanceof ConsoleCommandSender || sender.hasPermission(ADMIN_PERMISSION))) {
             return Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName).collect(Collectors.toList());
@@ -58,16 +58,16 @@ public class CreateQuarterCommand extends InternalCommand {
 
         Guild guild = Guilds.getApi().getGuild(target);
         if (guild == null) {
-            sendConfigErrorMessage(sender, "guildq-guilds-not_member");
+            sendConfigErrorMessage(sender, getMessagePath("not-master"));
             return false;
         }
         else if (!guild.getGuildMaster().getAsOfflinePlayer().equals(target)) {
-            sendConfigErrorMessage(sender, "guildq-guilds-not_master");
+            sendConfigErrorMessage(sender, getMessagePath("not-master"));
             return false;
         }
 
         if (!GuildQ.getInstance().getQuartersManager().createGuildQuarter(guild)) {
-            sendConfigErrorMessage(sender, "guildq-guilds-create-exists");
+            sendConfigErrorMessage(sender, getMessagePath("already-exists"));
             return false;
         }
 
@@ -75,6 +75,14 @@ public class CreateQuarterCommand extends InternalCommand {
 
         return true;
     }
+
+
+    @DefaultConfigMessage(forN = "not-master")
+    private static final String NOT_MEMBER = "Siedzibe moze utworzyc tylko zalozyciel gildii!";
+
+    @DefaultConfigMessage(forN = "already-exists")
+    private static final String ALREADY_EXISTS = "Ta siedziba juz istnieje!";
+
 
     public final String ADMIN_PERMISSION = getAbsolutePermission() + ".admin";
 

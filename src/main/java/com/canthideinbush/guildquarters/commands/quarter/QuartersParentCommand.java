@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters.commands.quarter;
 import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.quarter.region.ContractCommand;
 import com.canthideinbush.guildquarters.commands.quarter.region.ExpandCommand;
+import com.canthideinbush.guildquarters.commands.quarter.region.GetExpansion;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
 
@@ -25,6 +26,7 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new ContractCommand());
         subcommands.add(new PasteSchemCommand());
         subcommands.add(new UndoSchemCommand());
+        subcommands.add(new GetExpansion());
 
 
     }

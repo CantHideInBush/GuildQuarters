@@ -74,6 +74,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         region = new QuarterRegion(this);
         spawnLocation = getInitialLocation();
         quarterObjects = new QuarterObjects();
+        initialize();
     }
 
     public GuildQuarter(Chunk chunk, Guild guild) {
@@ -86,6 +87,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         region = new QuarterRegion(this);
         spawnLocation = getInitialLocation();
         quarterObjects = new QuarterObjects();
+        initialize();
     }
 
 
@@ -226,6 +228,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public void initialize() {
         quarterObjects.setQuarter(this);
+        getRegion().updateMembers();
     }
 
     public QuarterObjects getQuarterObjects() {

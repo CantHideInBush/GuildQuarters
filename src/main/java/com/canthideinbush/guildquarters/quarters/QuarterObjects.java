@@ -27,6 +27,7 @@ public class QuarterObjects implements ABSave {
 
     public void setQuarter(GuildQuarter quarter) {
         this.quarter = quarter;
+        System.out.println("Setting schematic: " + quarter.getShortId());
     }
 
     @YAMLElement

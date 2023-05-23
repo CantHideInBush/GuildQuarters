@@ -9,7 +9,9 @@ import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ContractCommand extends InternalCommand implements ABArgumentCompletion {
     @Override
@@ -24,7 +26,7 @@ public class ContractCommand extends InternalCommand implements ABArgumentComple
         String quarterId = parser.next();
         GuildQuarter quarter;
         if ((quarter = GuildQ.getInstance().getQuartersManager().getByShortId(quarterId)) == null) {
-            sendConfigErrorMessage(sender, "common.quarter.nonexistent");
+            sendConfigErrorMessage(sender, "common.quarter-nonexistent");
             return false;
         }
 
@@ -91,7 +93,7 @@ public class ContractCommand extends InternalCommand implements ABArgumentComple
 
     @ABCompleter(index = 1)
     private List<String> completeDirections() {
-        return QuarterRegion.Direction.values;
+        return Arrays.stream(BlockFace.values()).map(Enum::name).collect(Collectors.toList());
     }
 
     @ABCompleter(index = 2)

@@ -5,10 +5,12 @@ import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.WorldEditUtils;
 import com.canthideinbush.utils.managers.KeyedStorage;
 import com.canthideinbush.utils.storing.YAMLConfig;
+import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -74,7 +76,9 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         return quarters.stream().filter(q -> uuid.equals(q.guildUUID)).findAny().orElse(null);
     }
 
-
+    public GuildQuarter getByMember(Player member){
+        return quarters.stream().filter(q -> q.getGuild() != null && Guilds.getApi().getGuild(member).equals(q.getGuild())).findAny().orElse(null);
+    }
 
 
     @NotNull
