@@ -19,7 +19,7 @@ import java.util.List;
 public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorItemBuilder> {
 
     public ItemBuildCommand() {
-
+        defaultInit();
         saveDefaultConfigMessages();
     }
 

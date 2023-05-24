@@ -27,6 +27,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new PasteSchemCommand());
         subcommands.add(new UndoSchemCommand());
         subcommands.add(new GetExpansion());
+        subcommands.add(new AddGenerator());
+        subcommands.add(new RemoveGenerator());
 
 
     }

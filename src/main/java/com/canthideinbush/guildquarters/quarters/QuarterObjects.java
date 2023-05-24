@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.quarters;
 
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.utils.storing.ABSave;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A class containing all kinds of modifiable objects for quarter
@@ -36,6 +38,7 @@ public class QuarterObjects implements ABSave {
     @YAMLElement
     private List<QuarterStructure> quarterStructures = new ArrayList<>();
 
+
     public void placeSchematic(@NotNull QuarterSchematic schematic) {
         schematic.paste(quarter);
 
@@ -44,9 +47,19 @@ public class QuarterObjects implements ABSave {
 
 
 
+    public List<String> getStructureIds() {
+        return quarterStructures.stream().map(QuarterStructure::getId).collect(Collectors.toList());
+    }
+
+
+
 
     public boolean hasStructure(String id) {
         return quarterStructures.stream().anyMatch(s -> s.getId().equalsIgnoreCase(id));
+    }
+
+    public QuarterStructure getStructure(String id) {
+        return quarterStructures.stream().filter(s -> s.getId().equalsIgnoreCase(id)).findAny().orElse(null);
     }
 
     public boolean hasSchematic(String name) {
@@ -103,6 +116,17 @@ public class QuarterObjects implements ABSave {
 
         quarterSchematics.remove(name);
     }
+
+
+
+    int second;
+    public void tick() {
+        for (QuarterStructure structure : quarterStructures) {
+            structure.tickGenerators(second);
+        }
+        second++;
+    }
+
 
 
 

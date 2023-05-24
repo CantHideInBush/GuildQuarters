@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ItemGenerators implements ABSave {
 
@@ -25,6 +26,11 @@ public class ItemGenerators implements ABSave {
         return generators
                 .stream().filter(g -> g.getId().equals(id))
                 .findAny().map(ItemGenerator::clone).orElse(null);
+    }
+
+    public List<String> getIds() {
+        return generators
+                .stream().map(ItemGenerator::getId).collect(Collectors.toList());
     }
 
     public void register(ItemGenerator generator) {

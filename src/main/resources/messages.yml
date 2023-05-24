@@ -24,6 +24,8 @@ common:
   tier-nonexistent: "Ten poziom gildii nie istnieje!"
   schematic-nonexistent: "Ten schemat nie istnieje!"
   generator-item-nonexistent: "Ten przedmiot generatora nie istnieje!"
+  generator-nonexistent: "Ten generator nie istnieje!"
+  structure-nonexistent: "Ta struktura nie istnieje!"
 
 command:
   quarter:

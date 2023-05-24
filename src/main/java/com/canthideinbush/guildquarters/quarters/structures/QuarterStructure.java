@@ -48,6 +48,40 @@ public class QuarterStructure implements ABSave {
         return storage;
     }
 
+
+    public void addGenerator(ItemGenerator generator) {
+        if (containsGenerator(generator.getId())) return;
+        generators.add(generator);
+    }
+
+    public void removeGenerator(ItemGenerator generator) {
+        generators.remove(generator);
+    }
+
+    public void removeGenerator(String id) {
+        generators.removeIf(g -> g.getId().equalsIgnoreCase(id));
+    }
+
+    public boolean containsGenerator(String id) {
+        return generators.stream().anyMatch(generator -> generator.getId().equalsIgnoreCase(id));
+    }
+
+    public boolean containsGenerator(ItemGenerator generator) {
+        return generators.contains(generator);
+    }
+
+
+
+    public void tickGenerators(int second) {
+        for (ItemGenerator generator : generators) {
+            if (second % generator.getInterval() == 0) {
+                generator.generate();
+                storage.store(generator);
+            }
+        }
+    }
+
+
     @SuppressWarnings("all")
     @Override
     protected Object clone() {
