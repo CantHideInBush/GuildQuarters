@@ -28,6 +28,7 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new ItemParentCommand());
         subCommands.add(new ReloadCommand());
         subCommands.add(new HomeCommand());
+        subCommands.add(new CollectCommand());
     }
 
     @Override

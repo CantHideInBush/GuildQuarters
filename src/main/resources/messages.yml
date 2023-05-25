@@ -26,6 +26,8 @@ common:
   generator-item-nonexistent: "Ten przedmiot generatora nie istnieje!"
   generator-nonexistent: "Ten generator nie istnieje!"
   structure-nonexistent: "Ta struktura nie istnieje!"
+  structure-not-built: "Ta dzialka nie posiada podanej struktury!"
+
 
 command:
   quarter:

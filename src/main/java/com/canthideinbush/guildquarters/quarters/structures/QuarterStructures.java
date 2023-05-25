@@ -9,6 +9,7 @@ import com.canthideinbush.utils.storing.YAMLElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class QuarterStructures implements ABSave {
 
@@ -51,6 +52,10 @@ public class QuarterStructures implements ABSave {
 
     private QuarterStructure findById(String id) {
         return quarterStructures.stream().filter(q -> q.getId().equalsIgnoreCase(id)).findAny().orElse(null);
+    }
+
+    public List<String> getIds() {
+        return quarterStructures.stream().map(QuarterStructure::getId).collect(Collectors.toList());
     }
 
     public QuarterStructure create(String id) {
