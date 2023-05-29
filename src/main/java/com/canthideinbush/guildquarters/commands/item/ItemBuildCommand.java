@@ -27,13 +27,13 @@ public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorIte
         subCommands.add(new StartCommand(this) {
             @Override
             public Class<? extends InternalCommand> getParentCommandClass() {
-                return GeneratorBuildCommand.class;
+                return ItemBuildCommand.class;
             }
         });
         subCommands.add(new WithCommand(this) {
             @Override
             public Class<? extends InternalCommand> getParentCommandClass() {
-                return GeneratorBuildCommand.class;
+                return ItemBuildCommand.class;
             }
 
             @Override
@@ -56,7 +56,7 @@ public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorIte
         subCommands.add(new CompleteCommand(this) {
             @Override
             public Class<? extends InternalCommand> getParentCommandClass() {
-                return GeneratorBuildCommand.class;
+                return ItemBuildCommand.class;
             }
         });
     }

@@ -34,7 +34,7 @@ public class ItemGenerators implements ABSave {
     }
 
     public void register(ItemGenerator generator) {
-        Optional.of(get(generator.getId())).ifPresent(this::unregister);
+        Optional.ofNullable(get(generator.getId())).ifPresent(this::unregister);
         generators.add(generator);
     }
 

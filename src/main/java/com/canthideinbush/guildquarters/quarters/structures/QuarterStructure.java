@@ -1,8 +1,10 @@
 package com.canthideinbush.guildquarters.quarters.structures;
 
+import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorage;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorageImpl;
+import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 
@@ -35,6 +37,9 @@ public class QuarterStructure implements ABSave {
 
     @YAMLElement
     private List<ItemGenerator> generators = new ArrayList<>();
+
+    @YAMLElement
+    private List<String> schematics = new ArrayList<>();
 
     @YAMLElement
     private StructureStorage storage = new StructureStorageImpl();
@@ -70,6 +75,17 @@ public class QuarterStructure implements ABSave {
         return generators.contains(generator);
     }
 
+    public void addSchematic(String schem) {
+        if (schematics.contains(schem)) return;
+        schematics.add(schem);
+
+        QuarterSchematic schematic = GuildQ.getInstance().getQuarterSchematics().getByName();
+
+    }
+    public void removeSchematic(String schem) {
+        schematics.remove(schem);
+    }
+
 
 
     public void tickGenerators(int second) {
@@ -89,5 +105,9 @@ public class QuarterStructure implements ABSave {
         clone.generators = this.generators;
         clone.storage = this.storage;
         return clone;
+    }
+
+    public List<String> getSchematics() {
+        return schematics;
     }
 }

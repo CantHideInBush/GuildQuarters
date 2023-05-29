@@ -17,7 +17,7 @@ public class SchemParentCommand extends ParentCommand {
 
     @Override
     public String getName() {
-        return "structure";
+        return "schem";
     }
 
     @Override

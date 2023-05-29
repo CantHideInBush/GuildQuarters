@@ -34,7 +34,7 @@ public interface GeneratorItem extends ABSave {
     }
 
     static void register(GeneratorItem item) {
-        Optional.of(get(item.getId())).ifPresent(GeneratorItem::unregister);
+        Optional.ofNullable(get(item.getId())).ifPresent(GeneratorItem::unregister);
         registeredItems.add(item);
     }
 

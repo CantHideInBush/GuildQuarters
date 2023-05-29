@@ -234,4 +234,8 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     public QuarterObjects getQuarterObjects() {
         return quarterObjects;
     }
+
+    public void tick() {
+        quarterObjects.tick();
+    }
 }

@@ -21,8 +21,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CollectCommand extends InternalCommand {
+
+
 
 
     @Override
@@ -127,44 +130,63 @@ public class CollectCommand extends InternalCommand {
     private static final String NOT_ONLINE = "Gracz %s nie jest online!";
 
 
+
+    /*
+
+    /collect <structure> <item> <amount> (target)
+
+     */
     @Override
     public List<String> complete(String[] args, CommandSender sender) {
-        if (args.length == getArgIndex() - 1) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                GuildQuarter quarter;
-                if (player.hasPermission(ADMIN_PERMISSION())) {
-                    return GuildQ.getInstance().getQuarterStructures().getIds();
-                }
-                else if ((quarter = GuildQ.getInstance().getQuartersManager().getByMember(player)) != null) {
-                    return quarter.getQuarterObjects().getStructureIds();
-                }
-            }
-            else if (sender instanceof ConsoleCommandSender) {
-                return GuildQ.getInstance().getQuarterStructures().getIds();
+        Player player = null;
+        GuildQuarter quarter = null;
+        QuarterStructure structure = null;
+        GeneratorItem item = null;
+        boolean isAdmin = sender.hasPermission(ADMIN_PERMISSION());
+        if (args.length >= getArgIndex() + 1) {
+            if (!isAdmin && sender instanceof Player) {
+                player = (Player) sender;
+                quarter = GuildQ.getInstance().getQuartersManager().getByMember(player);
             }
         }
-        else if (args.length == getArgIndex()) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                GuildQuarter quarter;
-                if (player.hasPermission(ADMIN_PERMISSION())) {
-                    return GeneratorItem.getIds();
-                }
-                else if ((quarter = GuildQ.getInstance().getQuartersManager().getByMember(player)) != null) {
-                    QuarterStructure structure = quarter.getQuarterObjects().getStructure(args[getArgIndex()]);
-                    if (structure != null) {
-                        return structure.getStorage().getAvailable();
-                    }
-                    else return Collections.emptyList();
-                }
+        if (args.length == getArgIndex() + 1) {
+            if (isAdmin) {
+                return GuildQ.getInstance().getQuarterStructures().getIds();
             }
-            else if (sender instanceof ConsoleCommandSender) {
-                return GeneratorItem.getIds();
+            else if (quarter != null) {
+                return quarter.getQuarterObjects().getStructureIds();
             }
         }
 
-        //TODO: End this section
+        if (!isAdmin && args.length >= getArgIndex() + 2) {
+            quarter = GuildQ.getInstance().getQuartersManager().getByMember(player);
+            if (quarter != null) {
+                structure = quarter.getQuarterObjects().getStructure(args[getArgIndex()]);
+            }
+        }
+
+        if (args.length == getArgIndex() + 2) {
+            if (isAdmin) {
+                return GeneratorItem.getIds();
+            }
+            if (structure != null) {
+                return structure.getStorage().getAvailable();
+            }
+        }
+
+        if (!isAdmin && args.length >= getArgIndex() + 3) {
+            item = GeneratorItem.get(args[getArgIndex() + 2]);
+        }
+        if (args.length == getArgIndex() + 3) {
+            if (isAdmin) return Collections.singletonList("0");
+            if (structure != null && item != null) {
+                return Collections.singletonList(structure.getStorage().getAmount(item) + "");
+            }
+        }
+
+        if (isAdmin && args.length == getArgIndex() + 4) {
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+        }
 
 
 

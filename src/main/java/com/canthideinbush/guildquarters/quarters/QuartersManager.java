@@ -7,10 +7,13 @@ import com.canthideinbush.utils.managers.KeyedStorage;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -40,12 +43,22 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
     }
 
+    private BukkitTask quartersLoop;
+
     public void initialize() {
         load();
         createNamedQuarter("TemplateQuarter");
         templateQuarter = getByShortId("TemplateQuarter");
 
         quarters.forEach(GuildQuarter::initialize);
+
+        quartersLoop = Bukkit.getScheduler().runTaskTimerAsynchronously(GuildQ.getInstance(),
+                () -> {
+            for (int i = 0; i < quarters.size(); i++) {
+                GuildQuarter quarter = quarters.get(i);
+                quarter.tick();
+            }
+                }, 0, 20);
     }
 
 
@@ -76,7 +89,9 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         return quarters.stream().filter(q -> uuid.equals(q.guildUUID)).findAny().orElse(null);
     }
 
+
     public GuildQuarter getByMember(Player member){
+        if (member == null) return null;
         return quarters.stream().filter(q -> q.getGuild() != null && Guilds.getApi().getGuild(member).equals(q.getGuild())).findAny().orElse(null);
     }
 

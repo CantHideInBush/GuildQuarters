@@ -4,10 +4,7 @@ import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
 import com.canthideinbush.guildquarters.quarters.*;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.ConfigGeneratorItem;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerators;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.MMOGeneratorItem;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItemBuilder;
@@ -43,6 +40,7 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
         ConfigurationSerialization.registerClass(ItemGenerators.class);
         ConfigurationSerialization.registerClass(ConfigGeneratorItem.class);
         ConfigurationSerialization.registerClass(MMOGeneratorItem.class);
+        ConfigurationSerialization.registerClass(ConstantItemGenerator.class);
 
     }
 
