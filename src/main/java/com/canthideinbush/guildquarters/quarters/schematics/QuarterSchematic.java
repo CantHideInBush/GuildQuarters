@@ -75,4 +75,9 @@ public class QuarterSchematic implements ABSave {
                 ", offset=" + offset +
                 '}';
     }
+
+    public void deleteUndo() {
+        File file = new File(undoSchematic);
+        if (file.exists()) file.delete();
+    }
 }

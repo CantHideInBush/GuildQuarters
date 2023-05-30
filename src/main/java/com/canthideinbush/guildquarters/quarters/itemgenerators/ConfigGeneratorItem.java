@@ -41,6 +41,6 @@ public class ConfigGeneratorItem implements GeneratorItem {
 
     @Override
     public ItemStack getItem() {
-        return itemStack;
+        return itemStack.clone();
     }
 }

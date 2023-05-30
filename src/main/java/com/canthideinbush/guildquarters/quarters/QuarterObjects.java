@@ -2,7 +2,6 @@ package com.canthideinbush.guildquarters.quarters;
 
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.utils.storing.ABSave;
@@ -27,9 +26,9 @@ public class QuarterObjects implements ABSave {
 
     private GuildQuarter quarter;
 
-    public void setQuarter(GuildQuarter quarter) {
+    public void initialize(GuildQuarter quarter) {
         this.quarter = quarter;
-        System.out.println("Setting schematic: " + quarter.getShortId());
+        quarterStructures.forEach(qS -> qS.initialize(quarter));
     }
 
     @YAMLElement
@@ -39,11 +38,7 @@ public class QuarterObjects implements ABSave {
     private List<QuarterStructure> quarterStructures = new ArrayList<>();
 
 
-    public void placeSchematic(@NotNull QuarterSchematic schematic) {
-        schematic.paste(quarter);
 
-        quarterSchematics.add(schematic.getName());
-    }
 
 
 
@@ -70,14 +65,30 @@ public class QuarterObjects implements ABSave {
 
     public void placeStructure(QuarterStructure structure) {
         quarterStructures.add(structure);
+        for (String schem : structure.getSchematics()) {
+            placeSchematic(schem);
+        }
+        structure.initialize(quarter);
     }
 
     public void removeStructure(QuarterStructure structure) {
         quarterStructures.remove(structure);
+        for (String schem : structure.getSchematics()) {
+            removeSchematic(schem);
+        }
     }
 
     public void removeStructure(String structureId) {
-        quarterStructures.removeIf(q -> q.getId().equalsIgnoreCase(structureId));
+        quarterStructures.removeIf(q -> {
+
+            if  (q.getId().equalsIgnoreCase(structureId)) {
+                for (String schem : q.getSchematics()) {
+                    removeSchematic(schem);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
 
@@ -92,9 +103,14 @@ public class QuarterObjects implements ABSave {
             throw new IllegalArgumentException("Quarter schematic with given name does not exist!");
         }
 
+        placeSchematic(schematic);
+    }
+
+
+    public void placeSchematic(@NotNull QuarterSchematic schematic) {
         schematic.paste(quarter);
 
-        quarterSchematics.add(name);
+        quarterSchematics.add(schematic.getName());
     }
 
     public void removeSchematic(@NotNull QuarterSchematic schematic) {
@@ -119,7 +135,7 @@ public class QuarterObjects implements ABSave {
 
 
 
-    int second;
+    int second = 0;
     public void tick() {
         for (QuarterStructure structure : quarterStructures) {
             structure.tickGenerators(second);

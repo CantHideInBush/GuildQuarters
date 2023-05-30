@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters;
 import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
+import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
 import com.canthideinbush.guildquarters.quarters.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
@@ -11,7 +12,9 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItem
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemBuilder;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
+import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructures;
+import com.canthideinbush.guildquarters.quarters.structures.StructureBuilder;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
@@ -41,6 +44,8 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
         ConfigurationSerialization.registerClass(ConfigGeneratorItem.class);
         ConfigurationSerialization.registerClass(MMOGeneratorItem.class);
         ConfigurationSerialization.registerClass(ConstantItemGenerator.class);
+        ConfigurationSerialization.registerClass(StructureStorageImpl.class);
+        ConfigurationSerialization.registerClass(QuarterStructure.class);
 
     }
 
@@ -205,6 +210,9 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
 
         ItemBuildCommand.builders.put("config", ConfigGeneratorItemBuilder.class);
         ItemBuildCommand.builders.put("mmo", MMOItemBuilder.class);
+
+
+        StructureBuildCommand.builders.put("simple", StructureBuilder.class);
 
 
     }

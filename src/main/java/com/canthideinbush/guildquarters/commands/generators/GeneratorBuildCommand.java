@@ -33,6 +33,8 @@ public class GeneratorBuildCommand extends BuilderCommand<ItemGenerator, Generat
             public Class<? extends InternalCommand> getParentCommandClass() {
                 return GeneratorBuildCommand.class;
             }
+
+
         });
     }
 

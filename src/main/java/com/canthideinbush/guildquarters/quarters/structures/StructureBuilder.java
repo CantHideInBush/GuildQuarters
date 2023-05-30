@@ -1,16 +1,23 @@
 package com.canthideinbush.guildquarters.quarters.structures;
 
+import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerators;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorage;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorageImpl;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.utils.ObjectBuilder;
+import com.canthideinbush.utils.commands.ConfigMessageExtension;
+import com.canthideinbush.utils.commands.DefaultConfigMessage;
+import com.canthideinbush.utils.commands.InternalCommand;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class StructureBuilder implements ObjectBuilder<QuarterStructure> {
+public class StructureBuilder implements ObjectBuilder<QuarterStructure>, ConfigMessageExtension {
 
 
 
@@ -19,12 +26,13 @@ public class StructureBuilder implements ObjectBuilder<QuarterStructure> {
     private List<String> schematics;
     private StructureStorage storage;
 
-    public StructureBuilder(String id) {
-        this.id = id;
+
+    public StructureBuilder() {
         generators = new ArrayList<>();
         schematics = new ArrayList<>();
         storage = new StructureStorageImpl();
     }
+
 
     public StructureBuilder(QuarterStructure structure) {
         this.id = structure.getId();
@@ -45,6 +53,11 @@ public class StructureBuilder implements ObjectBuilder<QuarterStructure> {
 
     public StructureBuilder withId(String id) {
         this.id = id;
+        return this;
+    }
+    public StructureBuilder withSchem(String id) {
+        if (schematics.contains(id)) return this;
+        schematics.add(id);
         return this;
     }
 
@@ -70,27 +83,84 @@ public class StructureBuilder implements ObjectBuilder<QuarterStructure> {
     }
 
     @Override
-    public List<String> complete(CommandSender commandSender, String s) {
-        return null;
+    public List<String> complete(CommandSender commandSender, String option) {
+
+        switch (option) {
+            case "id" -> {
+                return Collections.singletonList(" ");
+            }
+            case "addgen" -> {
+                return GuildQ.getInstance().getItemGenerators().getIds();
+            }
+            case "addschem" -> {
+                return GuildQ.getInstance().getQuarterSchematics().getNames();
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     @Override
-    public String errorFor(String s, String s1) {
+    public String errorFor(String option, String value) {
+
+        switch (option) {
+            case "addgen" -> {
+                if (GuildQ.getInstance().getItemGenerators().get(value) == null) {
+                    return getMessage("generator-nonexistent");
+                }
+            }
+            case "addschem" -> {
+                if (GuildQ.getInstance().getQuarterSchematics().getByName(value) == null) {
+                    return getMessage("schem-nonexistent");
+                }
+            }
+        }
+
         return null;
     }
 
-    @Override
-    public void with(String s, String s1) {
+    @DefaultConfigMessage(forN = "generator-nonexistent")
+    private static final String GEN_NONEXISTENT = "Ten generator nie istnieje!";
 
+        @DefaultConfigMessage(forN = "schem-nonexistent")
+    private static final String SCHEM_NONEXISTENT = "Ten schemat nie istnieje!";
+
+
+
+
+    @Override
+    public Class<? extends InternalCommand> getCommandClass() {
+        return StructureBuildCommand.class;
+    }
+
+    @Override
+    public void with(String option, String value) {
+        switch (option) {
+            case "id" -> {
+                id = value;
+            }
+            case "addgen" -> {
+                this.withGenerator(GuildQ.getInstance().getItemGenerators().get(value));
+            }
+            case "addschem" -> {
+                this.withSchem(value);
+            }
+        }
     }
 
     @Override
     public List<String> missingOptions() {
-        return null;
+        if (id == null) return Collections.singletonList("id");
+
+        return Collections.emptyList();
     }
 
     @Override
     public boolean isComplete() {
-        return false;
+        return id != null;
+    }
+
+    public List<String> getSchematics() {
+        return schematics;
     }
 }

@@ -116,7 +116,7 @@ public class CollectCommand extends InternalCommand {
             return false;
         }
 
-        structure.getStorage().take(item, target, amount);
+        structure.getStorage().take(item.getId(), target, amount);
 
 
 
@@ -174,8 +174,8 @@ public class CollectCommand extends InternalCommand {
             }
         }
 
-        if (!isAdmin && args.length >= getArgIndex() + 3) {
-            item = GeneratorItem.get(args[getArgIndex() + 2]);
+        if (!isAdmin && args.length >= getArgIndex() + 2) {
+            item = GeneratorItem.get(args[getArgIndex() + 1]);
         }
         if (args.length == getArgIndex() + 3) {
             if (isAdmin) return Collections.singletonList("0");

@@ -42,9 +42,13 @@ public class QuarterSchematics implements ABSave {
     }
 
     public boolean removeSchematic(String name) {
-        QuarterSchematic structure = schematics.stream().filter(s -> name.equalsIgnoreCase(s.getName())).findAny().orElse(null);
-        if (structure == null) return false;
-        schematics.remove(structure);
+        QuarterSchematic schem = schematics.stream().filter(s -> name.equalsIgnoreCase(s.getName())).findAny().orElse(null);
+        if (schem == null) return false;
+        GuildQ.getInstance().getQuartersManager().getObjects().forEach(
+                schem::undo
+        );
+        schem.deleteUndo();
+        schematics.remove(schem);
         return true;
     }
 

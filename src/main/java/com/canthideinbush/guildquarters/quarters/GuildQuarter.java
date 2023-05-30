@@ -1,34 +1,24 @@
 package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
-import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.managers.Keyed;
 import com.canthideinbush.utils.storing.ABSave;
-import com.canthideinbush.utils.storing.YAMLConfig;
 import com.canthideinbush.utils.storing.YAMLElement;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldguard.WorldGuard;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.chunk.LevelChunk;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 
@@ -227,7 +217,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
     public void initialize() {
-        quarterObjects.setQuarter(this);
+        quarterObjects.initialize(this);
         getRegion().updateMembers();
     }
 

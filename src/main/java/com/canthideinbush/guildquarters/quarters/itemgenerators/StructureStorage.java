@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StructureStorage extends ABSave {
 
-    void take(GeneratorItem item, InventoryHolder to, int amount);
+    void take(String item, InventoryHolder to, int amount);
 
     void store(ItemGenerator generator);
 

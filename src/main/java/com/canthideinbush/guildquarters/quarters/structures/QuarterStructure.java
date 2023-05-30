@@ -1,6 +1,7 @@
 package com.canthideinbush.guildquarters.quarters.structures;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorage;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorageImpl;
@@ -22,6 +23,7 @@ public class QuarterStructure implements ABSave {
         this.id = builder.getId();
         this.storage = builder.getStorage();
         this.generators = builder.getGenerators();
+        this.schematics = builder.getSchematics();
     }
 
     public QuarterStructure(Map<String, Object> map) {
@@ -30,6 +32,12 @@ public class QuarterStructure implements ABSave {
 
     @YAMLElement
     String id;
+
+    private GuildQuarter quarter;
+
+    public void initialize(GuildQuarter quarter) {
+        this.quarter = quarter;
+    }
 
     public String getId() {
         return id;
@@ -79,11 +87,16 @@ public class QuarterStructure implements ABSave {
         if (schematics.contains(schem)) return;
         schematics.add(schem);
 
-        QuarterSchematic schematic = GuildQ.getInstance().getQuarterSchematics().getByName();
+        QuarterSchematic schematic = GuildQ.getInstance().getQuarterSchematics().getByName(schem);
+        if (schematic != null) {
+            schematic.paste(quarter);
+        }
 
     }
     public void removeSchematic(String schem) {
         schematics.remove(schem);
+        QuarterSchematic schematic = GuildQ.getInstance().getQuarterSchematics().getByName(schem);
+        if (schematic != null) schematic.undo(quarter);
     }
 
 
@@ -104,6 +117,7 @@ public class QuarterStructure implements ABSave {
         QuarterStructure clone = new QuarterStructure(this.id);
         clone.generators = this.generators;
         clone.storage = this.storage;
+        clone.schematics = this.schematics;
         return clone;
     }
 
