@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class StructureStorageImpl implements StructureStorage{
+public class StructureStorageImpl implements StructureStorage {
 
 
     public StructureStorageImpl() {}
@@ -21,6 +21,9 @@ public class StructureStorageImpl implements StructureStorage{
 
     @YAMLElement
     private Map<String, Integer> storedItems = new HashMap<>();
+
+    @YAMLElement
+    private Map<String, Integer> limit = new HashMap<>();
 
     @Override
     public void take(String itemId, InventoryHolder to, int amount) {
@@ -37,6 +40,17 @@ public class StructureStorageImpl implements StructureStorage{
         storedItems.put(itemId, stored - amount);
     }
 
+
+    public void setLimit(String itemId, int limit) {
+        this.limit.put(itemId, limit);
+    }
+
+    public int getLimit(String itemId) {
+        return limit.getOrDefault(itemId, -1);
+    }
+
+
+
     private int getFreeSlotsFor(GeneratorItem item, InventoryHolder holder) {
         int free = 0;
         ItemStack stack = item.getItem();
@@ -49,8 +63,20 @@ public class StructureStorageImpl implements StructureStorage{
 
     @Override
     public void store(ItemGenerator generator) {
-        storedItems.put(generator.getItem().getId(),
-                storedItems.getOrDefault(generator.getItem().getId(), 0) + generator.getAmount());
+        String itemId = generator.getItem().getId();
+        int amount = generator.getAmount();
+        int storedAmount = getAmount(itemId);
+        int limit = getLimit(itemId);
+
+        if (getLimit(itemId) >= -1) {
+            if (storedAmount >= limit) return;
+            if (storedAmount + amount > getLimit(itemId)) {
+                amount = limit - storedAmount;
+            }
+        }
+
+        storedItems.put(itemId,
+                storedItems.getOrDefault(itemId, 0) + amount);
     }
 
     @Override
@@ -59,8 +85,8 @@ public class StructureStorageImpl implements StructureStorage{
     }
 
     @Override
-    public int getAmount(GeneratorItem item) {
-        return storedItems.getOrDefault(item.getId(), 0);
+    public int getAmount(String itemId) {
+        return storedItems.getOrDefault(itemId, 0);
     }
 
 }

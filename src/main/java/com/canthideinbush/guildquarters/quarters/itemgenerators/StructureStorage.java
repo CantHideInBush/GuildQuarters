@@ -8,12 +8,16 @@ import java.util.List;
 
 public interface StructureStorage extends ABSave {
 
-    void take(String item, InventoryHolder to, int amount);
+    void take(String itemId, InventoryHolder to, int amount);
 
     void store(ItemGenerator generator);
 
     List<String> getAvailable();
 
-    int getAmount(GeneratorItem item);
+    int getAmount(String itemId);
+
+    void setLimit(String itemId, int limit);
+
+    int getLimit(String itemId);
 
 }

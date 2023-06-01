@@ -180,7 +180,7 @@ public class CollectCommand extends InternalCommand {
         if (args.length == getArgIndex() + 3) {
             if (isAdmin) return Collections.singletonList("0");
             if (structure != null && item != null) {
-                return Collections.singletonList(structure.getStorage().getAmount(item) + "");
+                return Collections.singletonList(structure.getStorage().getAmount(item.getId()) + "");
             }
         }
 
