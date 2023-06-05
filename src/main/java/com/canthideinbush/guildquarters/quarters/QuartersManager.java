@@ -98,8 +98,8 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
     @NotNull
     private Chunk getEmptyChunk() {
-        for (int x = 0; x < GuildUtils.getGuildWorld().getWorldBorder().getSize(); x+= GuildUtils.getQuarterSize()) {
-            for (int z = 0; z < GuildUtils.getGuildWorld().getWorldBorder().getSize(); z+= GuildUtils.getQuarterSize()) {
+        for (int x = 0; x < GuildUtils.getGuildWorld().getWorldBorder().getSize() * 2; x+= GuildUtils.getQuarterSize()) {
+            for (int z = 0; z < GuildUtils.getGuildWorld().getWorldBorder().getSize() * 2; z+= GuildUtils.getQuarterSize()) {
                 if (getByChunk(x, z) == null) return GuildUtils.getGuildWorld().getChunkAt(x, z);
             }
         }

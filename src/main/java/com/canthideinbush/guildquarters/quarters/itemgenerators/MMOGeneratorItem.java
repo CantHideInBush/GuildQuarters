@@ -33,7 +33,8 @@ public class MMOGeneratorItem implements GeneratorItem {
 
     @Override
     public ItemStack getItem() {
-        return MMOItems.plugin.getItem(type, mmoId);
+        ItemStack item = MMOItems.plugin.getItem(type, mmoId);
+        return item == null ? null : item.clone();
     }
 
 }
