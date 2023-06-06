@@ -13,9 +13,6 @@ public class AdjustChunkSizeCommand extends InternalCommand  {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        ArgParser parser = new ArgParser(args, getArgIndex());
-
-
         Clipboard clipboard;
         if ((clipboard = GuildQ.getInstance().getUtilsProvider().worldEdit.findByName(GuildUtils.getSchematicName())) == null) {
             sendConfigErrorMessage(sender, getMessagePath("clipboard-nonexistent"));
@@ -27,13 +24,24 @@ public class AdjustChunkSizeCommand extends InternalCommand  {
 
         int suggested = (int) Math.max(Math.ceil(xLength / 16.0), Math.ceil(zLength / 16.0));
 
+        sendConfigSuccessMessage(sender, getMessagePath("confirm"), suggested);
+
+        ConfirmCommand.actionFor(sender, s -> {
+            GuildQ.getInstance().getConfig().set("Quarters.ChunkSize", suggested);
+            sendConfigSuccessMessage(sender, getMessagePath("success"), suggested);
+            GuildQ.getInstance().getConfig().save();
+        });
 
 
         return true;
     }
 
     @DefaultConfigMessage(forN = "clipboard-nonexistent")
-    private static final String A = "Ten schemat nie istnieje!";
+    private static final String a = "Ten schemat nie istnieje!";
+    @DefaultConfigMessage(forN = "confirm")
+    private static final String b = "Sugerowany rozmiar: %s - potwierdz akcje za pomoca /gq confirm";
+    @DefaultConfigMessage(forN = "success")
+    private static final String c = "Zmieniono rozmiar na %s!";
 
 
     @Override
@@ -45,4 +53,7 @@ public class AdjustChunkSizeCommand extends InternalCommand  {
     public Class<? extends InternalCommand> getParentCommandClass() {
         return MainCommand.class;
     }
+
+
+
 }

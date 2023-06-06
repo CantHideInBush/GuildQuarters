@@ -7,8 +7,8 @@ import com.canthideinbush.guildquarters.commands.quarter.region.GetExpansion;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class QuartersParentCommand extends ParentCommand {
 
@@ -55,8 +55,8 @@ public class QuartersParentCommand extends ParentCommand {
     }
 
 
-
-
-
-
+    @Override
+    protected List<String> getLabels() {
+        return Arrays.asList("q", "quart", "qt");
+    }
 }

@@ -1,6 +1,7 @@
 GuildWorldName: "guildworld"
 Quarters:
   ChunkSize: 10
+  SpawnOffset: 0;0;0
   region:
     xz-size: 20
     y-up: 20

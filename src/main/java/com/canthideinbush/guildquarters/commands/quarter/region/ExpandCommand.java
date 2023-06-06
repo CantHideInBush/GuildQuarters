@@ -22,7 +22,7 @@ public class ExpandCommand extends InternalCommand implements ABArgumentCompleti
         ArgParser parser = new ArgParser(args, getArgIndex());
 
         if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, "command-arguments-insufficent");
+            sendConfigErrorMessage(sender, "command-arguments-insufficient");
             return false;
         }
 
@@ -34,7 +34,7 @@ public class ExpandCommand extends InternalCommand implements ABArgumentCompleti
         }
 
         if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, "command-arguments-insufficent");
+            sendConfigErrorMessage(sender, "command-arguments-insufficient");
             return false;
         }
 
@@ -48,7 +48,7 @@ public class ExpandCommand extends InternalCommand implements ABArgumentCompleti
 
 
         if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, "command-arguments-insufficent");
+            sendConfigErrorMessage(sender, "command-arguments-insufficient");
             return false;
         }
         int distance;

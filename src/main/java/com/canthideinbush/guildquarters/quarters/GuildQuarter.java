@@ -62,7 +62,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         setDebugGlass();
         GuildUtils.pasteGuildSchematic(getInitialLocation());
         region = new QuarterRegion(this);
-        spawnLocation = getInitialLocation();
+        spawnLocation = getInitialLocation().add(GuildUtils.getSpawnOffset());
         quarterObjects = new QuarterObjects();
         initialize();
     }
@@ -75,7 +75,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         setDebugGlass();
         GuildUtils.pasteGuildSchematic(getInitialLocation());
         region = new QuarterRegion(this);
-        spawnLocation = getInitialLocation();
+        spawnLocation = getInitialLocation().add(GuildUtils.getSpawnOffset());
         quarterObjects = new QuarterObjects();
         initialize();
     }

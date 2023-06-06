@@ -203,7 +203,7 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
     }
 
     private void loadCommands() {
-        new MainCommand(this);
+        new MainCommand(this).saveDefaultConfigMessages();
 
         GeneratorBuildCommand.builders.put("constant", ConstantGeneratorBuilder.class);
         GeneratorBuildCommand.builders.put("random", RandomItemBuilder.class);

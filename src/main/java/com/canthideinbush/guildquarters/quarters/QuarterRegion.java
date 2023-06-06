@@ -37,12 +37,6 @@ public class QuarterRegion implements ABSave {
 
 
 
-    public enum Direction  {
-        UP,DOWN,HORIZON;
-        public static List<String> values = Stream.of(values())
-                .map(Enum::name).collect(Collectors.toList());
-    }
-
     @YAMLElement
     private String quarterId;
     private GuildQuarter quarter;
@@ -54,7 +48,7 @@ public class QuarterRegion implements ABSave {
 
     @YAMLElement
     private String regionId;
-    private ProtectedCuboidRegion region() {
+    public ProtectedCuboidRegion region() {
         return (ProtectedCuboidRegion) WorldGuardUtils.getRegion(GuildUtils.getGuildWorld(), regionId);
     }
 
