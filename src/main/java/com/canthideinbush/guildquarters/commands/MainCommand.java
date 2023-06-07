@@ -31,6 +31,7 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new ReloadCommand());
         subCommands.add(new HomeCommand());
         subCommands.add(new CollectCommand());
+        subCommands.add(new CollectAllCommand());
         subCommands.add(new StructureParentCommand());
         subCommands.add(new ConfirmCommand());
         subCommands.add(new AdjustChunkSizeCommand());

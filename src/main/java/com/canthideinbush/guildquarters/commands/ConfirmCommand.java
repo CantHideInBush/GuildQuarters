@@ -1,5 +1,6 @@
 package com.canthideinbush.guildquarters.commands;
 
+import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.action.ConfirmActionCommand;
 import org.bukkit.command.CommandSender;
@@ -23,6 +24,13 @@ public class ConfirmCommand extends ConfirmActionCommand {
     @Override
     protected HashMap<CommandSender, Consumer<CommandSender>> getActionMap() {
         return actionMap;
+    }
+
+    @DefaultConfigMessage(forN = "warning")
+    private static final String WARNING = "Czy na pewno chcesz wykonac te akcje? Wpisz /gq confirm aby potwierdzic.";
+
+    public static void sendWarning(CommandSender sender) {
+        instance.sendConfigErrorMessage(sender, instance.getMessagePath("warning"));
     }
 
     @Override

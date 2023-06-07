@@ -129,13 +129,6 @@ public class CollectCommand extends InternalCommand {
     @DefaultConfigMessage(forN = "not-online")
     private static final String NOT_ONLINE = "Gracz %s nie jest online!";
 
-
-
-    /*
-
-    /collect <structure> <item> <amount> (target)
-
-     */
     @Override
     public List<String> complete(String[] args, CommandSender sender) {
         Player player = null;

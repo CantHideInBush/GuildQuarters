@@ -12,6 +12,8 @@ public class SchemParentCommand extends ParentCommand {
     public SchemParentCommand() {
         subCommands.add(new CreateSchemCommand());
         subCommands.add(new RemoveSchemCommand());
+        subCommands.add(new PasteAllCommand());
+        subCommands.add(new UndoAllCommand());
     }
 
 
