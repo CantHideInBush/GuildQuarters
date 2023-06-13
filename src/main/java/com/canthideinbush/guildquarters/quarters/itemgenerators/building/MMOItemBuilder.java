@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MMOItemBuilder implements GeneratorItemBuilder {
 
@@ -38,7 +39,8 @@ public class MMOItemBuilder implements GeneratorItemBuilder {
                 return Collections.singletonList(" ");
             }
             case "type" -> {
-                return MMOItems.plugin.getTypes().getAllTypeNames();
+                return MMOItems.plugin.getTypes().getAllTypeNames().stream()
+                        .filter(s -> true).collect(Collectors.toList());
             }
             case "mmoid" -> {
                 if (type != null) return MMOItems.plugin.getTemplates().getTemplateNames(MMOItems.plugin.getTypes().get(type));
@@ -46,6 +48,7 @@ public class MMOItemBuilder implements GeneratorItemBuilder {
         }
         return Collections.emptyList();
     }
+
 
     @Override
     public String errorFor(String option, String value) {
@@ -57,7 +60,7 @@ public class MMOItemBuilder implements GeneratorItemBuilder {
             }
             case "mmoid" -> {
                 if (type == null) {
-                    return "Najpierw ustaw numer!";
+                    return "Najpierw ustaw typ!";
                 }
                 if (MMOItems.plugin.getMMOItem(MMOItems.plugin.getTypes().get(type), value) == null) {
                     return "Przedmiot o tej nazwie nie istnieje!";

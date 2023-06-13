@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters;
 import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
+import com.canthideinbush.guildquarters.commands.spawner.SpawnerBuildCommand;
 import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
 import com.canthideinbush.guildquarters.quarters.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.*;
@@ -12,12 +13,15 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItem
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemBuilder;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
+import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
+import com.canthideinbush.guildquarters.quarters.spawners.MMSpawnerBuilder;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructures;
 import com.canthideinbush.guildquarters.quarters.structures.StructureBuilder;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
+import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -28,8 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.function.Function;
+import java.util.logging.Level;
 
-public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
+public final class GuildQ extends CHIBPlugin implements Listener {
 
     static {
         ConfigurationSerialization.registerClass(GuildQuarter.class);
@@ -46,6 +51,7 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
         ConfigurationSerialization.registerClass(ConstantItemGenerator.class);
         ConfigurationSerialization.registerClass(StructureStorageImpl.class);
         ConfigurationSerialization.registerClass(QuarterStructure.class);
+        ConfigurationSerialization.registerClass(MMSpawner.class);
 
     }
 
@@ -96,6 +102,10 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
 
         CHIBInit();
 
+        //For PlugMan integration
+        if (GuildUtils.getGuildWorld() != null) loadQuarters();
+
+
         GuildUtils.createGuildWorld();
 
         loadCommands();
@@ -120,10 +130,14 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
         saveManagers();
 
         saveConfigurations();
+
+        super.onDisable();
     }
 
 
     private void loadManagers() {
+
+
         quarterSchematics = quartersStorage.contains("Schematics") ? (QuarterSchematics) quartersStorage.get("Schematics") : new QuarterSchematics();
         quarterStructures = quartersStorage.contains("Structures") ? (QuarterStructures) quartersStorage.get("Structures") : new QuarterStructures();
         itemGenerators = quartersStorage.contains("ItemGenerators") ? (ItemGenerators) quartersStorage.get("ItemGenerators") : new ItemGenerators();
@@ -131,6 +145,8 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
 
         QuarterTiers.load();
         QuarterRegion.init();
+
+
 
         //QuartersManager is loaded in world load event below
 
@@ -140,11 +156,18 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
         if (event.getWorld().equals(GuildUtils.getGuildWorld())) {
-            quartersStorage = new YAMLConfig(this, "quarters", false);
-            quartersManager = new QuartersManager();
-            quartersManager.initialize();
+            if (quartersStorage == null) loadQuarters();
         }
     }
+
+    private void loadQuarters() {
+        quartersStorage = new YAMLConfig(this, "quarters", false);
+        quartersManager = new QuartersManager();
+        quartersManager.initialize();
+        getLogger().log(Level.INFO, "Successfully loaded quarters");
+    }
+
+
 
 
     /**
@@ -168,9 +191,17 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
     private void loadConfigurations() {
         config = new YAMLConfig(this, "config", true);
         messageConfig = new YAMLConfig(this, "messages", true);
-        //QuartersStorage in event
+
+
+
         itemsStorage = new YAMLConfig(this, "items", false);
         GeneratorItem.load();
+
+        MMSpawner.load();
+
+        //QuartersStorage loaded also in event!!!
+
+
     }
 
     private void loadListeners() {
@@ -183,6 +214,7 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
         quartersStorage.save();
 
         GeneratorItem.save();
+        MMSpawner.save();
         itemsStorage.save();
     }
 
@@ -213,6 +245,9 @@ public final class GuildQ extends CHIBPlugin implements @NotNull Listener {
 
 
         StructureBuildCommand.builders.put("simple", StructureBuilder.class);
+
+
+        SpawnerBuildCommand.builders.put("default", MMSpawnerBuilder.class);
 
 
     }

@@ -216,6 +216,8 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         return region;
     }
 
+
+
     public void initialize() {
         quarterObjects.initialize(this);
         getRegion().updateMembers();

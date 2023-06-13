@@ -6,6 +6,7 @@ import com.canthideinbush.guildquarters.commands.item.ItemParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.TeleportToQuarterCommand;
 import com.canthideinbush.guildquarters.commands.schem.SchemParentCommand;
+import com.canthideinbush.guildquarters.commands.spawner.SpawnerParentCommand;
 import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
 import com.canthideinbush.guildquarters.commands.structure.StructureParentCommand;
 import com.canthideinbush.guildquarters.commands.tiers.TierParentCommand;
@@ -36,6 +37,7 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new ConfirmCommand());
         subCommands.add(new AdjustChunkSizeCommand());
         subCommands.add(new SetSpawnOffsetCommand());
+        subCommands.add(new SpawnerParentCommand());
     }
 
     @Override

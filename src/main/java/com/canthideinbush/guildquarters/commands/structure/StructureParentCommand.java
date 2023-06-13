@@ -8,7 +8,7 @@ public class StructureParentCommand extends ParentCommand {
 
     public StructureParentCommand() {
         subCommands.add(new StructureBuildCommand());
-        subCommands.add(new RemoveStructure());
+        subCommands.add(new StructureRemoveCommand());
     }
 
     @Override

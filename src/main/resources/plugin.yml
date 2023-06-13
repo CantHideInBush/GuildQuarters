@@ -8,3 +8,5 @@ depend:
   - CHIBUtils
   - WorldEdit
   - WorldGuard
+  - Guilds
+  - MythicMobs

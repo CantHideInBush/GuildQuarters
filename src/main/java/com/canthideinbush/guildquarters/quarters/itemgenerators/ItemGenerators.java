@@ -1,6 +1,8 @@
 package com.canthideinbush.guildquarters.quarters.itemgenerators;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.GuildQuarter;
+import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 
@@ -40,6 +42,11 @@ public class ItemGenerators implements ABSave {
 
     public void unregister(ItemGenerator generator) {
         generators.remove(generator);
+        for (GuildQuarter quarter : GuildQ.getInstance().getQuartersManager().getObjects()) {
+            for (QuarterStructure structure : quarter.getQuarterObjects().getStructures()) {
+                structure.removeGenerator(generator);
+            }
+        }
     }
     public void save() {
         GuildQ.getInstance().getQuartersStorage().set("ItemGenerators", this);

@@ -27,6 +27,7 @@ common:
   generator-nonexistent: "Ten generator nie istnieje!"
   structure-nonexistent: "Ta struktura nie istnieje!"
   structure-not-built: "Ta dzialka nie posiada podanej struktury!"
+  spawner-nonexistent: "Ten spawner nie istnieje!"
 
 
 command:

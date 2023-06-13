@@ -1,16 +1,13 @@
 package com.canthideinbush.guildquarters.commands.structure;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
-import com.canthideinbush.utils.commands.ABArgumentCompletion;
-import com.canthideinbush.utils.commands.InternalCommand;
-import com.canthideinbush.utils.commands.TabCompleter;
+import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class RemoveStructure extends InternalCommand implements ABArgumentCompletion {
+public class StructureRemoveCommand extends InternalCommand implements ABArgumentCompletion {
     private final List<TabCompleter> completion = prepareCompletion();
 
     @Override
@@ -28,6 +25,14 @@ public class RemoveStructure extends InternalCommand implements ABArgumentComple
         sendConfigSuccessMessage(sender, getMessagePath("success"));
 
         return true;
+    }
+
+    @DefaultConfigMessage(forN = "success")
+    private static final String SUCCESS = "Usunieto strukture!";
+
+    @ABCompleter(index = 0)
+    private List<String> completeStructures() {
+        return GuildQ.getInstance().getQuarterStructures().getIds();
     }
 
     @Override

@@ -38,7 +38,7 @@ public class TeleportToQuarterCommand extends InternalCommand {
     @Override
     public List<String> complete(String[] args, CommandSender sender) {
         return args.length - 1 == getArgIndex() ? GuildQ.getInstance().getQuartersManager().getShortIds() :
-                args.length == getArgIndex() && sender.hasPermission(ADMIN_PERMISSION) ?
+                args.length == getArgIndex() && sender.hasPermission(ADMIN_PERMISSION()) ?
                         Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()) :
 
 
@@ -69,8 +69,8 @@ public class TeleportToQuarterCommand extends InternalCommand {
             }
             target = (Player) sender;
         }
-        else if (!sender.hasPermission(ADMIN_PERMISSION)) {
-            sendConfigErrorMessage(sender, DefMessages.PERMISSION_INSUFFICIENT, ADMIN_PERMISSION);
+        else if (!sender.hasPermission(ADMIN_PERMISSION())) {
+            sendConfigErrorMessage(sender, DefMessages.PERMISSION_INSUFFICIENT, ADMIN_PERMISSION());
             return false;
         }
         else {
@@ -101,11 +101,13 @@ public class TeleportToQuarterCommand extends InternalCommand {
     @DefaultConfigMessage(forN = "not-online")
     private static final String NOT_ONLINE = "Ten gracz nie jest online!";
 
-    private final String ADMIN_PERMISSION = getAbsolutePermission() + ".admin";
+    private String ADMIN_PERMISSION() {
+        return getAbsolutePermission() + ".admin";
+    }
 
     @Override
     protected List<Permission> getAdditionalPermissions() {
-        Permission adminPermission = new Permission(ADMIN_PERMISSION);
+        Permission adminPermission = new Permission(ADMIN_PERMISSION());
         Bukkit.getPluginManager().getPermission(getAbsolutePermission()).addParent(adminPermission, true);
         return Collections.singletonList(adminPermission);
     }

@@ -68,7 +68,7 @@ public class StructureStorageImpl implements StructureStorage {
         int storedAmount = getAmount(itemId);
         int limit = getLimit(itemId);
 
-        if (getLimit(itemId) >= -1) {
+        if (getLimit(itemId) > -1) {
             if (storedAmount >= limit) return;
             if (storedAmount + amount > getLimit(itemId)) {
                 amount = limit - storedAmount;

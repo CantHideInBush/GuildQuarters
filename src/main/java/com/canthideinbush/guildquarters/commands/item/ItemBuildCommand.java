@@ -46,12 +46,15 @@ public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorIte
                 return super.execute(sender, args);
             }
 
-            @Override
+            /*
+                        @Override
             public List<String> complete(String[] args, CommandSender sender) {
                 if (args.length > getArgIndex() + 1) args = Arrays.copyOf(args, args.length + 1);
                 args[args.length - 1] = " ";
                 return super.complete(args, sender);
             }
+             */
+
         });
         subCommands.add(new CompleteCommand(this) {
             @Override

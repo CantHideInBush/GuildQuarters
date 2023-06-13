@@ -31,6 +31,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new RemoveGenerator());
         subcommands.add(new AddStructure());
         subcommands.add(new RemoveStructure());
+        subcommands.add(new AddSpawner());
+        subcommands.add(new RemoveSpawner());
 
 
     }

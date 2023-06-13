@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
+import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
@@ -37,10 +38,13 @@ public class QuarterObjects implements ABSave {
     @YAMLElement
     private List<QuarterStructure> quarterStructures = new ArrayList<>();
 
+    @YAMLElement
+    private List<String> mythicSpawners = new ArrayList<>();
 
 
-
-
+    public List<QuarterStructure> getStructures() {
+        return quarterStructures;
+    }
 
     public List<String> getStructureIds() {
         return quarterStructures.stream().map(QuarterStructure::getId).collect(Collectors.toList());
@@ -60,6 +64,7 @@ public class QuarterObjects implements ABSave {
     public boolean hasSchematic(String name) {
         return quarterSchematics.stream().anyMatch(s -> s.equalsIgnoreCase(name));
     }
+
 
 
 
@@ -131,6 +136,25 @@ public class QuarterObjects implements ABSave {
         schematic.undo(quarter);
 
         quarterSchematics.remove(name);
+    }
+
+
+    public void placeSpawner(MMSpawner spawner) {
+        mythicSpawners.add(spawner.getId());
+        spawner.place(quarter);
+    }
+
+    public void removeSpawner(MMSpawner spawner) {
+        mythicSpawners.remove(spawner.getId());
+        spawner.remove(quarter);
+    }
+
+    public void removeSpawner(String spawner) {
+        mythicSpawners.remove(spawner);
+        MMSpawner mmSpawner;
+        if ((mmSpawner = MMSpawner.findByName(spawner)) != null) {
+            mmSpawner.remove(quarter);
+        }
     }
 
 
