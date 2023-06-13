@@ -28,6 +28,7 @@ common:
   structure-nonexistent: "Ta struktura nie istnieje!"
   structure-not-built: "Ta dzialka nie posiada podanej struktury!"
   spawner-nonexistent: "Ten spawner nie istnieje!"
+  outside-template: "Znajdujesz sie poza TemplateQuarter!"
 
 
 command:

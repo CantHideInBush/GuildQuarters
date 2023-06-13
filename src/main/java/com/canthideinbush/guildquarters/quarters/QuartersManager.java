@@ -7,6 +7,7 @@ import com.canthideinbush.utils.managers.KeyedStorage;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -14,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -111,15 +113,43 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     }
 
 
+    private int proxyNPCId = -1;
+
+    public int getProxyNPCId() {
+        return proxyNPCId;
+    }
+
+    public void setProxyNPCId(int proxyNPCId) {
+        this.proxyNPCId = proxyNPCId;
+    }
+
+    public Location proxyNPCLocation = new Location(GuildUtils.getGuildWorld(), 0, 0,0);
+
+    public void setProxyNPCLocation(Location proxyNPCLocation) {
+        this.proxyNPCLocation = proxyNPCLocation;
+    }
+
+    public Location getProxyNPCLocation() {
+        return proxyNPCLocation;
+    }
+
     public void save() {
         YAMLConfig config = GuildQ.getInstance().getQuartersStorage();
         config.set("Quarters", getObjects());
+        config.set("ProxyNPCLocation", proxyNPCLocation);
+        config.set("ProxyNPCId", proxyNPCId);
     }
 
     public void load() {
         YAMLConfig config = GuildQ.getInstance().getQuartersStorage();
         if (config.contains("Quarters")) this.quarters.addAll((Collection<? extends GuildQuarter>) config.getList("Quarters"));
+        proxyNPCLocation = config.getLocation("ProxyNPCLocation");
+        proxyNPCId = config.getInt("ProxyNPCId");
     }
 
 
+    public NPC getProxyNPC() {
+        if (proxyNPCId == -1) return null;
+        return GuildQ.citizens.getNPCRegistry().getById(proxyNPCId);
+    }
 }

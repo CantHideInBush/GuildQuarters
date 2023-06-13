@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.commands;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorage;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.utils.DefMessages;
@@ -10,6 +11,8 @@ import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.TabCompleter;
 import com.canthideinbush.utils.storing.ArgParser;
+import me.glaremasters.guilds.Guilds;
+import me.glaremasters.guilds.guild.Guild;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -18,6 +21,7 @@ import org.bukkit.permissions.Permission;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CollectAllCommand extends InternalCommand implements ABArgumentCompletion {
 
@@ -27,48 +31,60 @@ public class CollectAllCommand extends InternalCommand implements ABArgumentComp
         ArgParser parser = new ArgParser(args, getArgIndex());
 
         if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, DefMessages.ARGS_INSUFFICIENT);
+            sendConfigErrorMessage(sender, "command-arguments-insufficient");
             return false;
         }
 
-        GuildQuarter quarter;
-        if ((quarter = GuildQ.getInstance().getQuartersManager().getByShortId(parser.next())) == null) {
+        String id = parser.next();
+        if (!GuildQ.getInstance().getQuarterStructures().exists(id)) {
+            sendConfigErrorMessage(sender, "common.structure-nonexistent");
+            return false;
+        }
+
+
+
+        QuarterStructure structure;
+
+
+        Player target;
+
+        if (!parser.hasNext()) {
+            if (sender instanceof ConsoleCommandSender) {
+                sendConfigErrorMessage(sender, "command-arguments-insufficient");
+                return false;
+            }
+            target = (Player) sender;
+        }
+        else if (!sender.hasPermission(ADMIN_PERMISSION())) {
+            sendConfigErrorMessage(sender, "common.permissions-insufficient", ADMIN_PERMISSION());
+            return false;
+        }
+        else {
+            target = Bukkit.getPlayer(parser.next());
+            if (target == null) {
+                sendConfigErrorMessage(sender, getMessagePath("not-online"), parser.current());
+                return false;
+            }
+        }
+
+        Guild guild = Guilds.getApi().getGuild(target);
+        if (guild == null) {
+
+            if (sender.equals(target)) sendConfigErrorMessage(sender, "quildq-guilds-not_member");
+            else sendConfigErrorMessage(sender, getMessagePath("not-member"));
+            return false;
+        }
+
+        GuildQuarter quarter = GuildQ.getInstance().getQuartersManager().getByGuildId(guild.getId());
+        if (quarter == null) {
             sendConfigErrorMessage(sender, "common.quarter-nonexistent");
             return false;
         }
 
-        if (!parser.hasNext()) {
-            sendConfigErrorMessage(sender, DefMessages.ARGS_INSUFFICIENT);
-            return false;
-        }
-
-        QuarterStructure structure;
-        if ((structure = quarter.getQuarterObjects().getStructure(parser.next())) == null) {
+        if ((structure = quarter.getQuarterObjects().getStructure(id)) == null) {
             sendConfigErrorMessage(sender, "common.structure-not-built");
             return false;
         }
-
-
-        if (sender instanceof ConsoleCommandSender) {
-            sendConfigErrorMessage(sender, DefMessages.ARGS_INSUFFICIENT);
-            return false;
-        }
-
-        Player target = null;
-        if (parser.hasNext()) {
-            if (!sender.hasPermission(ADMIN_PERMISSION())) {
-                sendConfigErrorMessage(sender, DefMessages.ARGS_INSUFFICIENT);
-                return false;
-            }
-            target = Bukkit.getPlayer(parser.next());
-        }
-
-        if (target == null) {
-            sendConfigErrorMessage(sender, getMessagePath("not-online"));
-            return false;
-        }
-
-
         StructureStorage storage = structure.getStorage();
         for (String itemId : storage.getAvailable()) {
             storage.take(itemId, target, storage.getAmount(itemId));
@@ -95,6 +111,35 @@ public class CollectAllCommand extends InternalCommand implements ABArgumentComp
     @Override
     public String getName() {
         return "collectall";
+    }
+
+    @Override
+    public List<String> complete(String[] args, CommandSender sender) {
+        Player player;
+        GuildQuarter quarter = null;
+        boolean isAdmin = sender.hasPermission(ADMIN_PERMISSION());
+        if (args.length >= getArgIndex() + 1) {
+            if (!isAdmin && sender instanceof Player) {
+                player = (Player) sender;
+                quarter = GuildQ.getInstance().getQuartersManager().getByMember(player);
+            }
+        }
+        if (args.length == getArgIndex() + 1) {
+            if (isAdmin) {
+                return GuildQ.getInstance().getQuarterStructures().getIds();
+            }
+            else if (quarter != null) {
+                return quarter.getQuarterObjects().getStructureIds();
+            }
+        }
+
+        if (isAdmin && args.length == getArgIndex() + 2) {
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+        }
+
+
+
+        return Collections.emptyList();
     }
 
     @Override

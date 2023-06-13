@@ -7,6 +7,9 @@ import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import org.bukkit.Bukkit;
@@ -17,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -65,6 +69,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         spawnLocation = getInitialLocation().add(GuildUtils.getSpawnOffset());
         quarterObjects = new QuarterObjects();
         initialize();
+        initializeNPC();
     }
 
     public GuildQuarter(Chunk chunk, Guild guild) {
@@ -78,6 +83,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         spawnLocation = getInitialLocation().add(GuildUtils.getSpawnOffset());
         quarterObjects = new QuarterObjects();
         initialize();
+        initializeNPC();
     }
 
 
@@ -178,6 +184,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public void remove() {
         clearChunks(() -> {
+            if (getQuarterNPC() != null) GuildQ.citizens.getNPCRegistry().deregister(getQuarterNPC());
             region.remove();
             GuildQ.getInstance().getQuartersManager().unregister(this);
             if (getGuild() != null) {
@@ -217,10 +224,37 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
 
+    @YAMLElement
+    private int npcId = -1;
 
     public void initialize() {
         quarterObjects.initialize(this);
         getRegion().updateMembers();
+    }
+
+    public void initializeNPC() {
+        if (this.equals(QuartersManager.templateQuarter)) return;
+
+        NPC quarterNPC;
+        NPC proxyNPC = GuildQ.getInstance().getQuartersManager().getProxyNPC();
+        if (npcId == -1 || getQuarterNPC() == null) {
+            if (GuildQ.getInstance().getQuartersManager().getProxyNPC() == null) return;
+            quarterNPC = proxyNPC.copy();
+            npcId = quarterNPC.getId();
+        }
+        else quarterNPC = GuildQ.citizens.getNPCRegistry().getById(npcId);
+        quarterNPC.removeTrait(ClickRedirectTrait.class);
+        quarterNPC.addTrait(new ClickRedirectTrait(proxyNPC));
+        Location proxyLocation = GuildQ.getInstance().getQuartersManager().getProxyNPCLocation();
+        Location loc = getInitialLocation().add(proxyLocation);
+        loc.setPitch(proxyLocation.getPitch());
+        loc.setYaw(proxyLocation.getYaw());
+        if (!quarterNPC.isSpawned()) quarterNPC.spawn(loc);
+        else quarterNPC.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+
+    private NPC getQuarterNPC() {
+        return CitizensAPI.getNPCRegistry().getById(npcId);
     }
 
     public QuarterObjects getQuarterObjects() {

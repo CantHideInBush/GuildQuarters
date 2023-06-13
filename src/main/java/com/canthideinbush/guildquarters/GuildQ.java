@@ -21,7 +21,8 @@ import com.canthideinbush.guildquarters.quarters.structures.StructureBuilder;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
-import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
+import net.citizensnpcs.Citizens;
+import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -80,9 +81,6 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     private static final HashMap<Class<?>, Function<Object, String>> serializers = new HashMap<>();
     private static final HashMap<Class<?>, Function<String, Object>> deserializers = new HashMap<>();
 
-    static {
-
-    }
 
 
 
@@ -99,12 +97,10 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         loadConfigurations();
 
 
-
         CHIBInit();
 
         //For PlugMan integration
         if (GuildUtils.getGuildWorld() != null) loadQuarters();
-
 
         GuildUtils.createGuildWorld();
 
@@ -115,15 +111,21 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         loadListeners();
 
 
-
-
-
-    }
-
-    @Override
-    public void onLoad() {
+        hookCitizens();
 
     }
+
+    private void hookCitizens() {
+        citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
+        getQuartersManager().getObjects().forEach(GuildQuarter::initializeNPC);
+        getLogger().log(Level.INFO, "Hooked into Citizens!");
+    }
+
+
+    public static Citizens citizens;
+
+
+
 
     @Override
     public void onDisable() {
@@ -162,8 +164,13 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
     private void loadQuarters() {
         quartersStorage = new YAMLConfig(this, "quarters", false);
+
+        MMSpawner.load();
+
         quartersManager = new QuartersManager();
+
         quartersManager.initialize();
+
         getLogger().log(Level.INFO, "Successfully loaded quarters");
     }
 
@@ -184,6 +191,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         quarterSchematics.save();
         quarterStructures.save();
         itemGenerators.save();
+
     }
 
 
@@ -197,7 +205,6 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         itemsStorage = new YAMLConfig(this, "items", false);
         GeneratorItem.load();
 
-        MMSpawner.load();
 
         //QuartersStorage loaded also in event!!!
 

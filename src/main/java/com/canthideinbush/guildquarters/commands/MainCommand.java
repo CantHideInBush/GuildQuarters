@@ -38,6 +38,8 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new AdjustChunkSizeCommand());
         subCommands.add(new SetSpawnOffsetCommand());
         subCommands.add(new SpawnerParentCommand());
+        subCommands.add(new SetProxyNPCCommand());
+        subCommands.add(new SetNPCLocationCommand());
     }
 
     @Override
