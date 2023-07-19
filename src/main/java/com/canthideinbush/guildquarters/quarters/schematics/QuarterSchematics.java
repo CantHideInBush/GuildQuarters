@@ -1,9 +1,6 @@
 package com.canthideinbush.guildquarters.quarters.schematics;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuarterTier;
-import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 

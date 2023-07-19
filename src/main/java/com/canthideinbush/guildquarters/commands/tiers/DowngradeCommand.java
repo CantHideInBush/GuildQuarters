@@ -3,15 +3,12 @@ package com.canthideinbush.guildquarters.commands.tiers;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuarterTier;
-import com.canthideinbush.guildquarters.quarters.QuarterTiers;
 import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class DowngradeCommand extends InternalCommand implements ABArgumentCompletion {
 

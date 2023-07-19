@@ -3,7 +3,6 @@ package com.canthideinbush.guildquarters.quarters.itemgenerators.building;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ConfigGeneratorItem;
-import com.canthideinbush.utils.CHIBUtils;
 import com.canthideinbush.utils.commands.CHIBCommandsRegistry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,7 +36,7 @@ public class ConfigGeneratorItemBuilder implements GeneratorItemBuilder {
     }
 
     @Override
-    public List<String> complete(CommandSender player, String option) {
+    public List<String> complete(CommandSender player, String option, String value) {
         if (option.equalsIgnoreCase("name")) return Collections.singletonList(" ");
         return Collections.emptyList();
     }

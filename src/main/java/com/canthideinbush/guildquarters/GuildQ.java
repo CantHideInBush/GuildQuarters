@@ -10,7 +10,7 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItemBuilder;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemBuilder;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
@@ -22,7 +22,6 @@ import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import net.citizensnpcs.Citizens;
-import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -53,6 +52,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         ConfigurationSerialization.registerClass(StructureStorageImpl.class);
         ConfigurationSerialization.registerClass(QuarterStructure.class);
         ConfigurationSerialization.registerClass(MMSpawner.class);
+        ConfigurationSerialization.registerClass(RandomItemGenerator.class);
 
     }
 
@@ -85,42 +85,50 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
 
 
+    private boolean enabled = false;
     @Override
     public void onEnable() {
         instance = this;
-
+        loadConfigurations();
         Bukkit.getPluginManager().registerEvents(this, this);
+        GuildUtils.createGuildWorld();
+    }
+
+
+    private void enablePlugin() {
+        if (enabled) return;
+        enabled = true;
 
         serializers.forEach(YAMLConfig::registerSerializer);
         deserializers.forEach(YAMLConfig::registerDeserializer);
 
-        loadConfigurations();
 
 
         CHIBInit();
 
-        //For PlugMan integration
-        if (GuildUtils.getGuildWorld() != null) loadQuarters();
 
-        GuildUtils.createGuildWorld();
 
         loadCommands();
+
+        //requires post-world load
+        quartersStorage = new YAMLConfig(this, "quarters", false);
 
         loadManagers();
 
         loadListeners();
 
-
         hookCitizens();
-
     }
 
     private void hookCitizens() {
+        if (citizens != null) {
+            if (getQuartersManager() != null) getQuartersManager().getObjects().forEach(GuildQuarter::initializeNPC);
+            return;
+        }
         citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
-        getQuartersManager().getObjects().forEach(GuildQuarter::initializeNPC);
+        if (getQuartersManager() != null) getQuartersManager().getObjects().forEach(GuildQuarter::initializeNPC);
         getLogger().log(Level.INFO, "Hooked into Citizens!");
     }
-
 
     public static Citizens citizens;
 
@@ -132,6 +140,8 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         saveManagers();
 
         saveConfigurations();
+
+        enabled = false;
 
         super.onDisable();
     }
@@ -158,20 +168,18 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
         if (event.getWorld().equals(GuildUtils.getGuildWorld())) {
-            if (quartersStorage == null) loadQuarters();
+            enablePlugin();
+            loadQuarters();
         }
     }
 
     private void loadQuarters() {
-        quartersStorage = new YAMLConfig(this, "quarters", false);
+        hookCitizens();
 
         MMSpawner.load();
-
         quartersManager = new QuartersManager();
 
-        quartersManager.initialize();
 
-        getLogger().log(Level.INFO, "Successfully loaded quarters");
     }
 
 
@@ -201,7 +209,6 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         messageConfig = new YAMLConfig(this, "messages", true);
 
 
-
         itemsStorage = new YAMLConfig(this, "items", false);
         GeneratorItem.load();
 
@@ -218,10 +225,11 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     private void saveConfigurations() {
         config.save();
         messageConfig.save();
+        MMSpawner.save();
         quartersStorage.save();
 
         GeneratorItem.save();
-        MMSpawner.save();
+
         itemsStorage.save();
     }
 
@@ -245,10 +253,11 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         new MainCommand(this).saveDefaultConfigMessages();
 
         GeneratorBuildCommand.builders.put("constant", ConstantGeneratorBuilder.class);
-        GeneratorBuildCommand.builders.put("random", RandomItemBuilder.class);
+        GeneratorBuildCommand.builders.put("random", RandomItemGeneratorBuilder.class);
 
         ItemBuildCommand.builders.put("config", ConfigGeneratorItemBuilder.class);
         ItemBuildCommand.builders.put("mmo", MMOItemBuilder.class);
+
 
 
         StructureBuildCommand.builders.put("simple", StructureBuilder.class);
@@ -281,5 +290,9 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
     public YAMLConfig getItemsStorage() {
         return itemsStorage;
+    }
+
+    public void setQuartersManager(QuartersManager quartersManager) {
+        this.quartersManager = quartersManager;
     }
 }

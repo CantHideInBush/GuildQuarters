@@ -5,6 +5,17 @@ import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.managers.Keyed;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.EditSessionBuilder;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.SideEffect;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
 import net.citizensnpcs.api.CitizensAPI;
@@ -12,11 +23,8 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.ClickRedirectTrait;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
@@ -55,6 +63,15 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     @YAMLElement
     private Location spawnLocation;
 
+    @YAMLElement
+    private boolean removed = false;
+
+    @YAMLElement
+    private boolean pasted = false;
+
+
+    private List<Runnable> queuedActions = new ArrayList<>();
+
     public GuildQuarter(Map<String, Object> map) {
         deserializeFromMap(map);
     }
@@ -63,13 +80,11 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         this.chunkX = chunk.getX();
         this.chunkZ = chunk.getZ();
         this.shortId = shortId;
-        setDebugGlass();
-        GuildUtils.pasteGuildSchematic(getInitialLocation());
+        pasteSchem();
         region = new QuarterRegion(this);
         spawnLocation = getInitialLocation().add(GuildUtils.getSpawnOffset());
         quarterObjects = new QuarterObjects();
         initialize();
-        initializeNPC();
     }
 
     public GuildQuarter(Chunk chunk, Guild guild) {
@@ -77,13 +92,28 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
         this.chunkX = chunk.getX();
         this.chunkZ = chunk.getZ();
         this.shortId = guild.getName();
-        setDebugGlass();
-        GuildUtils.pasteGuildSchematic(getInitialLocation());
+        pasteSchem();
         region = new QuarterRegion(this);
         spawnLocation = getInitialLocation().add(GuildUtils.getSpawnOffset());
         quarterObjects = new QuarterObjects();
         initialize();
-        initializeNPC();
+    }
+
+    private void pasteSchem() {
+        if (getGuild().getGuildMaster().isOnline()) {
+            GuildQ.getInstance().getUtilsProvider().getChatUtils().sendConfigMessage("common.quarter-pasting-start", getGuild().getGuildMaster().getAsPlayer(), ChatColor.GREEN);
+        }
+        GuildUtils.pasteGuildSchematic(getInitialLocation(), () -> {
+            initializeNPC();
+            if (getGuild().getGuildMaster().isOnline()) {
+                GuildQ.getInstance().getUtilsProvider().getChatUtils().sendConfigMessage("common.quarter-pasting-complete", getGuild().getGuildMaster().getAsPlayer(), ChatColor.GREEN);
+            }
+            pasted = true;
+            for (Runnable r : queuedActions) {
+                r.run();
+            }
+            queuedActions.clear();
+        });
     }
 
 
@@ -140,58 +170,53 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
     public void clearChunks(Runnable r) {
-        ArrayList<BlockPos> toClear = new ArrayList<>();
         Bukkit.getScheduler().runTaskAsynchronously(GuildQ.getInstance(), () -> {
-            CraftWorld nmsWorld = ((CraftWorld) GuildUtils.getGuildWorld()).getHandle().getWorld();
-            int quarterSize = GuildUtils.getQuarterSize();
-            int minY = GuildUtils.getGuildWorld().getMinHeight();
-            int maxY = GuildUtils.getGuildWorld().getMaxHeight();
-            for (int x = chunkX - quarterSize; x < chunkX + quarterSize; x++) {
-                for (int z = chunkZ - quarterSize; z < chunkZ + quarterSize; z++) {
-                    CraftChunk chunk = (CraftChunk) nmsWorld.getChunkAt(x, z);
-                    ChunkSnapshot snapshot = chunk.getChunkSnapshot(true, false, false);
-                    for (int bX = 0; bX < 16; bX++) {
-                        for (int bZ = 0; bZ < 16; bZ++) {
-                            if (snapshot.getHighestBlockYAt(bX, bZ) != minY - 1) {
-                                for (int y = minY; y < maxY; y++) {
-                                    if (!snapshot.getBlockType(bX, y, bZ).isAir()) {
-                                        toClear.add(new BlockPos(x * 16 + bX, y, z * 16 + bZ));
-                                    }
-                                }
-                            }
-                        }
+            World world = getInitialLocation().getWorld();
+            com.sk89q.worldedit.world.World weWorld = BukkitAdapter.adapt(world);
+            EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder().world(BukkitAdapter.adapt(world)).maxBlocks(-1).build();
+            editSession.getSideEffectApplier().with(SideEffect.LIGHTING, SideEffect.State.OFF);
 
-                    }
-
-
-                }
+            CuboidRegion region = new CuboidRegion(BlockVector3.at((getChunkX() - GuildUtils.getQuarterSize()) << 4, weWorld.getMinY(), (getChunkZ() - GuildUtils.getQuarterSize()) << 4), BlockVector3.at(((getChunkX() + GuildUtils.getQuarterSize()) << 4) + 15, weWorld.getMaxY(), ((getChunkZ() + GuildUtils.getQuarterSize()) << 4) + 15));
+            try {
+                editSession.setBlocks(region, BlockTypes.AIR.getDefaultState().toBaseBlock());
+            } catch (
+                    MaxChangedBlocksException e) {
+                throw new RuntimeException(e);
             }
-            Bukkit.getScheduler().runTask(GuildQ.getInstance(), () -> {
-                toClear.forEach((position) ->((CraftChunk) nmsWorld.getChunkAt(position.getX() >> 4, position.getZ() >> 4)).getHandle().setBlockState(position, Blocks.AIR.defaultBlockState(), false));
-                if (r != null) r.run();
-            });
+            editSession.close();
+            if (r != null)
+                Bukkit.getScheduler().runTask(GuildQ.getInstance(), r);
         });
     }
 
     public void reset() {
+        if (removed || !pasted) return;
         setQuarterTier(0);
         clearChunks(() -> {
-            GuildUtils.pasteGuildSchematic(getInitialLocation());
+            GuildUtils.pasteGuildSchematic(getInitialLocation(), () -> pasted = true);
             GuildQ.getInstance().getLogger().log(Level.INFO, "GuildQuarter " + getShortId() + " reset complete");;
         });
     }
 
 
     public void remove() {
+        removed = true;
+        GuildQ.getInstance().getQuartersManager().save();
+        if (getGuild() != null) {
+            getGuild().getMembers().forEach(
+                    (guildMember) -> {
+                        if (guildMember.isOnline()) {
+                            Player player = guildMember.getAsPlayer();
+                            if (GuildUtils.contains(this, player.getLocation())) player.performCommand("spawn");
+                        }
+                    }
+
+            );
+        }
         clearChunks(() -> {
             if (getQuarterNPC() != null) GuildQ.citizens.getNPCRegistry().deregister(getQuarterNPC());
             region.remove();
             GuildQ.getInstance().getQuartersManager().unregister(this);
-            if (getGuild() != null) {
-                getGuild().getMembers().forEach(
-                        guildMember -> guildMember.getAsPlayer().performCommand("/spawn")
-                );
-            }
         });
 
     }
@@ -230,9 +255,15 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     public void initialize() {
         quarterObjects.initialize(this);
         getRegion().updateMembers();
+        if (removed) remove();
     }
 
     public void initializeNPC() {
+        if (!pasted) {
+            queuedActions.add(() -> initializeNPC());
+            return;
+        }
+
         if (this.equals(QuartersManager.templateQuarter)) return;
 
         NPC quarterNPC;
@@ -254,6 +285,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
     private NPC getQuarterNPC() {
+        if (npcId == -1) return null;
         return CitizensAPI.getNPCRegistry().getById(npcId);
     }
 
@@ -263,5 +295,17 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public void tick() {
         quarterObjects.tick();
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public boolean isPasted() {
+        return pasted;
+    }
+
+    public List<Runnable> getQueuedActions() {
+        return queuedActions;
     }
 }

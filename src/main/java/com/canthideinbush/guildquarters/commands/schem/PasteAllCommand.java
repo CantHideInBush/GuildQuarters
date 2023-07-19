@@ -3,14 +3,10 @@ package com.canthideinbush.guildquarters.commands.schem;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.ConfirmCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-
-import java.util.function.Consumer;
 
 public class PasteAllCommand extends InternalCommand {
 

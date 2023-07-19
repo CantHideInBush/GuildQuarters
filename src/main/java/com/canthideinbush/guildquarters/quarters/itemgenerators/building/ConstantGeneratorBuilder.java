@@ -6,8 +6,6 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
 import com.canthideinbush.guildquarters.utils.Utils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Panda;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +14,13 @@ import java.util.List;
 public class ConstantGeneratorBuilder implements GeneratorBuilder {
 
 
+
+    public ConstantGeneratorBuilder(ConstantItemGenerator generator) {
+        this.amount = generator.getAmount();
+        this.interval = generator.getInterval();
+        this.itemId = generator.getItemId();
+        this.id = generator.getId();
+    }
 
     int amount = -1;
 
@@ -39,7 +44,7 @@ public class ConstantGeneratorBuilder implements GeneratorBuilder {
 
 
     @Override
-    public List<String> complete(CommandSender player, String option) {
+    public List<String> complete(CommandSender player, String option, String value) {
         switch (option.toLowerCase()) {
             case "amount","interval" -> {
                 return Collections.singletonList("0");

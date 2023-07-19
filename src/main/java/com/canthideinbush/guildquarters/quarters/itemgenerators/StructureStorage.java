@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StructureStorage extends ABSave {
 
-    void take(String itemId, InventoryHolder to, int amount);
+    int take(String itemId, InventoryHolder to, int amount);
 
     void store(ItemGenerator generator);
 
@@ -19,5 +19,7 @@ public interface StructureStorage extends ABSave {
     void setLimit(String itemId, int limit);
 
     int getLimit(String itemId);
+
+    boolean isEmpty();
 
 }

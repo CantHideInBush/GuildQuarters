@@ -44,6 +44,14 @@ public class HomeCommand extends InternalCommand implements ABArgumentCompletion
         }
 
         if ((quarter = GuildQ.getInstance().getQuartersManager().getByMember(target)) != null) {
+            if (quarter.isRemoved()) {
+                sendConfigErrorMessage(sender, "common.quarter-removed");
+                return false;
+            }
+            else if (!quarter.isPasted()) {
+                sendConfigErrorMessage(sender, "common.quarter-not-pasted");
+                return false;
+            }
             target.teleport(quarter.getSpawnLocation());
             sendConfigSuccessMessage(target, getMessagePath("success"));
             if (!target.equals(sender)) {

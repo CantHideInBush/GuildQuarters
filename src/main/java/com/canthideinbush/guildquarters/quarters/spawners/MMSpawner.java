@@ -88,7 +88,7 @@ public class MMSpawner implements ABSave {
             return;
         }
         Location location = quarter.getInitialLocation().add(offset);
-        AbstractLocation abstractLocation = new AbstractLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        AbstractLocation abstractLocation = new AbstractLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         MythicBukkit.inst().getSpawnerManager().copySpawner(mythicId, getSpawnerName(quarter), abstractLocation);
     }
 

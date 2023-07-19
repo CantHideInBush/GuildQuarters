@@ -8,8 +8,6 @@ import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import org.bukkit.entity.Player;
 
-import java.util.function.Consumer;
-
 public class SetNPCLocationCommand extends InternalCommand {
 
 

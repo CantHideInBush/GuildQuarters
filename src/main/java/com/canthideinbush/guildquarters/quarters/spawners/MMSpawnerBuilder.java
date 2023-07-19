@@ -1,6 +1,12 @@
 package com.canthideinbush.guildquarters.quarters.spawners;
 
+import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.commands.spawner.SpawnerBuildCommand;
+import com.canthideinbush.guildquarters.quarters.QuartersManager;
+import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.ObjectBuilder;
+import com.canthideinbush.utils.commands.ConfigMessageExtension;
+import com.canthideinbush.utils.commands.InternalCommand;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.spawning.spawners.MythicSpawner;
 import org.bukkit.Location;
@@ -20,6 +26,13 @@ public class MMSpawnerBuilder implements ObjectBuilder<MMSpawner> {
     public String mythicId;
     public Vector offset;
 
+
+
+    private Player sender;
+    public void setSender(Player sender) {
+        this.sender = sender;
+    }
+
     @Override
     public MMSpawner build() {
         return new MMSpawner(this);
@@ -31,12 +44,12 @@ public class MMSpawnerBuilder implements ObjectBuilder<MMSpawner> {
     }
 
     @Override
-    public List<String> complete(CommandSender commandSender, String option) {
+    public List<String> complete(CommandSender commandSender, String option, String value) {
         switch (option) {
             case "id" -> {
                 return Collections.singletonList(" ");
             }
-            case "mythicId" -> {
+            case "mythicid" -> {
                 return MythicBukkit.inst().getSpawnerManager().getSpawners().stream().map(
                         MythicSpawner::getName
                 ).filter(s -> !s.contains("guildq-")).collect(Collectors.toList());
@@ -57,12 +70,28 @@ public class MMSpawnerBuilder implements ObjectBuilder<MMSpawner> {
 
     @Override
     public String errorFor(String option, String value) {
+        switch (option) {
+            case "mythicid" -> {
+                if (MythicBukkit.inst().getSpawnerManager().getSpawnerByName(value) == null) {
+                    return GuildQ.getInstance().getUtilsProvider().getChatUtils().getMessage("common.mythic-spawner-nonexistent");
+                }
+            }
+            case "offset" -> {
+                if (!GuildUtils.contains(QuartersManager.templateQuarter, sender.getLocation())) {
+                    return GuildQ.getInstance().getUtilsProvider().getChatUtils().getMessage("common.outside-template");
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public void with(String option, String value) {
-
+        switch (option) {
+            case "id" -> this.id = value;
+            case "mythicid" -> this.mythicId = value;
+            case "offset" -> this.offset = (sender.getLocation().subtract(QuartersManager.templateQuarter.getInitialLocation())).toVector();
+        }
     }
 
     @Override
@@ -71,7 +100,7 @@ public class MMSpawnerBuilder implements ObjectBuilder<MMSpawner> {
         ArrayList<String> options = new ArrayList<>();
         if (id == null) options.add("id");
         if (offset == null) options.add("offset");
-        if (mythicId == null) options.add("mythicId");
+        if (mythicId == null) options.add("mythicid");
         return options;
     }
 
@@ -79,4 +108,5 @@ public class MMSpawnerBuilder implements ObjectBuilder<MMSpawner> {
     public boolean isComplete() {
         return id != null && offset != null && mythicId != null;
     }
+
 }

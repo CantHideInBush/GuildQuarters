@@ -2,6 +2,8 @@ package com.canthideinbush.guildquarters.quarters.itemgenerators;
 
 import com.canthideinbush.utils.storing.YAMLElement;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class ConstantItemGenerator implements ItemGenerator {
@@ -30,6 +32,10 @@ public class ConstantItemGenerator implements ItemGenerator {
 
     @YAMLElement
     private String id;
+
+    public String getItemId() {
+        return itemId;
+    }
 
     @Override
     public String getId() {
@@ -62,6 +68,11 @@ public class ConstantItemGenerator implements ItemGenerator {
     @Override
     public int getInterval() {
         return interval;
+    }
+
+    @Override
+    public List<String> available() {
+        return Collections.singletonList(itemId);
     }
 
     @Override

@@ -7,15 +7,11 @@ import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.TeleportToQuarterCommand;
 import com.canthideinbush.guildquarters.commands.schem.SchemParentCommand;
 import com.canthideinbush.guildquarters.commands.spawner.SpawnerParentCommand;
-import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
 import com.canthideinbush.guildquarters.commands.structure.StructureParentCommand;
 import com.canthideinbush.guildquarters.commands.tiers.TierParentCommand;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class MainCommand extends ParentCommand {
 
@@ -40,6 +36,7 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new SpawnerParentCommand());
         subCommands.add(new SetProxyNPCCommand());
         subCommands.add(new SetNPCLocationCommand());
+        subCommands.add(new InitializeCommand());
     }
 
     @Override

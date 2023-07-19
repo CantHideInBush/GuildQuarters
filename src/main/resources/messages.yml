@@ -19,6 +19,7 @@ quildq-guilds-not_member: "Nie jestes czlonkiem zadnej gildii!"
 quildq-guilds-not_master: "Nie jestes zalozycielem gildii!"
 
 common:
+  template-quarter-nonexistent: "Siedziba &eTemplateQuarter &cnie istnieje!"
   guild-nonexistent: "Ta gildia nie istnieje!"
   quarter-nonexistent: "Ta siedziba gildii nie istnieje!"
   tier-nonexistent: "Ten poziom gildii nie istnieje!"
@@ -29,8 +30,13 @@ common:
   structure-not-built: "Ta dzialka nie posiada podanej struktury!"
   spawner-nonexistent: "Ten spawner nie istnieje!"
   outside-template: "Znajdujesz sie poza TemplateQuarter!"
-
-
+  no-target-block: "Musisz patrzec sie na jakis blok!"
+  item-collected: "Otrzymano %s: %s"
+  quarter-removed: "Ta siedziba jest w trakcie usuwania!"
+  quarter-not-pasted: "Ta siedziba nie jest jeszcze wklejona! Odczekaj chwile lub skontaktuj sie z technikiem w razie dalszych problemow"
+  quarter-pasting-complete: "Siedziba utworzona!"
+  quarter-pasting-start: "&8Rozpoczynam tworzenie siedziby..."
+  mythic-spawner-nonexistent: "Ten spawner MythicMobs nie istnieje!"
 command:
   quarter:
     reset:

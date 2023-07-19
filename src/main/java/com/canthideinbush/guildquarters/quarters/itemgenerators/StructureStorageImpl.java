@@ -26,11 +26,11 @@ public class StructureStorageImpl implements StructureStorage {
     private Map<String, Integer> limit = new HashMap<>();
 
     @Override
-    public void take(String itemId, InventoryHolder to, int amount) {
+    public int take(String itemId, InventoryHolder to, int amount) {
         GeneratorItem item = GeneratorItem.get(itemId);
-        if (item == null) return;
+        if (item == null) return 0;
         int stored = storedItems.getOrDefault(itemId, amount);
-        if (stored <= 0 || amount <= 0) return;
+        if (stored <= 0 || amount <= 0) return 0;
         else if (amount > stored) amount = stored;
         int free = getFreeSlotsFor(item, to);
         if (amount > free) amount = free;
@@ -38,10 +38,12 @@ public class StructureStorageImpl implements StructureStorage {
         stack.setAmount(amount);
         to.getInventory().addItem(stack);
         storedItems.put(itemId, stored - amount);
+        return amount;
     }
 
 
     public void setLimit(String itemId, int limit) {
+        if (limit == -1) this.limit.remove(itemId);
         this.limit.put(itemId, limit);
     }
 
@@ -63,7 +65,9 @@ public class StructureStorageImpl implements StructureStorage {
 
     @Override
     public void store(ItemGenerator generator) {
-        String itemId = generator.getItem().getId();
+        GeneratorItem item = generator.getItem();
+        if (item == null) return;
+        String itemId = item.getId();
         int amount = generator.getAmount();
         int storedAmount = getAmount(itemId);
         int limit = getLimit(itemId);
@@ -89,4 +93,8 @@ public class StructureStorageImpl implements StructureStorage {
         return storedItems.getOrDefault(itemId, 0);
     }
 
+    @Override
+    public boolean isEmpty() {
+        return storedItems.values().stream().anyMatch(i -> i > 0);
+    }
 }

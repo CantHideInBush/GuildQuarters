@@ -2,7 +2,6 @@ package com.canthideinbush.guildquarters.quarters.structures;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 
@@ -68,7 +67,7 @@ public class QuarterStructures implements ABSave {
     }
 
 
-
-
-
+    public QuarterStructure get(String structure) {
+        return quarterStructures.stream().filter(s -> s.id.equalsIgnoreCase(structure)).findAny().orElse(null);
+    }
 }

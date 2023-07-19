@@ -2,7 +2,6 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.utils.managers.KeyedStorage;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Collection;

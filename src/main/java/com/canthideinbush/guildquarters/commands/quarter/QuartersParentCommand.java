@@ -58,7 +58,7 @@ public class QuartersParentCommand extends ParentCommand {
 
 
     @Override
-    protected List<String> getLabels() {
+    protected List<String> getAliases() {
         return Arrays.asList("q", "quart", "qt");
     }
 }

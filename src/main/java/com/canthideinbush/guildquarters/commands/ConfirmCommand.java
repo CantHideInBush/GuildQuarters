@@ -48,7 +48,7 @@ public class ConfirmCommand extends ConfirmActionCommand {
     }
 
     @Override
-    protected List<String> getLabels() {
+    protected List<String> getAliases() {
         return Collections.singletonList("c");
     }
 }

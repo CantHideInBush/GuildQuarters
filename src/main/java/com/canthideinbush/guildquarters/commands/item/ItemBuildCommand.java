@@ -1,15 +1,15 @@
 package com.canthideinbush.guildquarters.commands.item;
 
-import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
+import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ConfigGeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
+import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.GeneratorItemBuilder;
 import com.canthideinbush.utils.ObjectBuilder;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
-import com.canthideinbush.utils.commands.builder.BuilderCommand;
-import com.canthideinbush.utils.commands.builder.CompleteCommand;
-import com.canthideinbush.utils.commands.builder.StartCommand;
-import com.canthideinbush.utils.commands.builder.WithCommand;
+import com.canthideinbush.utils.commands.builder.*;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
@@ -62,6 +62,28 @@ public class ItemBuildCommand extends BuilderCommand<GeneratorItem, GeneratorIte
                 return ItemBuildCommand.class;
             }
         });
+        subCommands.add(new EditCommand<>(this) {
+            @Override
+            public Class<? extends InternalCommand> getParentCommandClass() {
+                return ItemBuildCommand.class;
+            }
+        });
+    }
+
+    @Override
+    public Class<? extends GeneratorItemBuilder> getBuilderFor(GeneratorItem item) {
+        if (item instanceof ConfigGeneratorItem) return ConfigGeneratorItemBuilder.class;
+        return null;
+    }
+
+    @Override
+    public GeneratorItem findById(String s) {
+        return GeneratorItem.get(s);
+    }
+
+    @Override
+    public List<String> getIdCompletion() {
+        return GeneratorItem.getIds();
     }
 
     @DefaultConfigMessage(forN = "invalid-item")

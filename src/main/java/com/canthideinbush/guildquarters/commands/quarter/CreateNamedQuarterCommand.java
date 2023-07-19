@@ -42,7 +42,7 @@ public class CreateNamedQuarterCommand extends InternalCommand {
             return false;
         }
 
-        if (GuildQ.getInstance().getQuartersManager().createNamedQuarter(parser.next())) {
+        if (GuildQ.getInstance().getQuartersManager().createNamedQuarterAsync(parser.next())) {
             sendConfigSuccessMessage(sender, "guildq-quarter-create-success");
         }
         else {

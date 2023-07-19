@@ -54,8 +54,10 @@ public class QuarterSchematic implements ABSave {
     }
 
     public void paste(GuildQuarter quarter) {
-        Clipboard clipboard = GuildQ.getInstance().getUtilsProvider().worldEdit.swapAt(quarter.getInitialLocation().add(offset), schematic);
-        GuildQ.getInstance().getUtilsProvider().worldEdit.saveClipboard(clipboard, undoSchematic, false);
+        GuildQ.getInstance().getUtilsProvider().worldEdit.swapAt(quarter.getInitialLocation().add(offset), schematic, (clipboard) -> {
+            GuildQ.getInstance().getUtilsProvider().worldEdit.saveClipboard(clipboard, undoSchematic, false);
+        });
+
     }
 
     public void undo(GuildQuarter quarter) {

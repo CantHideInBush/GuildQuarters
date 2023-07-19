@@ -61,6 +61,15 @@ public class TeleportToQuarterCommand extends InternalCommand {
             return false;
         }
 
+        if (quarter.isRemoved()) {
+            sendConfigErrorMessage(sender, "common.quarter-removed");
+            return false;
+        }
+        else if (!quarter.isPasted()) {
+            sendConfigErrorMessage(sender, "common.quarter-not-pasted");
+            return false;
+        }
+
         Player target;
         if (!parser.hasNext()) {
             if (!(sender instanceof Player)) {
@@ -81,17 +90,13 @@ public class TeleportToQuarterCommand extends InternalCommand {
             }
         }
 
-        World w = GuildUtils.getGuildWorld();
-
-        if (quarter.equals(QuartersManager.templateQuarter)) {
-            target.teleport(w.getHighestBlockAt(quarter.getInitialLocation().getBlockX(), quarter.getInitialLocation().getBlockZ()).getLocation().add(0, 1, 0));
+        if (quarter.getShortId().equalsIgnoreCase("TemplateQuarter")) {
+            target.teleport(quarter.getInitialLocation());
             return true;
         }
 
 
-
-
-        target.teleport(w.getHighestBlockAt(quarter.getSpawnLocation().getBlockX(), quarter.getSpawnLocation().getBlockZ()).getLocation().add(0, 1, 0));
+        target.teleport(quarter.getSpawnLocation());
 
         sendConfigSuccessMessage(sender, "guildq-quarter-teleport-success");
 

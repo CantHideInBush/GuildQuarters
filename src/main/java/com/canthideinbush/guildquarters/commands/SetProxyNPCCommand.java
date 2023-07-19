@@ -6,16 +6,17 @@ import com.canthideinbush.guildquarters.utils.Utils;
 import com.canthideinbush.utils.DefMessages;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.List;
 
 public class SetProxyNPCCommand extends InternalCommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
 
-        if (args.length < getArgIndex()) {
+        if (args.length <= getArgIndex()) {
             sendConfigErrorMessage(sender, DefMessages.ARGS_INSUFFICIENT);
             return false;
         }
@@ -44,6 +45,13 @@ public class SetProxyNPCCommand extends InternalCommand {
     @Override
     public String getName() {
         return "setproxynpc";
+    }
+
+    @Override
+    public List<String> complete(String[] args, CommandSender sender) {
+
+
+        return Collections.emptyList();
     }
 
     @Override

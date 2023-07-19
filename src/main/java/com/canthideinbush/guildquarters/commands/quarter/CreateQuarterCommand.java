@@ -66,12 +66,14 @@ public class CreateQuarterCommand extends InternalCommand {
             return false;
         }
 
-        if (!GuildQ.getInstance().getQuartersManager().createGuildQuarter(guild)) {
+
+
+        if (!GuildQ.getInstance().getQuartersManager().createGuildQuarterAsync(guild)) {
             sendConfigErrorMessage(sender, getMessagePath("already-exists"));
             return false;
         }
 
-        sendConfigSuccessMessage(sender, getMessagePath("success"));
+        if (!guild.getGuildMaster().isOnline() || !sender.equals(guild.getGuildMaster().getAsPlayer())) sendConfigSuccessMessage(sender, getMessagePath("success"));
 
         return true;
     }
@@ -106,11 +108,10 @@ public class CreateQuarterCommand extends InternalCommand {
             return false;
         }
 
-        if (!GuildQ.getInstance().getQuartersManager().createGuildQuarter(guild)) {
+        if (!GuildQ.getInstance().getQuartersManager().createGuildQuarterAsync(guild)) {
             sendConfigErrorMessage(sender, "guildq-guilds-create-exists");
             return false;
         }
-
 
         sendConfigSuccessMessage(sender, getMessagePath("success"));
 

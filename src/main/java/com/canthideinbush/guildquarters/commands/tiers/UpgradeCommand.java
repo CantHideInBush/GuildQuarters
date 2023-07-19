@@ -12,9 +12,7 @@ import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class UpgradeCommand extends InternalCommand implements ABArgumentCompletion {
 

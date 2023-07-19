@@ -53,4 +53,7 @@ public class ItemGenerators implements ABSave {
     }
 
 
+    public List<ItemGenerator> getGenerators() {
+        return generators;
+    }
 }

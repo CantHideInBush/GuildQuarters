@@ -3,7 +3,6 @@ package com.canthideinbush.guildquarters.commands.quarter;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerator;
-import com.canthideinbush.guildquarters.quarters.itemgenerators.ItemGenerators;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.utils.commands.*;
 import com.canthideinbush.utils.storing.ArgParser;

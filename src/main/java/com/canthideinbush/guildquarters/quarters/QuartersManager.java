@@ -2,7 +2,6 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
-import com.canthideinbush.utils.WorldEditUtils;
 import com.canthideinbush.utils.managers.KeyedStorage;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import me.glaremasters.guilds.Guilds;
@@ -11,11 +10,8 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -35,11 +31,23 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
     public static GuildQuarter templateQuarter;
 
+    private boolean initialized = false;
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     public QuartersManager() {
+        GuildQ.getInstance().setQuartersManager(this);
         if (GuildQ.getInstance().getUtilsProvider()
                 .worldEdit.findByName(GuildUtils.getSchematicName()) == null) {
             GuildQ.getInstance().getLogger().log(Level.WARNING,
-                    "Default schematic file not found! Disabling quarters manager!");
+                    "Default schematic file not found! Disabling quarters manager! Please create " + GuildUtils.getSchematicName() + " schematic and issue '/gq initialize' command");
+        }
+        else {
+            initialize();
+            initialized = true;
+            GuildQ.getInstance().getLogger().log(Level.INFO, "Successfully loaded quarters manager!");
         }
 
 
@@ -47,7 +55,9 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
     private BukkitTask quartersLoop;
 
-    public void initialize() {
+    public boolean initialize() {
+        if (initialized || GuildQ.getInstance().getUtilsProvider()
+                .worldEdit.findByName(GuildUtils.getSchematicName()) == null) return false;
         load();
         createNamedQuarter("TemplateQuarter");
         templateQuarter = getByShortId("TemplateQuarter");
@@ -61,6 +71,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
                 quarter.tick();
             }
                 }, 0, 20);
+        return true;
     }
 
 
@@ -69,9 +80,22 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         register(new GuildQuarter(getEmptyChunk(), shortId));
         return true;
     }
+
+    public boolean createNamedQuarterAsync(String shortId) {
+        if (getByShortId(shortId) != null) return false;
+        Bukkit.getScheduler().runTaskAsynchronously(GuildQ.getInstance(), () -> register(new GuildQuarter(getEmptyChunk(), shortId)));
+        return true;
+    }
+
     public boolean createGuildQuarter(Guild guild) {
         if (getByGuildId(guild.getId()) != null) return false;
         register(new GuildQuarter(getEmptyChunk(), guild));
+        return true;
+    }
+
+    public boolean createGuildQuarterAsync(Guild guild) {
+        if (getByGuildId(guild.getId()) != null) return false;
+        Bukkit.getScheduler().runTaskAsynchronously(GuildQ.getInstance(), () -> register(new GuildQuarter(getEmptyChunk(), guild)));
         return true;
     }
 
@@ -149,7 +173,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
 
 
     public NPC getProxyNPC() {
-        if (proxyNPCId == -1) return null;
+        if (proxyNPCId == -1 || GuildQ.citizens == null) return null;
         return GuildQ.citizens.getNPCRegistry().getById(proxyNPCId);
     }
 }

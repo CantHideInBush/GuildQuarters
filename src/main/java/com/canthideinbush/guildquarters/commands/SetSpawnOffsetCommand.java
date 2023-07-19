@@ -2,7 +2,6 @@ package com.canthideinbush.guildquarters.commands;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.schem.CreateSchemCommand;
-import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
@@ -18,7 +17,7 @@ public class SetSpawnOffsetCommand extends InternalCommand {
 
     private final Consumer<CommandSender> consumer = (s) -> {
         Location loc = ((Player) s).getLocation();
-        Vector offset = QuartersManager.templateQuarter.getInitialLocation().subtract(loc).toVector();
+        Vector offset = loc.subtract(QuartersManager.templateQuarter.getInitialLocation()).toVector();
         GuildQ.getInstance().getConfig().set("Quarters.SpawnOffset", offset);
         sendConfigSuccessMessage(s, getMessagePath("success"));
 
@@ -26,7 +25,10 @@ public class SetSpawnOffsetCommand extends InternalCommand {
     @Override
     public boolean execute(Player sender, String[] args) {
 
-
+        if (QuartersManager.templateQuarter == null) {
+            sendConfigErrorMessage(sender, "common.template-quarter-nonexistent");
+            return false;
+        }
 
         if (!GuildUtils.contains(QuartersManager.templateQuarter, sender.getLocation())) {
             sendConfigErrorMessage(sender, getMessagePath("warning"));

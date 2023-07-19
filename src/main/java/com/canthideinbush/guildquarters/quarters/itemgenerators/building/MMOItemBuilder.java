@@ -33,14 +33,13 @@ public class MMOItemBuilder implements GeneratorItemBuilder {
     }
 
     @Override
-    public List<String> complete(CommandSender commandSender, String option) {
+    public List<String> complete(CommandSender commandSender, String option, String value) {
         switch (option) {
             case "name" -> {
                 return Collections.singletonList(" ");
             }
             case "type" -> {
-                return MMOItems.plugin.getTypes().getAllTypeNames().stream()
-                        .filter(s -> true).collect(Collectors.toList());
+                return new ArrayList<>(MMOItems.plugin.getTypes().getAllTypeNames());
             }
             case "mmoid" -> {
                 if (type != null) return MMOItems.plugin.getTemplates().getTemplateNames(MMOItems.plugin.getTypes().get(type));

@@ -2,37 +2,39 @@ package com.canthideinbush.guildquarters.utils;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
-import com.canthideinbush.guildquarters.quarters.QuarterRegion;
 import com.canthideinbush.guildquarters.utils.worldgen.EmptyGenerator;
-import com.canthideinbush.utils.WorldEditUtils;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.util.Vector;
 
+import java.io.File;
 import java.util.logging.Level;
 
 public class GuildUtils {
 
     public static void createGuildWorld() {
-        if (getGuildWorld() != null) return;
         String name = GuildQ.getInstance().getConfig().getString("GuildWorldName", "guildworld");
-        GuildQ.getInstance().getLogger().log(Level.INFO, "Generating guild world using name: '" + name + "'");
         WorldCreator creator = new WorldCreator(name);
+        if (!doGuildWorldExists()) {
+        GuildQ.getInstance().getLogger().log(Level.INFO, "Generating guild world using name: '" + name + "'");
+        }
         creator.generator(new EmptyGenerator());
         creator.createWorld();
     }
 
+
+    public static boolean doGuildWorldExists() {
+        return new File(Bukkit.getWorldContainer() + File.separator + GuildQ.getInstance().getConfig().getString("GuildWorldName", "guildworld")).exists();
+    }
     public static World getGuildWorld() {
         return Bukkit.getWorld(GuildQ.getInstance().getConfig().getString("GuildWorldName", "guildworld"));
     }
 
 
-    public static void pasteGuildSchematic(Location location) {
-
-        GuildQ.getInstance().getUtilsProvider().worldEdit.pasteAt(location, getSchematicName());
+    public static void pasteGuildSchematic(Location location, Runnable runnable) {
+        GuildQ.getInstance().getUtilsProvider().worldEdit.pasteAt(location, getSchematicName(), runnable);
     }
 
     public static int getQuarterSize() {

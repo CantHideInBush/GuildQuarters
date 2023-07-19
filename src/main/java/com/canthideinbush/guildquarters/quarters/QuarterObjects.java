@@ -69,6 +69,10 @@ public class QuarterObjects implements ABSave {
 
 
     public void placeStructure(QuarterStructure structure) {
+        if (!quarter.isPasted()) {
+            quarter.getQueuedActions().add(() -> placeStructure(structure));
+            return;
+        }
         quarterStructures.add(structure);
         for (String schem : structure.getSchematics()) {
             placeSchematic(schem);
@@ -103,6 +107,10 @@ public class QuarterObjects implements ABSave {
 
 
     public void placeSchematic(String name) {
+        if (!quarter.isPasted()) {
+            quarter.getQueuedActions().add(() -> placeSchematic(name));
+            return;
+        }
         QuarterSchematic schematic;
         if ((schematic = GuildQ.getInstance().getQuarterSchematics().getByName(name)) == null) {
             throw new IllegalArgumentException("Quarter schematic with given name does not exist!");
@@ -113,6 +121,10 @@ public class QuarterObjects implements ABSave {
 
 
     public void placeSchematic(@NotNull QuarterSchematic schematic) {
+        if (!quarter.isPasted()) {
+            quarter.getQueuedActions().add(() -> placeSchematic(schematic));
+            return;
+        }
         schematic.paste(quarter);
 
         quarterSchematics.add(schematic.getName());

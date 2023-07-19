@@ -8,12 +8,24 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.StructureStorage
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
+import me.glaremasters.guilds.Guilds;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class QuarterStructure implements ABSave {
+public class QuarterStructure implements ABSave, Listener {
+
+
+    /**
+     * !!! cloned object
+     */
 
     public QuarterStructure(String id) {
         this.id = id;
@@ -24,6 +36,7 @@ public class QuarterStructure implements ABSave {
         this.storage = builder.getStorage();
         this.generators = builder.getGenerators();
         this.schematics = builder.getSchematics();
+        this.collectionBlock = builder.getCollectionBlock();
     }
 
     public QuarterStructure(Map<String, Object> map) {
@@ -37,6 +50,7 @@ public class QuarterStructure implements ABSave {
 
     public void initialize(GuildQuarter quarter) {
         this.quarter = quarter;
+        Bukkit.getPluginManager().registerEvents(this, GuildQ.getInstance());
     }
 
     public String getId() {
@@ -52,6 +66,9 @@ public class QuarterStructure implements ABSave {
     @YAMLElement
     private StructureStorage storage = new StructureStorageImpl();
 
+    @YAMLElement
+    private Vector collectionBlock;
+
 
     public List<ItemGenerator> getGenerators() {
         return generators;
@@ -61,6 +78,31 @@ public class QuarterStructure implements ABSave {
         return storage;
     }
 
+    public void setCollectionBlock(Vector collectionBlock) {
+        this.collectionBlock = collectionBlock;
+    }
+
+    @EventHandler
+    public void onClick(PlayerInteractEvent event) {
+        if (collectionBlock == null) return;
+        if (event.getAction().isRightClick() && event.getClickedBlock() != null) {
+            if (event.getClickedBlock().equals(quarter.getInitialLocation().add(collectionBlock).getBlock())) {
+                if (quarter.getGuild() != null && quarter.getGuild().equals(Guilds.getApi().getGuild(event.getPlayer()))) {
+
+                    for (String itemId : storage.getAvailable()) {
+                        int amount = storage.take(itemId, event.getPlayer(), storage.getAmount(itemId));
+                        if (amount > 0) {
+                            GuildQ.getInstance().getUtilsProvider().getChatUtils().sendConfigMessage("common.item-collected", event.getPlayer(), ChatColor.GREEN, itemId, amount);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public Vector getCollectionBlock() {
+        return collectionBlock;
+    }
 
     public void addGenerator(ItemGenerator generator) {
         if (containsGenerator(generator.getId())) return;
@@ -108,20 +150,32 @@ public class QuarterStructure implements ABSave {
                 storage.store(generator);
             }
         }
+        if (collectionBlock != null) {
+            if (!storage.isEmpty()) {
+                StructureParticles.highlightBlock(quarter.getInitialLocation().add(collectionBlock).getBlock());
+            }
+        }
     }
 
 
     @SuppressWarnings("all")
     @Override
-    protected Object clone() {
+    public QuarterStructure clone() {
         QuarterStructure clone = new QuarterStructure(this.id);
         clone.generators = this.generators;
         clone.storage = this.storage;
         clone.schematics = this.schematics;
+        clone.collectionBlock = this.collectionBlock;
         return clone;
     }
 
+
+
     public List<String> getSchematics() {
         return schematics;
+    }
+
+    public void setStorage(StructureStorage storage) {
+        this.storage = storage;
     }
 }
