@@ -95,6 +95,6 @@ public class StructureStorageImpl implements StructureStorage {
 
     @Override
     public boolean isEmpty() {
-        return storedItems.values().stream().anyMatch(i -> i > 0);
+        return storedItems.values().stream().noneMatch(i -> i > 0);
     }
 }

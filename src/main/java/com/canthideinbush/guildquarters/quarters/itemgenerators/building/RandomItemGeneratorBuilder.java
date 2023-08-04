@@ -1,16 +1,20 @@
 package com.canthideinbush.guildquarters.quarters.itemgenerators.building;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.commands.generators.GeneratorParentCommand;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.GeneratorItem;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.RandomItemGenerator;
 import com.canthideinbush.guildquarters.utils.Utils;
 import com.canthideinbush.utils.ChanceMap;
+import com.canthideinbush.utils.commands.ConfigMessageExtension;
+import com.canthideinbush.utils.commands.DefaultConfigMessage;
+import com.canthideinbush.utils.commands.InternalCommand;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RandomItemGeneratorBuilder implements GeneratorBuilder {
+public class RandomItemGeneratorBuilder implements GeneratorBuilder, ConfigMessageExtension {
 
 
 
@@ -22,14 +26,18 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
         this.interval = item.getInterval();
     }
 
+
     public RandomItemGeneratorBuilder() {
         this.chanceMap = new ChanceMap<>();
         this.amountMap = new HashMap<>();
+
     }
 
 
+
+
     private final ChanceMap<String> chanceMap;
-    private Map<String, ChanceMap<Integer>> amountMap;
+    private final Map<String, ChanceMap<Integer>> amountMap;
     private String id;
 
     private int interval = 1;
@@ -63,6 +71,15 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
             case "modify" -> {
                 return chanceMap.getKeys().stream().map(id -> id + ":%").collect(Collectors.toList());
             }
+            case "removeamount" -> {
+                if (values.length == 2) {
+                    ChanceMap<Integer> amounts = amountMap.get(values[0]);
+                    if (amounts != null) {
+                        return amounts.getKeys().stream().map(Object::toString).collect(Collectors.toList());
+                    }
+                }
+                return new ArrayList<>(amountMap.keySet());
+            }
             case "addamount" -> {
                 if (values.length == 1) {
                     return new ArrayList<>(chanceMap.getKeys());
@@ -77,7 +94,7 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
             }
             case "modifyamount" -> {
                 if (values.length == 1) {
-                    return new ArrayList<>(chanceMap.getKeys());
+                    return new ArrayList<>(amountMap.keySet());
                 }
                 else if (values.length == 2) {
                     return Collections.singletonList("1");
@@ -85,7 +102,6 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
                 else if (values.length == 3) {
                     return Collections.singletonList("%");
                 }
-
             }
         }
         return Collections.emptyList();
@@ -118,9 +134,31 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
                     return "Szansa musi byc dodatnia liczba rzeczywista!";
                 }
             }
+            case "addamount","modifyamount" -> {
+                if (values.length < 3) {
+                    return GuildQ.getMessage("command-arguments-insufficient");
+                }
+                else if (!chanceMap.contains(value)) {
+                    return getMessage("item-not-added");
+                }
+                else if (!Utils.isNumeric(values[1]) || !Utils.isNumeric(values[2])) {
+                    return GuildQ.getMessage("incorrect_data_type");
+                }
+            }
+            case "removeamount" -> {
+                if (values.length < 2) {
+                    return GuildQ.getMessage("command-arguments-insufficient");
+                }
+                if (!Utils.isNumeric(values[1])) {
+                    return GuildQ.getMessage("incorrect_data_type");
+                }
+            }
         }
         return null;
     }
+
+    @DefaultConfigMessage(forN = "item-not-added")
+    private static final String ITEM_NOT_ADDED = "Podany przemdiot nie zostal jeszcze dodany do generatora!";
 
     @Override
     public void with(String option, String[] values) {
@@ -137,6 +175,24 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
                 String[] args = value.split(":");
                 chanceMap.remove(args[0]);
                 chanceMap.add(args[0], Double.parseDouble(args[1]));
+            }
+            case "addamount" -> {
+                if (!amountMap.containsKey(value)) amountMap.put(value, new ChanceMap<>());
+                ChanceMap<Integer> amounts = amountMap.get(value);
+                amounts.add(Integer.parseInt(values[1]), Double.parseDouble(values[2]));
+            }
+            case "modifyamount" -> {
+                if (!amountMap.containsKey(value)) amountMap.put(value, new ChanceMap<>());
+                ChanceMap<Integer> amounts = amountMap.get(value);
+                int key = Integer.parseInt(values[1]);
+                amounts.remove(key);
+                amounts.add(key, Double.parseDouble(values[2]));
+            }
+            case "removeamount" -> {
+                ChanceMap<Integer> amounts;
+                if ((amounts = amountMap.get(value)) != null) {
+                    amounts.remove(Integer.parseInt(values[1]));
+                }
             }
         }
     }
@@ -158,5 +214,10 @@ public class RandomItemGeneratorBuilder implements GeneratorBuilder {
     @Override
     public boolean isComplete() {
         return !chanceMap.isEmpty() && id != null;
+    }
+
+    @Override
+    public Class<? extends InternalCommand> getCommandClass() {
+        return GeneratorParentCommand.class;
     }
 }

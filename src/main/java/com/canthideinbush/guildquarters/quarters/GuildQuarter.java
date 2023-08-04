@@ -6,31 +6,27 @@ import com.canthideinbush.utils.managers.Keyed;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.EditSessionBuilder;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.SideEffect;
-import com.sk89q.worldedit.world.block.BaseBlock;
-import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.ClickRedirectTrait;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Blocks;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.craftbukkit.v1_18_R2.CraftChunk;
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 
@@ -100,12 +96,12 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     }
 
     private void pasteSchem() {
-        if (getGuild().getGuildMaster().isOnline()) {
+        if (getGuild() != null && getGuild().getGuildMaster().isOnline()) {
             GuildQ.getInstance().getUtilsProvider().getChatUtils().sendConfigMessage("common.quarter-pasting-start", getGuild().getGuildMaster().getAsPlayer(), ChatColor.GREEN);
         }
         GuildUtils.pasteGuildSchematic(getInitialLocation(), () -> {
             initializeNPC();
-            if (getGuild().getGuildMaster().isOnline()) {
+            if (getGuild() != null && getGuild().getGuildMaster().isOnline()) {
                 GuildQ.getInstance().getUtilsProvider().getChatUtils().sendConfigMessage("common.quarter-pasting-complete", getGuild().getGuildMaster().getAsPlayer(), ChatColor.GREEN);
             }
             pasted = true;

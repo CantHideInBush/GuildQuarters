@@ -83,7 +83,9 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
 
 
-
+    public static String getMessage(String path) {
+        return instance.utilsProvider.getChatUtils().getMessage(path);
+    }
 
     private boolean enabled = false;
     @Override
