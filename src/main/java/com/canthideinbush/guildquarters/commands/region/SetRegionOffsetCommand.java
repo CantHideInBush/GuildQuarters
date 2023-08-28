@@ -1,9 +1,13 @@
-package com.canthideinbush.guildquarters.commands;
+package com.canthideinbush.guildquarters.commands.region;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.commands.ConfirmCommand;
 import com.canthideinbush.guildquarters.commands.schem.CreateSchemCommand;
+import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
+import com.canthideinbush.guildquarters.quarters.WEQuarterUtils;
 import com.canthideinbush.guildquarters.quarters.WGQuarterUtils;
+import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import org.bukkit.Location;
@@ -13,12 +17,12 @@ import org.bukkit.util.Vector;
 
 import java.util.function.Consumer;
 
-public class SetSpawnOffsetCommand extends InternalCommand {
+public class SetRegionOffsetCommand extends InternalCommand {
 
     private final Consumer<CommandSender> consumer = (s) -> {
         Location loc = ((Player) s).getLocation();
         Vector offset = loc.subtract(QuartersManager.templateQuarter.getInitialLocation()).toVector();
-        GuildQ.getInstance().getConfig().set("Quarters.SpawnOffset", offset);
+        GuildQ.getInstance().getConfig().set("Quarters.region.offset", offset.getBlockX() + ";" + offset.getBlockY() + ";" + offset.getZ());
         sendConfigSuccessMessage(s, getMessagePath("success"));
 
     };
@@ -47,11 +51,11 @@ public class SetSpawnOffsetCommand extends InternalCommand {
 
     @Override
     public String getName() {
-        return "setspawnoffset";
+        return "setregionoffset";
     }
 
     @Override
     public Class<? extends InternalCommand> getParentCommandClass() {
-        return MainCommand.class;
+        return RegionParentCommand.class;
     }
 }

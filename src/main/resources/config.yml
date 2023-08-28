@@ -3,7 +3,11 @@ Quarters:
   ChunkSize: 10
   SpawnOffset: 0;0;0
   region:
-    xz-size: 20
-    y-up: 20
-    y-down: 10
+    offset: 0;0;0
+    default-positive-x: 20
+    default-positive-y: 20
+    default-positive-z: 20
+    default-negative-x: 20
+    default-negative-y: 20
+    default-negative-z: 20
   schematic-name: "guild-quarter.schem"

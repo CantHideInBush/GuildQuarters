@@ -1,9 +1,11 @@
 package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.http.integration.HttpsPluginIntegration;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.managers.KeyedStorage;
 import com.canthideinbush.utils.storing.YAMLConfig;
+import com.canthideinbush.utils.worldedit.ReferenceTable;
 import me.glaremasters.guilds.Guilds;
 import me.glaremasters.guilds.guild.Guild;
 import net.citizensnpcs.api.npc.NPC;
@@ -32,6 +34,8 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     public static GuildQuarter templateQuarter;
 
     private boolean initialized = false;
+
+    public ReferenceTable referenceTable = null;
 
     public boolean isInitialized() {
         return initialized;
@@ -71,8 +75,13 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
                 quarter.tick();
             }
                 }, 0, 20);
+        HttpsPluginIntegration.integrateQuarters(this);
+        HttpsPluginIntegration.integrateItemGenerators();
         return true;
     }
+
+
+
 
 
     public boolean createNamedQuarter(String shortId) {
@@ -137,6 +146,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     }
 
 
+
     private int proxyNPCId = -1;
 
     public int getProxyNPCId() {
@@ -157,11 +167,14 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         return proxyNPCLocation;
     }
 
+
+
     public void save() {
         YAMLConfig config = GuildQ.getInstance().getQuartersStorage();
         config.set("Quarters", getObjects());
         config.set("ProxyNPCLocation", proxyNPCLocation);
         config.set("ProxyNPCId", proxyNPCId);
+        config.set("ReferenceTable", referenceTable);
     }
 
     public void load() {
@@ -169,6 +182,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
         if (config.contains("Quarters")) this.quarters.addAll((Collection<? extends GuildQuarter>) config.getList("Quarters"));
         proxyNPCLocation = config.getLocation("ProxyNPCLocation");
         proxyNPCId = config.getInt("ProxyNPCId");
+        referenceTable = (ReferenceTable) config.get("ReferenceTable", null);
     }
 
 

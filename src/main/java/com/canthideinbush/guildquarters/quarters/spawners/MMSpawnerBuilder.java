@@ -1,15 +1,11 @@
 package com.canthideinbush.guildquarters.quarters.spawners;
 
 import com.canthideinbush.guildquarters.GuildQ;
-import com.canthideinbush.guildquarters.commands.spawner.SpawnerBuildCommand;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
-import com.canthideinbush.guildquarters.utils.GuildUtils;
+import com.canthideinbush.guildquarters.quarters.WGQuarterUtils;
 import com.canthideinbush.utils.ObjectBuilder;
-import com.canthideinbush.utils.commands.ConfigMessageExtension;
-import com.canthideinbush.utils.commands.InternalCommand;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.spawning.spawners.MythicSpawner;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -77,7 +73,7 @@ public class MMSpawnerBuilder implements ObjectBuilder<MMSpawner> {
                 }
             }
             case "offset" -> {
-                if (!GuildUtils.contains(QuartersManager.templateQuarter, sender.getLocation())) {
+                if (!WGQuarterUtils.contains(QuartersManager.templateQuarter, sender.getLocation())) {
                     return GuildQ.getInstance().getUtilsProvider().getChatUtils().getMessage("common.outside-template");
                 }
             }

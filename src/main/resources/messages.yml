@@ -36,6 +36,7 @@ common:
   quarter-not-pasted: "Ta siedziba nie jest jeszcze wklejona! Odczekaj chwile lub skontaktuj sie z technikiem w razie dalszych problemow"
   quarter-pasting-complete: "Siedziba utworzona!"
   quarter-pasting-start: "&8Rozpoczynam tworzenie siedziby..."
+  quarter-pasting-progress: "&8Wklejanie siedziby: &e%s"
   mythic-spawner-nonexistent: "Ten spawner MythicMobs nie istnieje!"
 command:
   quarter:

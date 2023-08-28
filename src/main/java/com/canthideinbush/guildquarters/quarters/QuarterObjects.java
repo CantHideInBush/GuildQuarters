@@ -180,8 +180,8 @@ public class QuarterObjects implements ABSave {
     }
 
 
-
-
-
+    public List<String> getSchematics() {
+        return new ArrayList<>(quarterSchematics);
+    }
 
 }

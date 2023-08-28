@@ -1,6 +1,7 @@
 package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.sk89q.worldedit.event.Event;
 import me.glaremasters.guilds.api.events.GuildJoinEvent;
 import me.glaremasters.guilds.api.events.GuildLeaveEvent;
 import me.glaremasters.guilds.api.events.GuildRemoveEvent;
@@ -37,5 +38,6 @@ public class QuartersListener implements Listener {
             quarter.getRegion().updateMembers();
         }
     }
+
 
 }

@@ -5,20 +5,20 @@ import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.WorldGuardUtils;
 import com.canthideinbush.utils.storing.ABSave;
+import com.canthideinbush.utils.storing.StoreResult;
 import com.canthideinbush.utils.storing.YAMLElement;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.glaremasters.guilds.guild.GuildMember;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,6 +30,19 @@ public class QuarterRegion implements ABSave {
 
     @YAMLElement
     private String quarterId;
+
+    @YAMLElement
+    private String regionId;
+
+    @YAMLElement
+    private Location savedCenter;
+
+    @StoreResult(field = "savedCenter")
+    private Location center() {
+        return quarter().getInitialLocation().add(WGQuarterUtils.getRegionOffset());
+    }
+
+
     private GuildQuarter quarter;
 
     private GuildQuarter quarter() {
@@ -37,15 +50,18 @@ public class QuarterRegion implements ABSave {
         else return quarter = GuildQ.getInstance().getQuartersManager().getByShortId(quarterId);
     }
 
-    @YAMLElement
-    private String regionId;
+
     public ProtectedCuboidRegion region() {
         return (ProtectedCuboidRegion) WorldGuardUtils.getRegion(GuildUtils.getGuildWorld(), regionId);
     }
 
-    public static int DEFAULT_XZ_SIZE;
-    public static int DEFAULT_Y_UP;
-    public static int DEFAULT_Y_DOWN;
+
+    public static int DEF_POS_X;
+    public static int DEF_POS_Y;
+    public static int DEF_POS_Z;
+    public static int DEF_NEG_X;
+    public static int DEF_NEG_Y;
+    public static int DEF_NEG_Z;
 
 
 
@@ -54,9 +70,13 @@ public class QuarterRegion implements ABSave {
         if (config == null) {
             config = GuildQ.getInstance().getConfig().createSection("Quarters.region");
         }
-        DEFAULT_XZ_SIZE = config.getInt("xz-size", 20);
-        DEFAULT_Y_UP = config.getInt("y-up",20);
-        DEFAULT_Y_DOWN = config.getInt("y-down", 10);
+
+        DEF_POS_X = config.getInt("default-positive-x", 20);
+        DEF_POS_Y = config.getInt("default-positive-y", 20);
+        DEF_POS_Z = config.getInt("default-positive-z", 20);
+        DEF_NEG_X = config.getInt("default-negative-x", 20);
+        DEF_NEG_Y = config.getInt("default-negative-y", 20);
+        DEF_NEG_Z = config.getInt("default-negative-z", 20);
 
     }
 
@@ -70,7 +90,14 @@ public class QuarterRegion implements ABSave {
         this.quarter = quarter;
         this.quarterId = quarter.getShortId();
         this.regionId = quarter.getShortId() + "_quarter_region";
-        create();
+    }
+
+    void initialize() {
+        //If region was not using center(), it couldn't support some operations and might became corrupted after they were used. Hence, it's safer to reset it to default form.
+        if (savedCenter == null) {
+            remove();
+        }
+        if (!exists()) create();
         updateMembers();
     }
 
@@ -91,15 +118,21 @@ public class QuarterRegion implements ABSave {
 
     public ProtectedCuboidRegion create() {
         ProtectedCuboidRegion region = new ProtectedCuboidRegion(
-                regionId, BukkitAdapter.adapt(
-                quarter().getInitialLocation().add(new Vector(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE))
-        ).toVector().toBlockPoint()
-                , BukkitAdapter.adapt(
-                        quarter.getInitialLocation().add(DEFAULT_XZ_SIZE, DEFAULT_Y_UP, DEFAULT_XZ_SIZE))
-                .toVector().toBlockPoint());
+                regionId, defaultMinPoint()
+                , defaultMaxPoint());
         WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).addRegion(region);
         setPermissions();
         return region;
+    }
+
+    public BlockVector3 defaultMinPoint() {
+        Location center = center();
+        return BlockVector3.at(center.getBlockX() - DEF_NEG_X, center.getBlockY() - DEF_NEG_Y, center.getBlockZ() - DEF_NEG_Z);
+    }
+    
+    public BlockVector3 defaultMaxPoint() {
+        Location center = center();
+        return BlockVector3.at(center.getBlockX() + DEF_POS_X, center.getBlockY() + DEF_POS_Y, center.getBlockZ() + DEF_POS_Z);
     }
 
     public void setPermissions() {
@@ -108,41 +141,35 @@ public class QuarterRegion implements ABSave {
     }
 
     public boolean exists() {
-        return WorldGuardUtils.getRegionsInLocation(quarter().getInitialLocation())
-                .stream().map(ProtectedRegion::getId)
-                .anyMatch(s -> s.equalsIgnoreCase(regionId));
+        return WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).getRegion(regionId) != null;
     }
 
     public int getExpansion(BlockFace face) {
-        Location min = BukkitAdapter.adapt(quarter().getInitialLocation().getWorld(), region().getMinimumPoint());
-        Location max = BukkitAdapter.adapt(quarter().getInitialLocation().getWorld(), region().getMaximumPoint());
-        Location defaultMin = quarter().getInitialLocation().add(-DEFAULT_XZ_SIZE, -DEFAULT_Y_DOWN, -DEFAULT_XZ_SIZE);
-        Location defaultMax = quarter().getInitialLocation().add(DEFAULT_XZ_SIZE, DEFAULT_Y_UP, DEFAULT_XZ_SIZE);
-
         int expansion = 0;
 
         Vector direction = face.getDirection();
+        BlockVector3 blockVectorDirection = BlockVector3.at(direction.getX(), direction.getY(), direction.getZ());
 
-        @NotNull Vector substMin = min.subtract(defaultMin).toVector().multiply(direction);
-        @NotNull Vector substMax = max.subtract(defaultMax).toVector().multiply(direction);
+        BlockVector3 expansionMin = getExpansionMinPoint().multiply(blockVectorDirection);
+        BlockVector3 expansionMax = getExpansionMaxPoint().multiply(blockVectorDirection);
 
         if (direction.getZ() < 0) {
-            expansion += substMin.getZ();
+            expansion -= expansionMin.getZ();
         }
         if (direction.getX() < 0) {
-            expansion += substMin.getX();
+            expansion -= expansionMin.getX();
         }
         if (direction.getY() < 0) {
-            expansion += substMin.getY();
+            expansion -= expansionMin.getY();
         }
         if (direction.getZ() > 0) {
-            expansion += substMax.getZ();
+            expansion += expansionMax.getZ();
         }
         if (direction.getX() > 0) {
-            expansion += substMax.getX();
+            expansion += expansionMax.getX();
         }
         if (direction.getY() > 0) {
-            expansion += substMax.getY();
+            expansion += expansionMax.getY();
         }
 
 
@@ -153,9 +180,13 @@ public class QuarterRegion implements ABSave {
     }
 
 
+    public BlockVector3 getExpansionMinPoint() {
+        return region().getMinimumPoint().subtract(defaultMinPoint());
+    }
 
-
-
+    public BlockVector3 getExpansionMaxPoint() {
+        return region().getMaximumPoint().subtract(defaultMaxPoint());
+    }
 
 
     public void expand(BlockFace face, int distance) {

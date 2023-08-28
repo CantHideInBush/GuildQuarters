@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <title>GuildQuarters Editor</title>
+        <link rel="stylesheet" type="text/css" href=" localAddress:{css/style.css}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@300&display=swap" rel="stylesheet">
+        <script src=" localAddress:{js/script.js}" defer></script>
+    </head>
+    <body>
+        <header>
+            <p><b>GuildQuarters Object Editor</b></p>
+        </header>
+        <main>
+            <article id="menu">
+                <img id="l-arrow" src=" localAddress:{images/left-arrow.png}">
+                <p id="available-quarters"><b>Available Quarters</b><br></p>
+                <img id="r-arrow" src=" localAddress:{images/right-arrow.png}" onclick="nextMenu()">
+                <div id="quarters-supply" class="supplied-menu"> supply:{quarterList}
+                    <br>
+                    <!--<div-- class="quarter-template"></div-->
+                </div>
+                <div id="generators-supply" class="supplied-menu"> supply:{generatorsList}</div>
+            </article>
+            <article id="workspace">
+
+            </article>
+        </main>
+    </body>
+
+</html>

@@ -24,6 +24,7 @@ public class ItemGenerators implements ABSave {
 
     @YAMLElement
     private List<ItemGenerator> generators;
+
     public ItemGenerator get(String id) {
         return generators
                 .stream().filter(g -> g.getId().equals(id))

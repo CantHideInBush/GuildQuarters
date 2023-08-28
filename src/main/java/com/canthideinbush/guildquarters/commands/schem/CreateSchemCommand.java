@@ -3,7 +3,7 @@ package com.canthideinbush.guildquarters.commands.schem;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.ConfirmCommand;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
-import com.canthideinbush.guildquarters.utils.GuildUtils;
+import com.canthideinbush.guildquarters.quarters.WGQuarterUtils;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.storing.ArgParser;
@@ -45,7 +45,7 @@ public class CreateSchemCommand extends InternalCommand {
             }
         };
 
-        if (!GuildUtils.contains(QuartersManager.templateQuarter,sender.getLocation())) {
+        if (!WGQuarterUtils.contains(QuartersManager.templateQuarter,sender.getLocation())) {
             sendConfigErrorMessage(sender, getMessagePath("warning"));
             ConfirmCommand.actionFor(sender, consumer);
             return true;

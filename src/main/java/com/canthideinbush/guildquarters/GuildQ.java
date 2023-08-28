@@ -5,6 +5,7 @@ import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildComman
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
 import com.canthideinbush.guildquarters.commands.spawner.SpawnerBuildCommand;
 import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
+import com.canthideinbush.guildquarters.http.GQHttpServer;
 import com.canthideinbush.guildquarters.quarters.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
@@ -18,10 +19,12 @@ import com.canthideinbush.guildquarters.quarters.spawners.MMSpawnerBuilder;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructures;
 import com.canthideinbush.guildquarters.quarters.structures.StructureBuilder;
+import com.canthideinbush.guildquarters.quarters.updating.QuartersUpdateQueue;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
 import net.citizensnpcs.Citizens;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -29,10 +32,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanners;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.function.Function;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 public final class GuildQ extends CHIBPlugin implements Listener {
 
@@ -61,6 +80,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     private static GuildQ instance;
 
 
+
     public static GuildQ getInstance() {
         return instance;
     }
@@ -76,6 +96,10 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     private QuarterStructures quarterStructures;
 
     private ItemGenerators itemGenerators;
+
+    private GQHttpServer httpServer;
+
+    private QuartersUpdateQueue quartersUpdateQueue;
 
 
     private static final HashMap<Class<?>, Function<Object, String>> serializers = new HashMap<>();
@@ -115,11 +139,63 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         //requires post-world load
         quartersStorage = new YAMLConfig(this, "quarters", false);
 
+        quartersUpdateQueue = new QuartersUpdateQueue();
+
         loadManagers();
 
         loadListeners();
 
         hookCitizens();
+
+        try {
+            initHttpServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void initHttpServer() throws Exception {
+        try (
+               JarFile jarFile = new JarFile(getFile())
+        ) {
+            jarFile.stream().filter(e -> e.getName().matches("^https.*"))
+                    .forEach(e -> {
+                        String fileName = e.getName();
+                        if (e.isDirectory()) {
+                            fileName += File.separator;
+                            new File(getDataFolder(), fileName).mkdir();
+                            return;
+                        }
+                        File copyFile = new File(getDataFolder(), fileName);
+                        try {
+                            copyFile.createNewFile();
+                            if (!e.isDirectory()) IOUtils.copy(jarFile.getInputStream(e), new FileOutputStream(copyFile));
+
+                        } catch (
+                                IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+        } catch (
+                IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        try {
+            saveResource("https/key.jks", false);
+            httpServer = new GQHttpServer(getSLF4JLogger());
+        } catch (
+                UnrecoverableKeyException |
+                NoSuchAlgorithmException |
+                KeyStoreException |
+                IOException |
+                KeyManagementException |
+                URISyntaxException |
+                CertificateException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void hookCitizens() {
@@ -168,7 +244,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
 
     @EventHandler
-    public void onWorldLoad(WorldLoadEvent event) {
+    public void onWorldLoad(WorldLoadEvent event) throws IOException {
         if (event.getWorld().equals(GuildUtils.getGuildWorld())) {
             enablePlugin();
             loadQuarters();
@@ -296,5 +372,9 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
     public void setQuartersManager(QuartersManager quartersManager) {
         this.quartersManager = quartersManager;
+    }
+
+    public QuartersUpdateQueue getQuartersUpdateQueue() {
+        return quartersUpdateQueue;
     }
 }
