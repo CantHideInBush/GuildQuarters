@@ -1,6 +1,8 @@
-package com.canthideinbush.guildquarters.quarters;
+package com.canthideinbush.guildquarters.utils;
 
+import com.Zrips.CMI.CMI;
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.storing.ArgParser;
 import org.bukkit.Location;

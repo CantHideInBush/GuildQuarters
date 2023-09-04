@@ -34,6 +34,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new AddSpawner());
         subcommands.add(new RemoveSpawner());
         subcommands.add(new UpdateDefaultSchematicCommand());
+        subcommands.add(new AddRedirectionPortal());
+        subcommands.add(new RemoveRedirectionPortal());
 
 
     }

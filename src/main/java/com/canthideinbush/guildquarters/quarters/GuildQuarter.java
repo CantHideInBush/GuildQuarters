@@ -2,6 +2,8 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
+import com.canthideinbush.guildquarters.utils.WEQuarterUtils;
+import com.canthideinbush.guildquarters.utils.WGQuarterUtils;
 import com.canthideinbush.utils.managers.Keyed;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
@@ -68,7 +70,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     private int npcId = -1;
 
     @YAMLElement
-    private HashMap<String, Object> tags = new HashMap<>();
+    private HashMap<String, Object> tags;
 
     //secure variables
     boolean isLoadedFromStorage = false;
@@ -152,6 +154,14 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     public HashMap<String, Object> getTags() {
         return tags;
+    }
+
+    public boolean hasTags() {
+        return tags != null;
+    }
+
+    public HashMap<String, Object> getOrCreateTags() {
+        return hasTags() ? getTags() : (tags = new HashMap<>());
     }
 
     private void setDebugGlass() {

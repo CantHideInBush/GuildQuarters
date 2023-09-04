@@ -2,7 +2,7 @@ package com.canthideinbush.guildquarters.quarters.spawners;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
-import com.canthideinbush.guildquarters.quarters.WGQuarterUtils;
+import com.canthideinbush.guildquarters.utils.WGQuarterUtils;
 import com.canthideinbush.utils.ObjectBuilder;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.spawning.spawners.MythicSpawner;

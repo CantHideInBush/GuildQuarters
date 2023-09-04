@@ -45,7 +45,7 @@ public class GQHttpServer {
 
         }
         else this.logger = logger;
-        initialize();
+        //initialize();
         instance = this;
     }
 

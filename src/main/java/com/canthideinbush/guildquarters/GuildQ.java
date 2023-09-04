@@ -1,17 +1,24 @@
 package com.canthideinbush.guildquarters;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Modules.Portals.CMIPortal;
 import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.generators.GeneratorBuildCommand;
 import com.canthideinbush.guildquarters.commands.item.ItemBuildCommand;
+import com.canthideinbush.guildquarters.commands.redirectionportal.RedirectionPortalBuildCommand;
 import com.canthideinbush.guildquarters.commands.spawner.SpawnerBuildCommand;
 import com.canthideinbush.guildquarters.commands.structure.StructureBuildCommand;
 import com.canthideinbush.guildquarters.http.GQHttpServer;
+import com.canthideinbush.guildquarters.placeholders.QuarterPlaceholder;
 import com.canthideinbush.guildquarters.quarters.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.*;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigGeneratorItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemGeneratorBuilder;
+import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortal;
+import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortalBuilder;
+import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortals;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
@@ -23,6 +30,8 @@ import com.canthideinbush.guildquarters.quarters.updating.QuartersUpdateQueue;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
 import com.canthideinbush.utils.CHIBPlugin;
 import com.canthideinbush.utils.storing.YAMLConfig;
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.citizensnpcs.Citizens;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
@@ -72,6 +81,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         ConfigurationSerialization.registerClass(QuarterStructure.class);
         ConfigurationSerialization.registerClass(MMSpawner.class);
         ConfigurationSerialization.registerClass(RandomItemGenerator.class);
+        ConfigurationSerialization.registerClass(RedirectionPortal.class);
 
     }
 
@@ -147,6 +157,8 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
         hookCitizens();
 
+        hookPlaceholders();
+
         try {
             initHttpServer();
         } catch (Exception e) {
@@ -155,7 +167,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     }
 
 
-    private void initHttpServer() throws Exception {
+    private void initHttpServer() {
         try (
                JarFile jarFile = new JarFile(getFile())
         ) {
@@ -198,6 +210,8 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         }
     }
 
+
+    public static Citizens citizens;
     private void hookCitizens() {
         if (citizens != null) {
             if (getQuartersManager() != null) getQuartersManager().getObjects().forEach(GuildQuarter::initializeNPC);
@@ -208,7 +222,20 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         getLogger().log(Level.INFO, "Hooked into Citizens!");
     }
 
-    public static Citizens citizens;
+
+    public static CMI cmi;
+
+    private void hookCMI() {
+        cmi = (CMI) Bukkit.getPluginManager().getPlugin("CMI");
+        if (cmi != null) {
+            getLogger().log(Level.INFO, "Hooked into CMI!");
+        }
+    }
+
+    public static boolean isCMIEnabled() {
+        return cmi != null && cmi.isEnabled();
+    }
+
 
 
 
@@ -244,7 +271,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
 
     @EventHandler
-    public void onWorldLoad(WorldLoadEvent event) throws IOException {
+    public void onWorldLoad(WorldLoadEvent event) {
         if (event.getWorld().equals(GuildUtils.getGuildWorld())) {
             enablePlugin();
             loadQuarters();
@@ -255,11 +282,20 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         hookCitizens();
 
         MMSpawner.load();
+        RedirectionPortals.load();
+
         quartersManager = new QuartersManager();
+
 
 
     }
 
+
+
+    public void hookPlaceholders() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) return;
+        new QuarterPlaceholder().register();
+    }
 
 
 
@@ -291,6 +327,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         GeneratorItem.load();
 
 
+
         //QuartersStorage loaded also in event!!!
 
 
@@ -303,11 +340,12 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     private void saveConfigurations() {
         config.save();
         messageConfig.save();
+
         MMSpawner.save();
+        RedirectionPortals.save();
         quartersStorage.save();
 
         GeneratorItem.save();
-
         itemsStorage.save();
     }
 
@@ -332,17 +370,11 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
         GeneratorBuildCommand.builders.put("constant", ConstantGeneratorBuilder.class);
         GeneratorBuildCommand.builders.put("random", RandomItemGeneratorBuilder.class);
-
         ItemBuildCommand.builders.put("config", ConfigGeneratorItemBuilder.class);
         ItemBuildCommand.builders.put("mmo", MMOItemBuilder.class);
-
-
-
         StructureBuildCommand.builders.put("simple", StructureBuilder.class);
-
-
         SpawnerBuildCommand.builders.put("default", MMSpawnerBuilder.class);
-
+        RedirectionPortalBuildCommand.builders.put("default", RedirectionPortalBuilder.class);
 
     }
 

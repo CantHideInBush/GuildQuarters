@@ -3,7 +3,7 @@ package com.canthideinbush.guildquarters.commands;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.commands.schem.CreateSchemCommand;
 import com.canthideinbush.guildquarters.quarters.QuartersManager;
-import com.canthideinbush.guildquarters.quarters.WGQuarterUtils;
+import com.canthideinbush.guildquarters.utils.WGQuarterUtils;
 import com.canthideinbush.utils.commands.DefaultConfigMessage;
 import com.canthideinbush.utils.commands.InternalCommand;
 import org.bukkit.Location;

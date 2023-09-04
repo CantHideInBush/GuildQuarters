@@ -3,9 +3,9 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.utils.GuildUtils;
+import com.canthideinbush.guildquarters.utils.WGQuarterUtils;
 import com.canthideinbush.utils.WorldGuardUtils;
 import com.canthideinbush.utils.storing.ABSave;
-import com.canthideinbush.utils.storing.StoreResult;
 import com.canthideinbush.utils.storing.YAMLElement;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -20,7 +20,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SerializableAs("QuarterRegion")
@@ -35,14 +37,17 @@ public class QuarterRegion implements ABSave {
     private String regionId;
 
     @YAMLElement
-    private Location savedCenter;
+    private Location center;
 
-    @StoreResult(field = "savedCenter")
-    private Location center() {
+
+    public Location createCenter() {
         return quarter().getInitialLocation().add(WGQuarterUtils.getRegionOffset());
     }
 
-
+    public void updateCenter() {
+        center = createCenter();
+    }
+    
     private GuildQuarter quarter;
 
     private GuildQuarter quarter() {
@@ -93,9 +98,10 @@ public class QuarterRegion implements ABSave {
     }
 
     void initialize() {
-        //If region was not using center(), it couldn't support some operations and might became corrupted after they were used. Hence, it's safer to reset it to default form.
-        if (savedCenter == null) {
+        //If region was not using center, it couldn't support some operations and probably became corrupted after they were used. Hence, it's safer to reset it to default form.
+        if (center == null) {
             remove();
+            center = createCenter();
         }
         if (!exists()) create();
         updateMembers();
@@ -117,22 +123,37 @@ public class QuarterRegion implements ABSave {
 
 
     public ProtectedCuboidRegion create() {
+        center = createCenter();
         ProtectedCuboidRegion region = new ProtectedCuboidRegion(
                 regionId, defaultMinPoint()
                 , defaultMaxPoint());
         WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(GuildUtils.getGuildWorld())).addRegion(region);
         setPermissions();
+
         return region;
     }
 
+
     public BlockVector3 defaultMinPoint() {
-        Location center = center();
         return BlockVector3.at(center.getBlockX() - DEF_NEG_X, center.getBlockY() - DEF_NEG_Y, center.getBlockZ() - DEF_NEG_Z);
     }
-    
+
     public BlockVector3 defaultMaxPoint() {
-        Location center = center();
         return BlockVector3.at(center.getBlockX() + DEF_POS_X, center.getBlockY() + DEF_POS_Y, center.getBlockZ() + DEF_POS_Z);
+    }
+
+
+    public BlockVector3 getExpansionMinPoint() {
+        return region().getMinimumPoint().subtract(defaultMinPoint());
+    }
+
+    public BlockVector3 getExpansionMaxPoint() {
+        return region().getMaximumPoint().subtract(defaultMaxPoint());
+    }
+
+
+    public Location getCenter() {
+        return center;
     }
 
     public void setPermissions() {
@@ -154,13 +175,13 @@ public class QuarterRegion implements ABSave {
         BlockVector3 expansionMax = getExpansionMaxPoint().multiply(blockVectorDirection);
 
         if (direction.getZ() < 0) {
-            expansion -= expansionMin.getZ();
+            expansion += expansionMin.getZ();
         }
         if (direction.getX() < 0) {
-            expansion -= expansionMin.getX();
+            expansion += expansionMin.getX();
         }
         if (direction.getY() < 0) {
-            expansion -= expansionMin.getY();
+            expansion += expansionMin.getY();
         }
         if (direction.getZ() > 0) {
             expansion += expansionMax.getZ();
@@ -173,23 +194,15 @@ public class QuarterRegion implements ABSave {
         }
 
 
-
-
-
         return expansion;
     }
 
 
-    public BlockVector3 getExpansionMinPoint() {
-        return region().getMinimumPoint().subtract(defaultMinPoint());
-    }
-
-    public BlockVector3 getExpansionMaxPoint() {
-        return region().getMaximumPoint().subtract(defaultMaxPoint());
-    }
 
 
     public void expand(BlockFace face, int distance) {
+
+
         WorldGuardUtils.expand(GuildUtils.getGuildWorld(), region(),
                 BukkitAdapter.adapt(face).toBlockVector().multiply(distance));
     }

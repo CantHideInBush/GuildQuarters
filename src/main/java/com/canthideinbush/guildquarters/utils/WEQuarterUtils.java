@@ -1,6 +1,7 @@
-package com.canthideinbush.guildquarters.quarters;
+package com.canthideinbush.guildquarters.utils;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematics;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;

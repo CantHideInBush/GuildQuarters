@@ -38,6 +38,8 @@ common:
   quarter-pasting-start: "&8Rozpoczynam tworzenie siedziby..."
   quarter-pasting-progress: "&8Wklejanie siedziby: &e%s"
   mythic-spawner-nonexistent: "Ten spawner MythicMobs nie istnieje!"
+  redirection-portal-nonexistent: "Portal o podanej nazwie nie istnieje!"
+  redirection-portal-not-added: "Ta siedziba nie posiada portalu o podanej nazwie!"
 command:
   quarter:
     reset:

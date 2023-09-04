@@ -10,4 +10,6 @@ depend:
   - Guilds
   - MythicMobs
   - Citizens
-
+softdepend:
+  - CMI
+  - PlaceholderAPI

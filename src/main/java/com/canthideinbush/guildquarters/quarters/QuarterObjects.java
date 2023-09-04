@@ -2,6 +2,7 @@ package com.canthideinbush.guildquarters.quarters;
 
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortal;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +32,7 @@ public class QuarterObjects implements ABSave {
     public void initialize(GuildQuarter quarter) {
         this.quarter = quarter;
         quarterStructures.forEach(qS -> qS.initialize(quarter));
+        if (GuildQ.isCMIEnabled()) redirectionPortals.forEach(rP -> rP.initialize(quarter));
     }
 
     @YAMLElement
@@ -40,6 +43,9 @@ public class QuarterObjects implements ABSave {
 
     @YAMLElement
     private List<String> mythicSpawners = new ArrayList<>();
+
+    @YAMLElement
+    private List<RedirectionPortal> redirectionPortals = new ArrayList<>();
 
 
     public List<QuarterStructure> getStructures() {
@@ -169,6 +175,28 @@ public class QuarterObjects implements ABSave {
         }
     }
 
+    public void addRPortal(RedirectionPortal portal) {
+        if (portal == null || redirectionPortals.stream().anyMatch(rP -> rP != null && rP.getName().equalsIgnoreCase(portal.getName()))) return;
+        redirectionPortals.add(portal);
+        portal.initialize(quarter);
+    }
+
+    public void removeRPortal(RedirectionPortal portal) {
+        portal.remove();
+        redirectionPortals.remove(portal);
+    }
+
+    public void removeRPortal(String name) {
+        Optional<RedirectionPortal> optional = redirectionPortals.stream().filter(rP -> rP.getName().equalsIgnoreCase(name)).findAny();
+        optional.ifPresent(rP -> {
+                rP.remove();
+                redirectionPortals.remove(rP);
+        });
+    }
+
+    public boolean hasRPortal(String name) {
+        return redirectionPortals.stream().anyMatch(rP -> rP.getName().equalsIgnoreCase(name));
+    }
 
 
     int second = 0;
