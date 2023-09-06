@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 
 public class WEQuarterUtils {
+
     public static void pasteDefaultSchematic(Location location, CommandSender observer, Runnable runnable) {
 
         //self-explanatory
@@ -41,8 +42,30 @@ public class WEQuarterUtils {
             progressTracker.createReferenceTracker((referenceTable) -> GuildQ.getInstance().getQuartersManager().referenceTable = referenceTable);
         }
     }
+    public static SessionProgressTracker pasteDefaultSchematic(Location location, CommandSender observer, Runnable runnable, SessionProgressTracker progressTracker) {
 
-    public static void updateQuarterSchematic(GuildQuarter quarter, CommandSender observer) {
+        //self-explanatory
+        boolean shouldCreateReference = GuildQ.getInstance().getQuartersManager().referenceTable == null;
+
+        //Starts tracking paste of quarter schematic in location of quarter, and after it's complete runs given runnable. If observer is present, tracking/progress info is sent to him
+        GuildQ.getInstance().getUtilsProvider().worldEdit.trackPasteAt(location, GuildUtils.getSchematicName(), (progress) -> {
+            if (observer != null) GuildQ.getInstance().getUtilsProvider().chat.sendConfigMessage("common.quarter-pasting-progress", observer, ChatColor.GREEN, progress.getPercentageProgress() + "%");
+            if (progress.isComplete()) {
+                Bukkit.getScheduler().runTask(GuildQ.getInstance(), runnable);
+            }
+        }, 20 * 5, GuildQ.getInstance().getQuartersManager().referenceTable, progressTracker);
+
+
+        //If there is no reference table created yet, create new one and assign it to referenceTable variable
+        if (shouldCreateReference) {
+            progressTracker.createReferenceTracker((referenceTable) -> GuildQ.getInstance().getQuartersManager().referenceTable = referenceTable);
+        }
+        return progressTracker;
+    }
+
+    public static SessionProgressTracker updateQuarterSchematic(GuildQuarter quarter, CommandSender observer) {
+
+        SessionProgressTracker tracker = new SessionProgressTracker();
         Bukkit.getScheduler().runTaskAsynchronously(GuildQ.getInstance(), () -> {
 
             //Get build quarter region, convert to WE and copy it's content to clipboard
@@ -64,13 +87,14 @@ public class WEQuarterUtils {
                 rePasteQuarterSchematics(quarter);
 
                 pasteRegionBackup(clipboard, protectedRegion);
-            });
+            }, tracker);
 
 
 
 
 
         });
+        return tracker;
     }
 
 

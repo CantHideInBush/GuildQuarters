@@ -3,6 +3,7 @@ package com.canthideinbush.guildquarters.quarters;
 
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortal;
+import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortals;
 import com.canthideinbush.guildquarters.quarters.schematics.QuarterSchematic;
 import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
 import com.canthideinbush.guildquarters.quarters.structures.QuarterStructure;
@@ -10,10 +11,7 @@ import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +30,14 @@ public class QuarterObjects implements ABSave {
     public void initialize(GuildQuarter quarter) {
         this.quarter = quarter;
         quarterStructures.forEach(qS -> qS.initialize(quarter));
-        if (GuildQ.isCMIEnabled()) redirectionPortals.forEach(rP -> rP.initialize(quarter));
+        if (GuildQ.isCMIEnabled()) redirectionPortals.forEach(rP -> {
+            if (rP != null) rP.initialize(quarter);
+        });
+        for (RedirectionPortal portal : RedirectionPortals.getObjects()) {
+            if (portal.isDefault() && !this.hasRPortal(portal)) {
+                addRPortal(portal);
+            }
+        }
     }
 
     @YAMLElement
@@ -46,6 +51,54 @@ public class QuarterObjects implements ABSave {
 
     @YAMLElement
     private List<RedirectionPortal> redirectionPortals = new ArrayList<>();
+
+    @YAMLElement
+    private HashMap<String, List<QuarterObject>> quarterObjects = new HashMap<>();
+
+
+
+    public List<QuarterObject> getQuarterObjects(String category) {
+        if (!quarterObjects.containsKey(category)) return Collections.emptyList();
+        return quarterObjects.get(category);
+    }
+
+    public void addQuarterObject(QuarterObject object) {
+        List<QuarterObject> objects;
+        if (!quarterObjects.containsKey(object.getCategory())) {
+            objects = new ArrayList<>();
+            quarterObjects.put(object.getCategory(), objects);
+        }
+        else objects = quarterObjects.get(object.getCategory());
+        if (!isPresent(object, objects)) {
+            objects.add(object);
+            object.place(quarter);
+        }
+    }
+
+    public QuarterObject findByName(String category, String id) {
+        if (quarterObjects.containsKey(category)) {
+            return quarterObjects.get(category).stream().filter(qO -> qO.getId().equalsIgnoreCase(id)).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+
+    public void removeQuarterObject(String category, String id) {
+        QuarterObject quarterObject = findByName(category, id);
+        if (quarterObject != null) {
+            removeQuarterObject(quarterObject);
+        }
+    }
+
+    public void removeQuarterObject(QuarterObject object) {
+        getQuarterObjects(object.getCategory()).remove(object);
+        object.remove(quarter);
+    }
+
+    public boolean isPresent(QuarterObject object, List<QuarterObject> objects) {
+        return objects.stream().anyMatch(obj -> obj.getId().equalsIgnoreCase(object.getId()));
+    }
+
 
 
     public List<QuarterStructure> getStructures() {
@@ -196,6 +249,10 @@ public class QuarterObjects implements ABSave {
 
     public boolean hasRPortal(String name) {
         return redirectionPortals.stream().anyMatch(rP -> rP.getName().equalsIgnoreCase(name));
+    }
+
+    public boolean hasRPortal(RedirectionPortal portal) {
+        return redirectionPortals.contains(portal);
     }
 
 

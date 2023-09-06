@@ -44,5 +44,7 @@ public class RegionUpdateOperation extends UpdateOperation {
                 newMin, newMax);
 
         WorldGuardUtils.redefine(GuildUtils.getGuildWorld(), region.region(), newRegion);
+
+        complete();
     }
 }

@@ -11,3 +11,4 @@ Quarters:
     default-negative-y: 20
     default-negative-z: 20
   schematic-name: "guild-quarter.schem"
+  parallel-quarter-schematic-updates: 5

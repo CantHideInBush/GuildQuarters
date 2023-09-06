@@ -9,13 +9,12 @@ public abstract class UpdateOperation {
     }
 
 
-    private void complete() {
+    protected void complete() {
         isComplete = true;
     }
 
     public void start() {
         run();
-        complete();
     }
 
     public abstract void run();

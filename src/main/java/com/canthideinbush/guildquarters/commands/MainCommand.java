@@ -5,6 +5,7 @@ import com.canthideinbush.guildquarters.commands.generators.GeneratorParentComma
 import com.canthideinbush.guildquarters.commands.item.ItemParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.commands.quarter.TeleportToQuarterCommand;
+import com.canthideinbush.guildquarters.commands.quarterschem.QuarterSchemParentCommand;
 import com.canthideinbush.guildquarters.commands.redirectionportal.RedirectionPortalParentCommand;
 import com.canthideinbush.guildquarters.commands.region.RegionParentCommand;
 import com.canthideinbush.guildquarters.commands.schem.SchemParentCommand;
@@ -42,6 +43,8 @@ public class MainCommand extends ParentCommand {
         subCommands.add(new ResetReferenceCommand());
         subCommands.add(new RegionParentCommand());
         subCommands.add(new RedirectionPortalParentCommand());
+        subCommands.add(new QuarterSchemParentCommand());
+        subCommands.add(new PermissionParentCommand());
     }
 
     @Override

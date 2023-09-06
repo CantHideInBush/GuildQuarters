@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 
 public class RedirectionPortals {
 
-    private static ArrayList<RedirectionPortal> registeredPortals = new ArrayList<>();
+    private static final ArrayList<RedirectionPortal> registeredPortals = new ArrayList<>();
 
 
 
     @SuppressWarnings("unchecked")
     public static void load() {
-        ((ArrayList<RedirectionPortal>) GuildQ.getInstance().getQuartersStorage().get("RedirectionPortals", new ArrayList<>())).forEach(RedirectionPortals::register);
+        ((ArrayList<RedirectionPortal>) GuildQ.getInstance().getQuartersStorage().getList("RedirectionPortals", new ArrayList<>())).forEach(RedirectionPortals::register);
     }
 
     public static void save() {
@@ -55,5 +55,9 @@ public class RedirectionPortals {
 
     public static List<String> getIds() {
         return registeredPortals.stream().map(RedirectionPortal::getName).collect(Collectors.toList());
+    }
+
+    public static List<RedirectionPortal> getObjects() {
+        return registeredPortals;
     }
 }

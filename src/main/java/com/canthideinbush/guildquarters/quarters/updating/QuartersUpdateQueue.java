@@ -5,6 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class QuartersUpdateQueue {
 
@@ -55,6 +56,21 @@ public class QuartersUpdateQueue {
         if (asyncTask == null || asyncTask.isCancelled()) {
             asyncTask = new QueueRunnable(asyncOperations).runTaskTimerAsynchronously(GuildQ.getInstance(), 0, 1);
         }
+    }
+
+    public ArrayList<UpdateOperation> getUpdateOperationsOfType(Class<? extends UpdateOperation> c) {
+        ArrayList<UpdateOperation> operations = new ArrayList<>();
+        syncOperations.forEach(operation -> {
+            if (operation instanceof BundledOperation) {
+                BundledOperation.getAllBundledOperations((BundledOperation) operation).forEach(
+                        subOperation -> {
+                            if (subOperation.getClass().equals(c)) operations.add(subOperation);
+                        }
+                );
+            }
+            if (operation.getClass().equals(c)) operations.add(operation);
+        });
+        return operations;
     }
 
 

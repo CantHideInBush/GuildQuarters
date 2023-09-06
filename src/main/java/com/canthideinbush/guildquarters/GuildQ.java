@@ -16,6 +16,7 @@ import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConfigG
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.ConstantGeneratorBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.MMOItemBuilder;
 import com.canthideinbush.guildquarters.quarters.itemgenerators.building.RandomItemGeneratorBuilder;
+import com.canthideinbush.guildquarters.quarters.permissions.GuildPermissions;
 import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortal;
 import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortalBuilder;
 import com.canthideinbush.guildquarters.quarters.portals.RedirectionPortals;
@@ -33,6 +34,7 @@ import com.canthideinbush.utils.storing.YAMLConfig;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.citizensnpcs.Citizens;
+import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,6 +42,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -95,6 +98,18 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         return instance;
     }
 
+
+    private Permission permissions;
+
+    public Permission getPermissions() {
+        return permissions;
+    }
+
+    private void setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        permissions = rsp.getProvider();
+    }
+
     private YAMLConfig config;
     private YAMLConfig messageConfig;
     private YAMLConfig quartersStorage;
@@ -110,6 +125,8 @@ public final class GuildQ extends CHIBPlugin implements Listener {
     private GQHttpServer httpServer;
 
     private QuartersUpdateQueue quartersUpdateQueue;
+
+    private GuildPermissions guildPermissions;
 
 
     private static final HashMap<Class<?>, Function<Object, String>> serializers = new HashMap<>();
@@ -155,12 +172,13 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
         loadListeners();
 
+        setupPermissions();
         hookCitizens();
-
         hookPlaceholders();
+        hookCMI();
 
         try {
-            initHttpServer();
+            //initHttpServer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -258,6 +276,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
         quarterSchematics = quartersStorage.contains("Schematics") ? (QuarterSchematics) quartersStorage.get("Schematics") : new QuarterSchematics();
         quarterStructures = quartersStorage.contains("Structures") ? (QuarterStructures) quartersStorage.get("Structures") : new QuarterStructures();
         itemGenerators = quartersStorage.contains("ItemGenerators") ? (ItemGenerators) quartersStorage.get("ItemGenerators") : new ItemGenerators();
+        guildPermissions = quartersStorage.contains("GuildPermissions") ? (GuildPermissions) quartersStorage.get("GuildPermissions") : new GuildPermissions();
 
 
         QuarterTiers.load();
@@ -343,6 +362,7 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
         MMSpawner.save();
         RedirectionPortals.save();
+
         quartersStorage.save();
 
         GeneratorItem.save();
@@ -408,5 +428,9 @@ public final class GuildQ extends CHIBPlugin implements Listener {
 
     public QuartersUpdateQueue getQuartersUpdateQueue() {
         return quartersUpdateQueue;
+    }
+
+    public GuildPermissions getGuildPermissions() {
+        return guildPermissions;
     }
 }

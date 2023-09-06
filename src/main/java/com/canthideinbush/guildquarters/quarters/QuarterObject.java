@@ -2,13 +2,16 @@ package com.canthideinbush.guildquarters.quarters;
 
 public interface QuarterObject {
 
+    String getId();
+
+    String getCategory();
+
     boolean isDefault();
 
-    void place();
+    void place(GuildQuarter quarter);
 
-    void remove();
+    void remove(GuildQuarter quarter);
 
-    QuarterObject clone();
-
+    void initialize(GuildQuarter quarter);
 
 }

@@ -109,7 +109,7 @@ public class QuartersManager implements KeyedStorage<GuildQuarter> {
     }
 
     @Override
-    public Collection<GuildQuarter> getObjects() {
+    public List<GuildQuarter> getObjects() {
         return quarters;
     }
 

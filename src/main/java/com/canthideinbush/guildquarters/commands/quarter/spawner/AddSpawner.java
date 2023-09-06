@@ -1,6 +1,7 @@
-package com.canthideinbush.guildquarters.commands.quarter;
+package com.canthideinbush.guildquarters.commands.quarter.spawner;
 
 import com.canthideinbush.guildquarters.GuildQ;
+import com.canthideinbush.guildquarters.commands.quarter.QuartersParentCommand;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.spawners.MMSpawner;
 import com.canthideinbush.utils.DefMessages;

@@ -56,5 +56,7 @@ public class RegionDefaultSizeUpdateOperation extends UpdateOperation {
 
         WorldGuardUtils.expand(GuildUtils.getGuildWorld(), region.region(), minExpand, maxExpand);
         WorldGuardUtils.contract(GuildUtils.getGuildWorld(), region.region(), minContract, maxContract);
+
+        complete();
     }
 }

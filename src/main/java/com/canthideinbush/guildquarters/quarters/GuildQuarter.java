@@ -22,6 +22,7 @@ import me.glaremasters.guilds.guild.Guild;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.ClickRedirectTrait;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -71,6 +72,10 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
 
     @YAMLElement
     private HashMap<String, Object> tags;
+
+    @YAMLElement
+    private ArrayList<String> sharedPermissions = new ArrayList<>();
+
 
     //secure variables
     boolean isLoadedFromStorage = false;
@@ -269,6 +274,7 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     public void remove() {
         if (removed) return;
         removed = true;
+        sharedPermissions.clear();
         try {
             GuildQ.getInstance().getQuartersManager().save();
             if (getGuild() != null) {
@@ -382,4 +388,47 @@ public class GuildQuarter implements Keyed<UUID>, ABSave {
     public List<Runnable> getQueuedActions() {
         return queuedActions;
     }
+
+
+
+    /*
+    Possible scenarios where player's permissions should be synced:
+    - Joining guild
+    - Leaving guild
+    - Adding permissions to guild
+    - Removing permissions from guild
+    - Joining server
+    */
+    public ArrayList<String> getSharedPermissions() {
+        return sharedPermissions;
+    }
+
+
+
+
+    public void syncSharedPermissions() {
+        if (getGuild() == null) return;
+        List<String> registeredPermissions = GuildQ.getInstance().getGuildPermissions().getRegisteredPermissions();
+        getGuild().getMembers().forEach(
+                guildMember -> {
+                    Player player = guildMember.getAsPlayer();
+                    if (player.isOnline()) {
+                        for (String permission : registeredPermissions) {
+                            if (sharedPermissions.contains(permission)) GuildQ.getInstance().getPermissions().playerAdd(player, permission);
+                            else GuildQ.getInstance().getPermissions().playerRemove(player, permission);
+                        }
+                    }
+                }
+        );
+    }
+
+    public void syncPermissions(Player player) {
+        for (String permission : GuildQ.getInstance().getGuildPermissions().getRegisteredPermissions()) {
+            if (sharedPermissions.contains(permission)) GuildQ.getInstance().getPermissions().playerAdd(player, permission);
+            else GuildQ.getInstance().getPermissions().playerRemove(player, permission);
+        }
+    }
+
+
+
 }

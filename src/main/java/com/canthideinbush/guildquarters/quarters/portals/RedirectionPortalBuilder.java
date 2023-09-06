@@ -60,6 +60,8 @@ public class RedirectionPortalBuilder implements ObjectBuilder<RedirectionPortal
                 Location location = targetBlock != null ? targetBlock.getLocation() : sender.getLocation();
                 this.offset1  = location.toVector().subtract(QuartersManager.templateQuarter.getInitialLocation().toVector());
             }
+            case "isdefault" ->
+                    isDefault = Boolean.parseBoolean(value.toLowerCase());
         }
     }
 
@@ -90,7 +92,7 @@ public class RedirectionPortalBuilder implements ObjectBuilder<RedirectionPortal
             case "offset","offset1" -> {
                 Block targetBlock = ((Player) sender).getTargetBlock(8);
                 Location location = targetBlock != null ? targetBlock.getLocation() : ((Player) sender).getLocation();
-                return Collections.singletonList((location.toBlockLocation().toString()));
+                return Collections.singletonList((location.toVector().toBlockVector().toString()));
             }
             case "isdefault" -> {
                 return Arrays.asList("true", "false");

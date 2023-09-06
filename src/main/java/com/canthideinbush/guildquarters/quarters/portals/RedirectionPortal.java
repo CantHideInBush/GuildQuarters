@@ -6,10 +6,12 @@ import com.Zrips.CMI.Modules.Portals.CuboidArea;
 import com.canthideinbush.guildquarters.GuildQ;
 import com.canthideinbush.guildquarters.quarters.GuildQuarter;
 import com.canthideinbush.guildquarters.quarters.QuarterObject;
+import com.canthideinbush.guildquarters.quarters.QuarterObjects;
 import com.canthideinbush.utils.storing.ABSave;
 import com.canthideinbush.utils.storing.YAMLElement;
 import org.bukkit.util.Vector;
 
+import java.util.Map;
 import java.util.logging.Level;
 
 public class RedirectionPortal implements ABSave, QuarterObject {
@@ -33,10 +35,14 @@ public class RedirectionPortal implements ABSave, QuarterObject {
     private Vector offset1;
 
     @YAMLElement
-    private boolean isDefault = false;
+    private boolean isDefault;
 
     private CMIPortal portal;
     private GuildQuarter quarter;
+
+    public RedirectionPortal(Map<String, Object> data) {
+        deserializeFromMap(data);
+    }
 
     public RedirectionPortal(String name, String target, Vector offset, Vector offset1, boolean isDefault) {
         this.name = name;
@@ -58,7 +64,7 @@ public class RedirectionPortal implements ABSave, QuarterObject {
 
     //report=redirection portal
     public String getCMIPortalName() {
-        return "guildq_report_" + quarter.getShortId() + "_" + name;
+        return "guildq_rportal_" + quarter.getShortId() + "_" + name;
     }
 
     public void initialize(GuildQuarter quarter) {
@@ -90,12 +96,27 @@ public class RedirectionPortal implements ABSave, QuarterObject {
     }
 
     @Override
+    public String getId() {
+        return name;
+    }
+
+    @Override
+    public String getCategory() {
+        return "rportal";
+    }
+
+    @Override
     public boolean isDefault() {
         return isDefault;
     }
 
     @Override
-    public void place() {
+    public void place(GuildQuarter quarter) {
+        quarter.getQuarterObjects().addRPortal(this);
+    }
+
+    @Override
+    public void remove(GuildQuarter quarter) {
 
     }
 

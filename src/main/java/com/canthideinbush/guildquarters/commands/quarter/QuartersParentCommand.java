@@ -4,10 +4,11 @@ import com.canthideinbush.guildquarters.commands.MainCommand;
 import com.canthideinbush.guildquarters.commands.quarter.region.ContractCommand;
 import com.canthideinbush.guildquarters.commands.quarter.region.ExpandCommand;
 import com.canthideinbush.guildquarters.commands.quarter.region.GetExpansion;
+import com.canthideinbush.guildquarters.commands.quarter.spawner.AddSpawner;
+import com.canthideinbush.guildquarters.commands.quarter.spawner.RemoveSpawner;
 import com.canthideinbush.utils.commands.InternalCommand;
 import com.canthideinbush.utils.commands.ParentCommand;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class QuartersParentCommand extends ParentCommand {
@@ -36,6 +37,8 @@ public class QuartersParentCommand extends ParentCommand {
         subcommands.add(new UpdateDefaultSchematicCommand());
         subcommands.add(new AddRedirectionPortal());
         subcommands.add(new RemoveRedirectionPortal());
+        subcommands.add(new AddPermissionCommand());
+        subcommands.add(new RemovePermissionCommand());
 
 
     }
