@@ -12,7 +12,7 @@ public class UpdateQuarterSchematicOperation extends UpdateOperation {
 
 
     public static void updateAll() {
-        int parallelUpdates = GuildQ.getInstance().getConfig().getInt("parallel-quarter-schematic-updates");
+        int parallelUpdates = GuildQ.getInstance().getConfig().getInt("Quarters.parallel-quarter-schematic-updates", 1);
         QuartersUpdateQueue queue = GuildQ.getInstance().getQuartersUpdateQueue();
         List<GuildQuarter> quarters = GuildQ.getInstance().getQuartersManager().getObjects();
         for (int i = 0; i < quarters.size(); i+= parallelUpdates) {
