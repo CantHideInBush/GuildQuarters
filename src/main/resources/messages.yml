@@ -1,0 +1,59 @@
+guildq-world-nonexistent: "Swiat gildyjny nie zostal jeszcze utworzony!"
+guildq-world-enter: "Przenosze na swiat gildyjny..."
+guildq-world-exit: "Przenosze ze swiata gildyjnego..."
+
+
+guildq-quarter-create-exists: "Siedziba tej gildii juz istnieje!"
+guildq-quarter-create-shortId_taken: "Ta krotka nazwa jest zajeta przez inna siedzibe!"
+guildq-quarter-create-success: "Pomyslnie utworzono siedzibe!"
+guildq-quarter-shortId-nonexistent: "Siedziba o podanej nazwie nie istnieje!"
+guildq-quarter-teleport-success: "Przenosze do siedziby..."
+
+guildq:
+  quarter:
+    create:
+      exists: "Siedziba tej gildii juz istnieje!"
+
+
+quildq-guilds-not_member: "Nie jestes czlonkiem zadnej gildii!"
+quildq-guilds-not_master: "Nie jestes zalozycielem gildii!"
+
+common:
+  template-quarter-nonexistent: "Siedziba &eTemplateQuarter &cnie istnieje!"
+  guild-nonexistent: "Ta gildia nie istnieje!"
+  quarter-nonexistent: "Ta siedziba gildii nie istnieje!"
+  tier-nonexistent: "Ten poziom gildii nie istnieje!"
+  schematic-nonexistent: "Ten schemat nie istnieje!"
+  generator-item-nonexistent: "Ten przedmiot generatora nie istnieje!"
+  generator-nonexistent: "Ten generator nie istnieje!"
+  structure-nonexistent: "Ta struktura nie istnieje!"
+  structure-not-built: "Ta dzialka nie posiada podanej struktury!"
+  spawner-nonexistent: "Ten spawner nie istnieje!"
+  outside-template: "Znajdujesz sie poza TemplateQuarter!"
+  no-target-block: "Musisz patrzec sie na jakis blok!"
+  item-collected: "Otrzymano %s: %s"
+  quarter-removed: "Ta siedziba jest w trakcie usuwania!"
+  quarter-not-pasted: "Ta siedziba nie jest jeszcze wklejona! Odczekaj chwile lub skontaktuj sie z technikiem w razie dalszych problemow"
+  quarter-pasting-complete: "Siedziba utworzona!"
+  quarter-pasting-start: "&8Rozpoczynam tworzenie siedziby..."
+  quarter-pasting-progress: "&8Wklejanie siedziby: &e%s"
+  mythic-spawner-nonexistent: "Ten spawner MythicMobs nie istnieje!"
+  redirection-portal-nonexistent: "Portal o podanej nazwie nie istnieje!"
+  redirection-portal-not-added: "Ta siedziba nie posiada portalu o podanej nazwie!"
+command:
+  quarter:
+    reset:
+      success: "Zresetowano siedzibe!"
+    delete:
+      success: "Usunieto siedzibe!"
+  tier:
+    structure:
+      create:
+        success: "Pomyslnie dodano strukture!"
+      remove:
+        success: "Pomyslnie usunieto strukture!"
+    upgrade:
+      success: "Zwiekszono poziom siedziby!"
+    downgrade:
+      success: "Obnizono poziom siedziby!"
+

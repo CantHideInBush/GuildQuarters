@@ -1,0 +1,16 @@
+name: GuildQuarters
+version: '${project.version}'
+main: com.canthideinbush.guildquarters.GuildQ
+api-version: 1.18
+authors: [ CantHideInBush ]
+depend:
+  - CHIBUtils
+  - WorldEdit
+  - WorldGuard
+  - Guilds
+  - MythicMobs
+  - Citizens
+  - Vault
+softdepend:
+  - CMI
+  - PlaceholderAPI
